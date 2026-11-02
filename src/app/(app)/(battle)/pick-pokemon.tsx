@@ -20,6 +20,7 @@ import { useAuthStore } from "@stores/auth/auth.config";
 import { useGlobalStore } from "@stores/global/global.config";
 import { useMatchingStore } from "@stores/matching/matching.config";
 import { useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Clock, Info, ShieldAlert, Star, Timer, Zap } from "lucide-react-native";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -599,6 +600,14 @@ export default function PickPokemonScreen() {
       });
       setSelectedPokemonId(null);
     } catch (error) {
+      // 400 = selection time is over and the server already picked a Pokemon.
+      // Same as before (BE used to answer 200): refresh the round, no error alert.
+      if ((error as AxiosError)?.response?.status === 400) {
+        queryClient.invalidateQueries({ queryKey: ["list-match-round"] });
+        queryClient.invalidateQueries({ queryKey: ["list-user-pokemon-round"] });
+        setSelectedPokemonId(null);
+        return;
+      }
       Alert.alert(t("common.error"), t("battle.pick.alerts.choose_error"));
     }
   };
