@@ -7,6 +7,7 @@ import { IBackendResponse } from '@models/backend/common';
 import { ROUTES } from '@routes/routes';
 import authService from '@services/auth';
 import { useEmailSelector } from '@stores/user/user.selectors';
+import { getCheckEmailOutcome } from '@utils/auth.utils';
 import { saveSecureStorage } from '@utils/secure-storage';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -89,15 +90,9 @@ export default function OTPScreen() {
         } else {
             const res = await authService.checkEmail(email) as IBackendResponse<any>
 
-            switch (res.data.statusCode) {
-                case 401:
-                    showAlert(t('auth.a-new-code-has-been-sent-to-your-email'), 'success');
-                    setTimer(60);
-                    break;
-                case 200:
-                    showAlert(t('auth.a-new-code-has-been-sent-to-your-email'), 'success');
-                    setTimer(60);
-                    break;
+            if (getCheckEmailOutcome(res.data)?.requiresOtp) {
+                showAlert(t('auth.a-new-code-has-been-sent-to-your-email'), 'success');
+                setTimer(60);
             }
         }
     };
