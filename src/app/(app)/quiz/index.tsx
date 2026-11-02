@@ -21,6 +21,7 @@ import { usePreventRemove } from "@react-navigation/native";
 import { ROUTES } from "@routes/routes";
 import userExerciseAttemptService from "@services/user-exercise-attempt";
 import { useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import {
   router,
   useFocusEffect,
@@ -534,6 +535,13 @@ export default function QuizScreen() {
           proceedNavigation();
         },
         onError: (error) => {
+          // 400 = attempt is no longer IN_PROGRESS (already finished/abandoned):
+          // nothing left to save, so leave the quiz as before (BE used to answer 200).
+          if ((error as AxiosError)?.response?.status === 400) {
+            setShowExitConfirmModal(false);
+            proceedNavigation();
+            return;
+          }
           console.error("Error abandoning exercise:", error);
           showError(
             "quiz_screen.alerts.save_failed",
