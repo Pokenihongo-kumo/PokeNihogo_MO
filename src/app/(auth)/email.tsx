@@ -8,6 +8,7 @@ import { EmailFormDataRequest, IEmailFormDataRequest } from '@models/user/user.r
 import { ROUTES } from '@routes/routes';
 import authService from '@services/auth';
 import { useUserSetEmail } from '@stores/user/user.selectors';
+import { getCheckEmailOutcome } from '@utils/auth.utils';
 import { router } from 'expo-router';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -37,25 +38,15 @@ export default function EmailScreen() {
 
     const handleNextStep = async (data: IEmailFormDataRequest) => {
         const res = await authService.checkEmail(data.email) as IBackendResponse<any>
+        const outcome = getCheckEmailOutcome(res.data)
+        if (!outcome) return
 
-        switch (res.data.statusCode) {
-            case 401:
-                setEmail(data.email)
-                router.push({ pathname: ROUTES.AUTH.OTP, params: { type: res.data.data.type } })
-                break;
-            case 200:
-                setEmail(data.email)
-                router.push({ pathname: ROUTES.AUTH.OTP, params: { type: res.data.data.type } })
-                break;
-            //Đã lưu IP máy dưới
-            case 201:
-                setEmail(data.email)
-                router.push({ pathname: ROUTES.AUTH.PASSWORD, params: { type: res.data.data.type } })
-                break;
-
-            default:
-                break;
-        }
+        setEmail(data.email)
+        // OTP đã gửi (tài khoản mới / thiết bị mới) → nhập OTP; thiết bị đã lưu → nhập mật khẩu
+        router.push({
+            pathname: outcome.requiresOtp ? ROUTES.AUTH.OTP : ROUTES.AUTH.PASSWORD,
+            params: { type: outcome.type },
+        })
     };
     //-----------------------End-----------------------//
 
