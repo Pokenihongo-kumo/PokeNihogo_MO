@@ -1,9 +1,5 @@
 import { useAuth } from "@hooks/useAuth";
-import attendanceService, {
-  IAttendanceCheckInResponse,
-  IAttendanceConfigResponse,
-  IAttendanceSummary,
-} from "@services/attendance";
+import attendanceService from "@services/attendance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 /**
@@ -12,9 +8,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 export const useAttendanceSummary = () => {
   const { user } = useAuth();
 
-  return useQuery<IAttendanceSummary>({
+  return useQuery({
     queryKey: ["attendance-summary", user?.data?.id],
     queryFn: attendanceService.getAttendanceSummary,
+    select: (result) => result.data,
     enabled: !!user?.data?.id,
   });
 };
@@ -26,7 +23,7 @@ export const useCheckIn = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  return useMutation<IAttendanceCheckInResponse, Error, void>({
+  return useMutation({
     mutationFn: attendanceService.checkIn,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -41,10 +38,10 @@ export const useCheckIn = () => {
  * Hook to fetch attendance configuration (coin rewards per day)
  */
 export const useAttendanceConfig = () => {
-  return useQuery<IAttendanceConfigResponse>({
+  return useQuery({
     queryKey: ["attendance-config"],
     queryFn: attendanceService.getAttendanceConfig,
+    select: (result) => result.data.results,
     staleTime: 1000 * 60 * 60, // Cache for 1 hour since config rarely changes
   });
 };
-

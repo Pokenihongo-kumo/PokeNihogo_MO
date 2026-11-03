@@ -95,7 +95,7 @@ export function DailyLoginModal({
 }: DailyLoginModalProps) {
   const { t } = useTranslation();
   const [showCelebration, setShowCelebration] = useState(false);
-  const { data: attendanceConfigData, isLoading: isConfigLoading } = useAttendanceConfig();
+  const { data: attendanceConfig, isLoading: isConfigLoading } = useAttendanceConfig();
 
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -128,11 +128,6 @@ export function DailyLoginModal({
         .map((date) => normalizeDate(date))
         .filter((value, index, array) => value && array.indexOf(value) === index),
     [checkInHistory]
-  );
-
-  const attendanceConfig = useMemo(
-    () => attendanceConfigData?.data?.results,
-    [attendanceConfigData]
   );
 
   const checkInDays = useCreateLast7Days(

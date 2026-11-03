@@ -1,87 +1,76 @@
 import { axiosPrivate } from "@configs/axios";
+import { pageSchema, toApiResult } from "@utils/api-response.utils";
+import { z } from "zod";
 
-export type AttendanceStatus = "PRESENT" | "ABSENT";
+export const AttendanceStatusSchema = z.enum(["PRESENT", "ABSENT"]);
+export type AttendanceStatus = z.infer<typeof AttendanceStatusSchema>;
 
-export interface IAttendanceRecord {
-  id: number;
-  date: string;
-  status: AttendanceStatus;
-  coin: number;
-  bonusCoin: number;
-  userId: number;
-  createdById: number;
-  updatedById: number | null;
-  deletedById: number | null;
-  deletedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-  dayOfWeek: string;
-}
+export const DayOfWeekSchema = z.enum([
+  "SUNDAY",
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+]);
 
-export interface IAttendanceSummary {
-  user: {
-    id: number;
-    name: string;
-    email: string;
-  };
-  attendances: IAttendanceRecord[];
-  /**
-   * Total number of check-in days in the current week only
-   */
-  count: number;
+// passthrough: keep audit fields (createdById, deletedAt, ...) the screens do not read
+export const AttendanceRecordSchema = z
+  .object({
+    id: z.number(),
+    date: z.string(),
+    status: AttendanceStatusSchema,
+    coin: z.number(),
+    bonusCoin: z.number(),
+    userId: z.number(),
+    dayOfWeek: DayOfWeekSchema.nullish(),
+  })
+  .passthrough();
+export type IAttendanceRecord = z.infer<typeof AttendanceRecordSchema>;
+
+export const AttendanceSummarySchema = z.object({
+  user: z.object({
+    id: z.number(),
+    name: z.string(),
+    email: z.string(),
+  }),
+  attendances: z.array(AttendanceRecordSchema),
+  /** Total number of check-in days in the current week only */
+  count: z.number(),
   /**
    * The streak of consecutive check-ins the user has achieved,
    * regardless of which week (could be this week or previous weeks)
    */
-  totalStreak: number;
-}
+  totalStreak: z.number(),
+});
+export type IAttendanceSummary = z.infer<typeof AttendanceSummarySchema>;
 
-export interface IAttendanceCheckInResponse {
-  data: IAttendanceRecord;
-  message: string;
-}
+export const AttendanceConfigSchema = z
+  .object({
+    id: z.number(),
+    dayOfWeek: DayOfWeekSchema,
+    bonusCoin: z.number(),
+    baseCoin: z.number(),
+  })
+  .passthrough();
+export type IAttendanceConfig = z.infer<typeof AttendanceConfigSchema>;
 
-export interface IAttendanceConfig {
-  id: number;
-  dayOfWeek: "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
-  bonusCoin: number;
-  baseCoin: number;
-  deletedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-  createdById: number | null;
-  deletedById: number | null;
-  updatedById: number | null;
-}
-
-export interface IAttendanceConfigResponse {
-  statusCode: number;
-  message: string;
-  data: {
-    results: IAttendanceConfig[];
-    pagination: {
-      current: number;
-      pageSize: number;
-      totalPage: number;
-      totalItem: number;
-    };
-  };
-}
+export const AttendanceConfigListSchema = pageSchema(AttendanceConfigSchema);
 
 const attendanceService = {
-  getAttendanceSummary: async (): Promise<IAttendanceSummary> => {
+  getAttendanceSummary: async () => {
     const response = await axiosPrivate.get("/attendance/user");
-    return response.data?.data as IAttendanceSummary;
+    return toApiResult(response, AttendanceSummarySchema);
   },
-  checkIn: async (): Promise<IAttendanceCheckInResponse> => {
+  checkIn: async () => {
     const response = await axiosPrivate.post("/attendance");
-    return response.data as IAttendanceCheckInResponse;
+    return toApiResult(response, AttendanceRecordSchema);
   },
-  getAttendanceConfig: async (): Promise<IAttendanceConfigResponse> => {
+  getAttendanceConfig: async () => {
     const response = await axiosPrivate.get("/attendence-config");
-    return response.data as IAttendanceConfigResponse;
+    return toApiResult(response, AttendanceConfigListSchema);
   },
 };
 
 export default attendanceService;
-
