@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Image, ImageBackground, Modal, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getApiErrorMessage } from '@utils/api-error.utils';
 
 export default function GachaScreen() {
     /**
@@ -93,10 +94,7 @@ export default function GachaScreen() {
                 setIsAnimating(true);
             },
             onError: (error: any) => {
-                const serverMessage = error?.response?.data?.message;
-                setConfirmMessage(
-                    serverMessage || 'Đã xảy ra lỗi khi mua gacha.'
-                );
+                setConfirmMessage(getApiErrorMessage(error, 'Đã xảy ra lỗi khi mua gacha.'));
                 setShowConfirmModal(true);
             },
         });

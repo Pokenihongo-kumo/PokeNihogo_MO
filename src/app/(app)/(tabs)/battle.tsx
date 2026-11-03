@@ -43,6 +43,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Socket } from "socket.io-client";
+import { getApiErrorMessage } from "@utils/api-error.utils";
 
 export default function BattleLobbyScreen() {
   const router = useRouter();
@@ -177,11 +178,7 @@ export default function BattleLobbyScreen() {
         console.log("[QUEUE] Emitted join-searching-room");
       }
     } catch (error: any) {
-      Alert.alert(
-        t("common.error"),
-        error?.response?.data?.message || t("common.error")
-
-      );
+      Alert.alert(t("common.error"), getApiErrorMessage(error, t("common.error")));
       console.log("[QUEUE] startQueue failed:", error?.response?.data?.message);
       setInQueue(false);
       setGlobalInQueue(false);
@@ -209,10 +206,7 @@ export default function BattleLobbyScreen() {
         queryClient.invalidateQueries({ queryKey: ["user-stats-season"] });
       }
     } catch (error: any) {
-      Alert.alert(
-        t("common.error"),
-        error?.response?.data?.message || t("common.error")
-      );
+      Alert.alert(t("common.error"), getApiErrorMessage(error, t("common.error")));
       queryClient.invalidateQueries({ queryKey: ["user-stats-season"] });
     }
   };

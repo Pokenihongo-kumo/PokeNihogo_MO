@@ -9,6 +9,7 @@ import { Sparkles } from "lucide-react-native";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import { getApiErrorMessage } from "@utils/api-error.utils";
 
 interface ShopItemCapsuleProps {
     item: IShopItemRandomTodayResponseSchema;
@@ -57,8 +58,7 @@ const ShopItemCapsule = ({ item, userPoints, exchangeLabel }: ShopItemCapsulePro
                     showAlert(data.data.message || t('reward_shop.purchase_success'), 'success');
                 },
                 onError: (error: any) => {
-                    const errorMessage = error?.response?.data?.message || t('reward_shop.purchase_failed');
-                    showAlert(errorMessage, 'error');
+                    showAlert(getApiErrorMessage(error, t('reward_shop.purchase_failed')), 'error');
                 },
             }
         );

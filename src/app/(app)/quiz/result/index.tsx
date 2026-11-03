@@ -9,12 +9,12 @@ import { useCheckReviewAccess } from "@hooks/useUserExerciseAttempt";
 import { useCheckReviewAccessTest } from "@hooks/useUserTestAttempt";
 import { ISubmitCompletionData } from "@models/user-exercise-attempt/user-exercise-attempt.response";
 import { ROUTES } from "@routes/routes";
-import { AxiosError } from "axios";
 import { ResizeMode, Video } from "expo-av";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { getApiErrorMessage, toApiError } from "@utils/api-error.utils";
 
 export default function QuizResultScreen() {
   const {
@@ -75,21 +75,11 @@ export default function QuizResultScreen() {
 
   const parseAxiosErrorMessage = useCallback(
     (error: Error, fallbackKey: string, fallbackDefault: string) => {
-      const axiosError = error as AxiosError<any>;
-      const status = axiosError.response?.status;
-      if (status === 403) {
-        return (
-          axiosError.response?.data?.message ||
-          t(
-            "quiz_result.review_forbidden",
-            "Bạn không đủ điều kiện để xem đáp án"
-          )
-        );
-      }
-      return (
-        axiosError.response?.data?.message ||
-        t(fallbackKey, fallbackDefault)
-      );
+      const fallback =
+        toApiError(error).status === 403
+          ? t("quiz_result.review_forbidden", "Bạn không đủ điều kiện để xem đáp án")
+          : t(fallbackKey, fallbackDefault);
+      return getApiErrorMessage(error, fallback);
     },
     [t]
   );
