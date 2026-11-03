@@ -19,6 +19,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Animated, AppState, AppStateStatus, Platform, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getApiErrorMessage } from "@utils/api-error.utils";
 
 const MIN_POKECOIN_DEDUCTION = 10000;
 const POKECOIN_DEDUCTION_STEP = 10000;
@@ -337,8 +338,7 @@ export default function SubscriptionScreen() {
                 showAlert(t('subscription.purchase_failed'), 'error');
             }
         } catch (error: any) {
-            const errorMessage = error?.response?.data?.message || t('subscription.purchase_failed');
-            showAlert(errorMessage, 'error');
+            showAlert(getApiErrorMessage(error, t('subscription.purchase_failed')), 'error');
         } finally {
             setIsResolvingInvoice(false);
         }
@@ -416,8 +416,10 @@ export default function SubscriptionScreen() {
                                 }
                             })
                             .catch((recallError: any) => {
-                                const recallErrorMessage = recallError?.response?.data?.message || errorData?.message || t('subscription.purchase_failed');
-                                showAlert(recallErrorMessage, 'error');
+                                showAlert(
+                                    getApiErrorMessage(recallError, errorData?.message || t('subscription.purchase_failed')),
+                                    'error'
+                                );
                             });
                     } else {
                         const errorMessage = errorData?.message || t('subscription.purchase_failed');

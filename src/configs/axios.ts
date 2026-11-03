@@ -3,6 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 import { ROUTES } from '@routes/routes';
 import { useAuthStore } from '@stores/auth/auth.config';
 import { useGlobalStore } from '@stores/global/global.config';
+import { ApiRequestError, getApiErrorMessage, toApiError } from '@utils/api-error.utils';
 import axios, { AxiosError } from 'axios';
 import { router } from 'expo-router';
 
@@ -147,12 +148,9 @@ axiosPrivate.interceptors.response.use(
 // Xử lý lỗi toàn cục
 const handleError = (error: AxiosError) => {
     if (error.response) {
-        const serverErrorData = error.response.data as { message?: string };
-        const serverErrorMessage = serverErrorData?.message;
-
-        if (serverErrorMessage) {
-            return Promise.reject(new Error(serverErrorMessage));
-        }
+        // Keep `error.message` as the text screens show, plus status/field errors
+        const apiError = toApiError(error);
+        return Promise.reject(new ApiRequestError(apiError, getApiErrorMessage(error, error.message)));
     } else if (error.request) {
         console.error('No Response from server:', error.request);
         alert('Không thể kết nối với server. Vui lòng kiểm tra lại mạng của bạn');

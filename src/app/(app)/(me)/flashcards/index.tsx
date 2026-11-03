@@ -35,6 +35,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { getApiErrorMessage } from "@utils/api-error.utils";
 
 const ITEMS_PER_PAGE_OPTIONS = [
   { labelKey: "flashcard_list.pagination.10", fallback: "10", value: "10" },
@@ -280,10 +281,10 @@ const FlashcardDeckListScreen = () => {
           setNewDeckName("");
         },
         onError: (error: any) => {
-          const message =
-            error?.response?.data?.message ||
-            error?.message ||
-            t("flashcard_list.create_error_desc", "Không thể tạo bộ flashcard. Vui lòng thử lại.");
+          const message = getApiErrorMessage(
+            error,
+            t("flashcard_list.create_error_desc", "Không thể tạo bộ flashcard. Vui lòng thử lại.")
+          );
           showAlert(
             `${t(
               "flashcard_list.create_error_title",
