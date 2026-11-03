@@ -1,6 +1,7 @@
 {
   "common": {
     "start": "BẮT ĐẦU NGAY",
+    "network_error": "Không thể kết nối với server. Vui lòng kiểm tra lại mạng của bạn",
     "i-already-have-an-account": "TÔI ĐÃ CÓ TÀI KHOẢN",
     "learn": "Học",
     "learn-again": "Học nữa",

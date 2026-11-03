@@ -1,6 +1,7 @@
 {
   "common": {
     "start": "GET STARTED",
+    "network_error": "Cannot connect to the server. Please check your network connection.",
     "i-already-have-an-account": "I ALREADY HAVE AN ACCOUNT",
     "learn": "Learn",
     "learn-again": "Learn again",

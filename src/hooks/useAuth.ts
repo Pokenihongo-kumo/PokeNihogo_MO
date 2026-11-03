@@ -7,7 +7,9 @@ export const useAuth = () => {
     const { accessToken } = useAuthStore();
 
     const { data: user, isLoading, isError, error } = useQuery({
-        queryKey: ['user-profile', accessToken],
+        // No token in the key: a refresh must not refetch/duplicate the profile;
+        // logout clears 'user-profile' (clearUserCache) so accounts do not mix
+        queryKey: ['user-profile'],
         queryFn: () => authService.getProfile(),
         enabled: !!accessToken,
     });

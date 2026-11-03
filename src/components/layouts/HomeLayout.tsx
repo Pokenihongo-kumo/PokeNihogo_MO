@@ -128,7 +128,7 @@ const HomeLayout = forwardRef<HomeLayoutRef, HomeLayoutProps>(
       if (accessToken) {
         // Refetch user profile khi mount
         queryClient.invalidateQueries({ 
-          queryKey: ['user-profile', accessToken] 
+          queryKey: ['user-profile'] 
         });
       }
     }, [accessToken, queryClient]);
@@ -138,7 +138,7 @@ const HomeLayout = forwardRef<HomeLayoutRef, HomeLayoutProps>(
       useCallback(() => {
         if (accessToken) {
           queryClient.invalidateQueries({ 
-            queryKey: ['user-profile', accessToken] 
+            queryKey: ['user-profile'] 
           });
         }
       }, [accessToken, queryClient])

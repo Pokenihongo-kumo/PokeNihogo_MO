@@ -1,5 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 
+import i18n from '@configs/i18n';
 import { ROUTES } from '@routes/routes';
 import { useAuthStore } from '@stores/auth/auth.config';
 import { useGlobalStore } from '@stores/global/global.config';
@@ -145,17 +146,16 @@ axiosPrivate.interceptors.response.use(
     },
 );
 
-// Xử lý lỗi toàn cục
+// Normalizes errors of the public client; screens decide how to show them
 const handleError = (error: AxiosError) => {
-    if (error.response) {
+    const apiError = toApiError(error);
+    if (apiError.kind === 'http') {
         // Keep `error.message` as the text screens show, plus status/field errors
-        const apiError = toApiError(error);
         return Promise.reject(new ApiRequestError(apiError, getApiErrorMessage(error, error.message)));
-    } else if (error.request) {
-        console.error('No Response from server:', error.request);
-        alert('Không thể kết nối với server. Vui lòng kiểm tra lại mạng của bạn');
-    } else {
-        console.error('Error:', error.message);
+    }
+    if (apiError.kind === 'network') {
+        // Screens show `error.message`, so it carries the translated "cannot connect" text
+        return Promise.reject(new ApiRequestError(apiError, i18n.t('common.network_error')));
     }
     return Promise.reject(error);
 };

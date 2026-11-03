@@ -1,6 +1,7 @@
 {
     "common": {
         "start": "始める",
+        "network_error": "サーバーに接続できません。ネットワーク接続を確認してください。",
         "i-already-have-an-account": "アカウントをお持ちです",
         "test": "テスト",
         "learn": "学ぶ",
