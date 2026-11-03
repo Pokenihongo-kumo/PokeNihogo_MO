@@ -83,7 +83,6 @@ axiosClient.interceptors.request.use(
 axiosPrivate.interceptors.request.use(
     async (config) => {
         const token = useAuthStore.getState().accessToken;
-        console.log('accessTokenAxios: ', token);
 
         // Add language header to all requests
         const currentLanguage = getCurrentLanguage();
