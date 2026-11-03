@@ -26,7 +26,7 @@ const StepProgress = React.forwardRef<View, StepProgressProps>(
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     const renderStep = (stepIndex: number) => {
       const stepNumber = stepIndex + 1;
@@ -68,11 +68,10 @@ const StepProgress = React.forwardRef<View, StepProgressProps>(
         {Array.from({ length: totalSteps }, (_, index) => renderStep(index))}
       </View>
     );
-  }
+  },
 );
 
 StepProgress.displayName = "StepProgress";
 
 export { StepProgress };
 export type { StepProgressProps };
-

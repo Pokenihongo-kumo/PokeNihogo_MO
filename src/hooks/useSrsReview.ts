@@ -1,7 +1,5 @@
 import { ISrsReviewResponse } from "@models/srs/srs-review.response";
-import userSrsReviewService, {
-  GetSrsReviewParams,
-} from "@services/user-srs-review";
+import userSrsReviewService, { GetSrsReviewParams } from "@services/user-srs-review";
 import { useQuery } from "@tanstack/react-query";
 
 const defaultParams: Required<GetSrsReviewParams> = {
@@ -24,4 +22,3 @@ export const useSrsReview = (params?: GetSrsReviewParams) => {
     staleTime: 60 * 1000,
   });
 };
-

@@ -6,10 +6,7 @@ interface TestSetContentProps {
   sectionIndex: number;
 }
 
-export const TestSetContent: React.FC<TestSetContentProps> = ({
-  content,
-  sectionIndex,
-}) => {
+export const TestSetContent: React.FC<TestSetContentProps> = ({ content, sectionIndex }) => {
   return (
     <View style={styles.contentCard}>
       <Text style={styles.sectionBadge}>Đoạn {sectionIndex + 1}</Text>

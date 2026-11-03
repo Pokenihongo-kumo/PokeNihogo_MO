@@ -8,12 +8,7 @@ import { useFocusEffect } from "expo-router";
 import { BookOpen, HeadphonesIcon, Mic } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { RefreshControl, StyleSheet, TouchableOpacity, View } from "react-native";
 
 type TabType = "listening" | "reading" | "speaking";
 
@@ -27,18 +22,18 @@ export default function AbilitiesScreen() {
   useFocusEffect(
     React.useCallback(() => {
       // Invalidate all user-tests queries to trigger refetch
-      queryClient.invalidateQueries({ 
-        queryKey: ["user-tests"] 
+      queryClient.invalidateQueries({
+        queryKey: ["user-tests"],
       });
-    }, [queryClient])
+    }, [queryClient]),
   );
 
   const handleRefresh = React.useCallback(async () => {
     setRefreshing(true);
     try {
       // Invalidate and refetch all user-tests queries
-      await queryClient.invalidateQueries({ 
-        queryKey: ["user-tests"] 
+      await queryClient.invalidateQueries({
+        queryKey: ["user-tests"],
       });
       // Wait a bit for queries to refetch
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -84,17 +79,11 @@ export default function AbilitiesScreen() {
   };
 
   return (
-    <HomeLayout
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-      }
-    >
+    <HomeLayout refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
       <ThemedText type="title" style={styles.title}>
         🎯 {t("tabs.abilities")}
       </ThemedText>
-      <ThemedText style={styles.subtitle}>
-        {t("tabs.abilities_subtitle")}
-      </ThemedText>
+      <ThemedText style={styles.subtitle}>{t("tabs.abilities_subtitle")}</ThemedText>
 
       {/* Tab Navigation */}
       <View style={styles.tabContainer}>
@@ -104,35 +93,19 @@ export default function AbilitiesScreen() {
           return (
             <TouchableOpacity
               key={tab.key}
-              style={[
-                styles.tab,
-                isActive && styles.activeTab,
-                isActive && { backgroundColor: tab.color },
-              ]}
+              style={[styles.tab, isActive && styles.activeTab, isActive && { backgroundColor: tab.color }]}
               onPress={() => setActiveTab(tab.key)}
               activeOpacity={0.7}
             >
-              <Icon
-                size={20}
-                color={isActive ? "#ffffff" : "#6b7280"}
-              />
-              <ThemedText
-                style={[
-                  styles.tabText,
-                  isActive && styles.activeTabText,
-                ]}
-              >
-                {tab.label}
-              </ThemedText>
+              <Icon size={20} color={isActive ? "#ffffff" : "#6b7280"} />
+              <ThemedText style={[styles.tabText, isActive && styles.activeTabText]}>{tab.label}</ThemedText>
             </TouchableOpacity>
           );
         })}
       </View>
 
       {/* Tab Content */}
-      <View style={styles.contentContainer}>
-        {renderContent()}
-      </View>
+      <View style={styles.contentContainer}>{renderContent()}</View>
     </HomeLayout>
   );
 }
@@ -156,7 +129,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
     padding: 4,
-    marginBottom: 20,},
+    marginBottom: 20,
+  },
   tab: {
     flex: 1,
     flexDirection: "row",
@@ -181,4 +155,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-

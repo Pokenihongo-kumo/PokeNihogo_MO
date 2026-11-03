@@ -3,16 +3,8 @@ import BackScreen from "@components/molecules/Back";
 import { HOT_KEYWORDS, JLPT_LEVELS } from "@constants/dictionary.constants";
 import { FlashcardContentType } from "@constants/flashcard.enum";
 import { useDebounce } from "@hooks/useDebounce";
-import {
-  useDictionarySearch,
-  useSearchHistory,
-  useWordDetails,
-} from "@hooks/useDictionary";
-import {
-  useAddWordToFlashcardDeck,
-  useCreateFlashcardDeck,
-  useFlashcardDecks,
-} from "@hooks/useFlashcard";
+import { useDictionarySearch, useSearchHistory, useWordDetails } from "@hooks/useDictionary";
+import { useAddWordToFlashcardDeck, useCreateFlashcardDeck, useFlashcardDecks } from "@hooks/useFlashcard";
 import { useMinimalAlert } from "@hooks/useMinimalAlert";
 import { DictionaryResult } from "@services/dictionary";
 import { formatDateVN } from "@utils/date";
@@ -21,21 +13,8 @@ import { Audio } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import * as Speech from "expo-speech";
-import {
-  Clock,
-  Lightbulb,
-  Plus,
-  Search,
-  Volume2,
-  X,
-} from "lucide-react-native";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Clock, Lightbulb, Plus, Search, Volume2, X } from "lucide-react-native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
@@ -61,16 +40,13 @@ export default function DictionaryScreen() {
   const insets = useSafeAreaInsets();
   const showDictionaryAlert = useCallback(
     (titleKey: string, descriptionKey?: string, type: AlertType = "info") => {
-      const parts = [
-        titleKey ? t(titleKey) : "",
-        descriptionKey ? t(descriptionKey) : "",
-      ].filter(Boolean);
+      const parts = [titleKey ? t(titleKey) : "", descriptionKey ? t(descriptionKey) : ""].filter(Boolean);
       const message = parts.join(" - ");
       if (message) {
         showAlert(message, type);
       }
     },
-    [showAlert, t]
+    [showAlert, t],
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -79,8 +55,7 @@ export default function DictionaryScreen() {
   const [searchBarY, setSearchBarY] = useState(0);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [showFlashcardModal, setShowFlashcardModal] = useState(false);
-  const [showCreateFlashcardModal, setShowCreateFlashcardModal] =
-    useState(false);
+  const [showCreateFlashcardModal, setShowCreateFlashcardModal] = useState(false);
   const [newFlashcardName, setNewFlashcardName] = useState("");
   const [flashcardNotes, setFlashcardNotes] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -92,8 +67,10 @@ export default function DictionaryScreen() {
   const currentAudioUrlRef = useRef<string | null>(null);
 
   // Flashcard hooks
-  const { data: flashcardDecksData, isLoading: flashcardDecksLoading } =
-    useFlashcardDecks({ currentPage: 1, pageSize: 100 });
+  const { data: flashcardDecksData, isLoading: flashcardDecksLoading } = useFlashcardDecks({
+    currentPage: 1,
+    pageSize: 100,
+  });
   const createFlashcardDeckMutation = useCreateFlashcardDeck();
   const addWordToFlashcardDeckMutation = useAddWordToFlashcardDeck();
 
@@ -103,14 +80,13 @@ export default function DictionaryScreen() {
   const debouncedQuery = useDebounce(searchQuery, 300);
 
   // Get word details when a word is selected
-  const { data: wordDetailData, isLoading: wordDetailLoading } =
-    useWordDetails(selectedWordId);
+  const { data: wordDetailData, isLoading: wordDetailLoading } = useWordDetails(selectedWordId);
 
   const hasAudioPronunciation = Boolean(wordDetailData?.data?.audioUrl);
   const isPronouncing = hasAudioPronunciation ? isAudioPlaying : isSpeaking;
   const formattedWordType = useMemo(
     () => wordDetailData?.data?.wordType?.replace(/_/g, " "),
-    [wordDetailData?.data?.wordType]
+    [wordDetailData?.data?.wordType],
   );
 
   // Use API hook for real search
@@ -120,28 +96,20 @@ export default function DictionaryScreen() {
       currentPage: 1,
       pageSize: 10,
     },
-    true
+    true,
   );
 
   // Get search history from API
-  const { data: searchHistoryData, refetch: refetchHistory } = useSearchHistory(
-    {
-      currentPage: 1,
-      pageSize: 20,
-    }
-  );
+  const { data: searchHistoryData, refetch: refetchHistory } = useSearchHistory({
+    currentPage: 1,
+    pageSize: 20,
+  });
 
   // Get search results from API - memoized to prevent unnecessary re-renders
-  const searchResults = useMemo(
-    () => apiData?.data?.results || [],
-    [apiData?.data?.results]
-  );
+  const searchResults = useMemo(() => apiData?.data?.results || [], [apiData?.data?.results]);
 
   // Get search history results - memoized to prevent unnecessary re-renders
-  const searchHistory = useMemo(
-    () => searchHistoryData?.data?.results || [],
-    [searchHistoryData?.data?.results]
-  );
+  const searchHistory = useMemo(() => searchHistoryData?.data?.results || [], [searchHistoryData?.data?.results]);
 
   // Refetch history after successful search
   useEffect(() => {
@@ -214,41 +182,25 @@ export default function DictionaryScreen() {
           contentType: FlashcardContentType.VOCABULARY,
           notes: flashcardNotes.trim() || undefined,
         });
-        showDictionaryAlert(
-          "dictionary.add_word_success_title",
-          "dictionary.add_word_success_description",
-          "success"
-        );
+        showDictionaryAlert("dictionary.add_word_success_title", "dictionary.add_word_success_description", "success");
         closeFlashcardModal();
       } catch (error) {
         // Check if it's a 409 conflict error (content already exists)
         const axiosError = error as AxiosError<{ statusCode?: number; message?: string }>;
-        const isConflictError =
-          axiosError?.response?.status === 409 ||
-          axiosError?.response?.data?.statusCode === 409;
+        const isConflictError = axiosError?.response?.status === 409 || axiosError?.response?.data?.statusCode === 409;
 
         if (isConflictError) {
           showDictionaryAlert(
             "dictionary.add_word_conflict_title",
             "dictionary.add_word_conflict_description",
-            "warning"
+            "warning",
           );
         } else {
-          showDictionaryAlert(
-            "dictionary.add_word_error_title",
-            "dictionary.add_word_error_description",
-            "error"
-          );
+          showDictionaryAlert("dictionary.add_word_error_title", "dictionary.add_word_error_description", "error");
         }
       }
     },
-    [
-      selectedWordId,
-      flashcardNotes,
-      addWordToFlashcardDeckMutation,
-      closeFlashcardModal,
-      showDictionaryAlert,
-    ]
+    [selectedWordId, flashcardNotes, addWordToFlashcardDeckMutation, closeFlashcardModal, showDictionaryAlert],
   );
 
   // Handle create new flashcard deck
@@ -273,27 +225,22 @@ export default function DictionaryScreen() {
           showDictionaryAlert(
             "dictionary.add_word_success_title",
             "dictionary.add_word_success_description",
-            "success"
+            "success",
           );
         } catch (error) {
           // Check if it's a 409 conflict error (content already exists)
           const axiosError = error as AxiosError<{ statusCode?: number; message?: string }>;
           const isConflictError =
-            axiosError?.response?.status === 409 ||
-            axiosError?.response?.data?.statusCode === 409;
+            axiosError?.response?.status === 409 || axiosError?.response?.data?.statusCode === 409;
 
           if (isConflictError) {
             showDictionaryAlert(
               "dictionary.add_word_conflict_title",
               "dictionary.add_word_conflict_description",
-              "warning"
+              "warning",
             );
           } else {
-            showDictionaryAlert(
-              "dictionary.add_word_error_title",
-              "dictionary.add_word_error_description",
-              "error"
-            );
+            showDictionaryAlert("dictionary.add_word_error_title", "dictionary.add_word_error_description", "error");
           }
         }
       }
@@ -301,16 +248,12 @@ export default function DictionaryScreen() {
       showDictionaryAlert(
         "dictionary.create_deck_success_title",
         "dictionary.create_deck_success_description",
-        "success"
+        "success",
       );
       closeCreateFlashcardModal();
       closeFlashcardModal();
     } catch {
-      showDictionaryAlert(
-        "dictionary.create_deck_error_title",
-        "dictionary.create_deck_error_description",
-        "error"
-      );
+      showDictionaryAlert("dictionary.create_deck_error_title", "dictionary.create_deck_error_description", "error");
     }
   }, [
     newFlashcardName,
@@ -390,16 +333,10 @@ export default function DictionaryScreen() {
         const audioErrorTitle = t("dictionary.audio_error_title", {
           defaultValue: "Không thể phát âm thanh",
         });
-        const audioErrorDescription = t(
-          "dictionary.audio_error_description",
-          {
-            defaultValue: "Vui lòng thử lại sau.",
-          }
-        );
-        showAlert(
-          `${audioErrorTitle} - ${audioErrorDescription}`,
-          "error"
-        );
+        const audioErrorDescription = t("dictionary.audio_error_description", {
+          defaultValue: "Vui lòng thử lại sau.",
+        });
+        showAlert(`${audioErrorTitle} - ${audioErrorDescription}`, "error");
       } finally {
         setIsAudioLoading(false);
       }
@@ -415,8 +352,7 @@ export default function DictionaryScreen() {
       return;
     }
 
-    const textToSpeak =
-      wordDetailData.data.reading || wordDetailData.data.wordJp;
+    const textToSpeak = wordDetailData.data.reading || wordDetailData.data.wordJp;
 
     if (!textToSpeak) return;
 
@@ -435,15 +371,7 @@ export default function DictionaryScreen() {
         setIsSpeaking(false);
       },
     });
-  }, [
-    cleanupAudio,
-    isAudioLoading,
-    isAudioPlaying,
-    isSpeaking,
-    showAlert,
-    t,
-    wordDetailData?.data,
-  ]);
+  }, [cleanupAudio, isAudioLoading, isAudioPlaying, isSpeaking, showAlert, t, wordDetailData?.data]);
 
   // Stop pronunciation when word changes
   useEffect(() => {
@@ -472,8 +400,7 @@ export default function DictionaryScreen() {
   }, []);
 
   // Handle blur search input
-  const handleBlurSearch = useCallback(() => {
-  }, []);
+  const handleBlurSearch = useCallback(() => {}, []);
 
   // Handle focus search input
   const handleFocusSearch = useCallback(() => {
@@ -504,13 +431,13 @@ export default function DictionaryScreen() {
       Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
       (e) => {
         setKeyboardHeight(e.endCoordinates.height);
-      }
+      },
     );
     const keyboardWillHideListener = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
       () => {
         setKeyboardHeight(0);
-      }
+      },
     );
 
     return () => {
@@ -522,32 +449,27 @@ export default function DictionaryScreen() {
   // Calculate dropdown max height based on available space
   const dropdownMaxHeight = useMemo(() => {
     const screenHeight = Dimensions.get("window").height;
-    const availableHeight =
-      screenHeight - searchBarY - keyboardHeight - insets.bottom - 20;
+    const availableHeight = screenHeight - searchBarY - keyboardHeight - insets.bottom - 20;
     // Ensure minimum height and maximum reasonable height
     return Math.max(200, Math.min(availableHeight, 400));
   }, [searchBarY, keyboardHeight, insets.bottom]);
 
   // Render search result item (for dropdown) - memoized component
-  const SearchResultItem = React.memo(({ item, onSelect }: { item: DictionaryResult; onSelect: (id: string) => void }) => (
-    <TouchableOpacity
-      className="py-3 px-4 border-b border-gray-50 active:bg-gray-50"
-      onPress={() => onSelect(item.id)}
-      activeOpacity={0.7}
-    >
-      <View className="flex-row items-center mb-1">
-        <Text className="text-lg font-bold text-gray-900 mr-2">
-          {item.word}
-        </Text>
-        {item.reading && (
-          <Text className="text-sm text-gray-500">「{item.reading}」</Text>
-        )}
-      </View>
-      {item.meaning && (
-        <Text className="text-sm text-gray-700 mt-1">{item.meaning}</Text>
-      )}
-    </TouchableOpacity>
-  ));
+  const SearchResultItem = React.memo(
+    ({ item, onSelect }: { item: DictionaryResult; onSelect: (id: string) => void }) => (
+      <TouchableOpacity
+        className="py-3 px-4 border-b border-gray-50 active:bg-gray-50"
+        onPress={() => onSelect(item.id)}
+        activeOpacity={0.7}
+      >
+        <View className="flex-row items-center mb-1">
+          <Text className="text-lg font-bold text-gray-900 mr-2">{item.word}</Text>
+          {item.reading && <Text className="text-sm text-gray-500">「{item.reading}」</Text>}
+        </View>
+        {item.meaning && <Text className="text-sm text-gray-700 mt-1">{item.meaning}</Text>}
+      </TouchableOpacity>
+    ),
+  );
   SearchResultItem.displayName = "SearchResultItem";
 
   // Handle open flashcard modal
@@ -556,105 +478,91 @@ export default function DictionaryScreen() {
   }, []);
 
   // Memoized home content component
-  const DictionaryHomeContent = React.memo(({
-    searchHistory,
-    onSearch
-  }: {
-    searchHistory: IComponents.SearchHistoryItem[];
-    onSearch: (keyword: string, autoSelect?: boolean) => void;
-  }) => {
-    const { t } = useTranslation();
+  const DictionaryHomeContent = React.memo(
+    ({
+      searchHistory,
+      onSearch,
+    }: {
+      searchHistory: IComponents.SearchHistoryItem[];
+      onSearch: (keyword: string, autoSelect?: boolean) => void;
+    }) => {
+      const { t } = useTranslation();
 
-    return (
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="px-4 py-6">
-          {/* Tips Section */}
-          <View className="mb-6">
-            <View className="flex-row items-center mb-3">
-              <Lightbulb size={20} color="#fbbf24" />
-              <Text className="text-lg font-semibold text-gray-900 ml-2">
-                {t("dictionary.tips")}
-              </Text>
+      return (
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          <View className="px-4 py-6">
+            {/* Tips Section */}
+            <View className="mb-6">
+              <View className="flex-row items-center mb-3">
+                <Lightbulb size={20} color="#fbbf24" />
+                <Text className="text-lg font-semibold text-gray-900 ml-2">{t("dictionary.tips")}</Text>
+              </View>
+              <View className="pl-7">
+                <Text className="text-sm text-gray-700 mb-2">{t("dictionary.tips_sync_account")}</Text>
+                <Text className="text-sm text-gray-700 mb-2">{t("dictionary.tips_conjugation")}</Text>
+                <Text className="text-sm text-gray-700">{t("dictionary.tips_katakana")}</Text>
+              </View>
             </View>
-            <View className="pl-7">
-              <Text className="text-sm text-gray-700 mb-2">
-                {t("dictionary.tips_sync_account")}
-              </Text>
-              <Text className="text-sm text-gray-700 mb-2">
-                {t("dictionary.tips_conjugation")}
-              </Text>
-              <Text className="text-sm text-gray-700">
-                {t("dictionary.tips_katakana")}
-              </Text>
-            </View>
-          </View>
 
-          {/* Search History Section */}
-          {searchHistory.length > 0 && (
+            {/* Search History Section */}
+            {searchHistory.length > 0 && (
+              <View className="mb-6">
+                <View className="flex-row items-center justify-between mb-3">
+                  <Text className="text-lg font-semibold text-gray-900">{t("dictionary.recent_searches")}</Text>
+                </View>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.historyScrollContainer}
+                >
+                  {searchHistory.map((item) => (
+                    <TouchableOpacity
+                      key={item.id}
+                      className="bg-gray-100 rounded-full px-4 py-2 mr-2"
+                      onPress={() => onSearch(item.searchKeyword, true)}
+                      activeOpacity={0.7}
+                    >
+                      <Text className="text-base text-gray-900">{item.searchKeyword}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            )}
+
+            {/* Hot Keywords Section */}
             <View className="mb-6">
               <View className="flex-row items-center justify-between mb-3">
-                <Text className="text-lg font-semibold text-gray-900">
-                  {t("dictionary.recent_searches")}
-                </Text>
+                <Text className="text-lg font-semibold text-gray-900">{t("dictionary.hot_keywords")}</Text>
               </View>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.historyScrollContainer}
-              >
-                {searchHistory.map((item) => (
+              <View className="flex-row flex-wrap">
+                {HOT_KEYWORDS.map((keyword) => (
                   <TouchableOpacity
-                    key={item.id}
-                    className="bg-gray-100 rounded-full px-4 py-2 mr-2"
-                    onPress={() => onSearch(item.searchKeyword, true)}
+                    key={keyword}
+                    className="bg-gray-100 rounded-full px-4 py-2 mr-2 mb-2"
+                    onPress={() => onSearch(keyword, true)}
                     activeOpacity={0.7}
                   >
-                    <Text className="text-base text-gray-900">
-                      {item.searchKeyword}
-                    </Text>
+                    <Text className="text-base text-gray-900">{keyword}</Text>
                   </TouchableOpacity>
                 ))}
-              </ScrollView>
+              </View>
             </View>
-          )}
 
-          {/* Hot Keywords Section */}
-          <View className="mb-6">
-            <View className="flex-row items-center justify-between mb-3">
-              <Text className="text-lg font-semibold text-gray-900">
-                {t("dictionary.hot_keywords")}
-              </Text>
-            </View>
-            <View className="flex-row flex-wrap">
-              {HOT_KEYWORDS.map((keyword) => (
-                <TouchableOpacity
-                  key={keyword}
-                  className="bg-gray-100 rounded-full px-4 py-2 mr-2 mb-2"
-                  onPress={() => onSearch(keyword, true)}
-                  activeOpacity={0.7}
-                >
-                  <Text className="text-base text-gray-900">{keyword}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            {/* Empty State when no history */}
+            {searchHistory.length === 0 && (
+              <View className="items-center justify-center py-12">
+                <Search size={64} color="#d1d5db" />
+                <Text className="text-lg font-semibold text-gray-400 mt-4 text-center">
+                  {t("dictionary.start_searching")}
+                </Text>
+                <Text className="text-sm text-gray-400 mt-2 text-center">{t("dictionary.search_description")}</Text>
+              </View>
+            )}
           </View>
-
-          {/* Empty State when no history */}
-          {searchHistory.length === 0 && (
-            <View className="items-center justify-center py-12">
-              <Search size={64} color="#d1d5db" />
-              <Text className="text-lg font-semibold text-gray-400 mt-4 text-center">
-                {t("dictionary.start_searching")}
-              </Text>
-              <Text className="text-sm text-gray-400 mt-2 text-center">
-                {t("dictionary.search_description")}
-              </Text>
-            </View>
-          )}
-        </View>
-      </ScrollView>
-    );
-  });
+        </ScrollView>
+      );
+    },
+  );
   DictionaryHomeContent.displayName = "DictionaryHomeContent";
 
   return (
@@ -670,9 +578,7 @@ export default function DictionaryScreen() {
       <View style={styles.overlayBackground} />
 
       {/* Overlay to detect outside clicks - outside SafeAreaView for proper positioning */}
-      {isFocused && (
-        <Pressable style={styles.overlay} onPress={handleOverlayPress} />
-      )}
+      {isFocused && <Pressable style={styles.overlay} onPress={handleOverlayPress} />}
 
       {/* Dropdown for search suggestions/history - absolute positioned overlay - outside SafeAreaView */}
       {isFocused && searchBarY > 0 && (
@@ -700,28 +606,19 @@ export default function DictionaryScreen() {
                     </View>
                   ) : searchResults.length > 0 ? (
                     <ScrollView
-                      style={[
-                        styles.dropdownScrollView,
-                        { maxHeight: dropdownMaxHeight - 20 },
-                      ]}
+                      style={[styles.dropdownScrollView, { maxHeight: dropdownMaxHeight - 20 }]}
                       showsVerticalScrollIndicator={false}
                       keyboardShouldPersistTaps="handled"
                       nestedScrollEnabled={true}
                       bounces={false}
                     >
                       {searchResults.map((item) => (
-                        <SearchResultItem
-                          key={item.id}
-                          item={item}
-                          onSelect={handleSelectWord}
-                        />
+                        <SearchResultItem key={item.id} item={item} onSelect={handleSelectWord} />
                       ))}
                     </ScrollView>
                   ) : (
                     <View className="py-6 px-4">
-                      <Text className="text-sm text-gray-400 text-center">
-                        {t("dictionary.no_results")}
-                      </Text>
+                      <Text className="text-sm text-gray-400 text-center">{t("dictionary.no_results")}</Text>
                     </View>
                   )}
                 </>
@@ -735,10 +632,7 @@ export default function DictionaryScreen() {
                       </Text>
                     </View>
                     <ScrollView
-                      style={[
-                        styles.dropdownScrollView,
-                        { maxHeight: dropdownMaxHeight - 60 },
-                      ]}
+                      style={[styles.dropdownScrollView, { maxHeight: dropdownMaxHeight - 60 }]}
                       showsVerticalScrollIndicator={false}
                       keyboardShouldPersistTaps="handled"
                       nestedScrollEnabled={true}
@@ -754,12 +648,8 @@ export default function DictionaryScreen() {
                           <View className="w-8 h-8 bg-blue-50 rounded-full items-center justify-center mr-3">
                             <Clock size={14} color="#3b82f6" />
                           </View>
-                          <Text className="flex-1 text-base text-gray-900 font-medium">
-                            {item.searchKeyword}
-                          </Text>
-                          <Text className="text-xs text-gray-400 ml-2">
-                            {formatDateVN(item.createdAt)}
-                          </Text>
+                          <Text className="flex-1 text-base text-gray-900 font-medium">{item.searchKeyword}</Text>
+                          <Text className="text-xs text-gray-400 ml-2">{formatDateVN(item.createdAt)}</Text>
                         </TouchableOpacity>
                       ))}
                     </ScrollView>
@@ -774,18 +664,10 @@ export default function DictionaryScreen() {
       <SafeAreaView className="flex-1">
         {/* Header with gradient */}
         <LinearGradient colors={["#4A9FA2", "#5FA8AB"]} className="pb-4">
-          <BackScreen
-            onPress={() => router.back()}
-            color="white"
-            title={t("dictionary.title")}
-          />
+          <BackScreen onPress={() => router.back()} color="white" title={t("dictionary.title")} />
 
           {/* Search Bar */}
-          <View
-            className="px-4 mb-3"
-            ref={searchContainerRef}
-            onLayout={handleSearchContainerLayout}
-          >
+          <View className="px-4 mb-3" ref={searchContainerRef} onLayout={handleSearchContainerLayout}>
             <View className="bg-white rounded-2xl flex-row items-center px-4 py-3 shadow-lg border border-gray-200/50 relative z-10">
               <Search size={20} color="#6b7280" />
               <TextInput
@@ -817,23 +699,16 @@ export default function DictionaryScreen() {
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
               <View className="px-4 py-6">
                 {/* Back button to clear selection */}
-                <TouchableOpacity
-                  className="flex-row items-center mb-4"
-                  onPress={handleBackFromDetail}
-                >
+                <TouchableOpacity className="flex-row items-center mb-4" onPress={handleBackFromDetail}>
                   <X size={20} color="#374151" />
-                  <Text className="text-base text-gray-700 ml-2">
-                    {t("dictionary.back")}
-                  </Text>
+                  <Text className="text-base text-gray-700 ml-2">{t("dictionary.back")}</Text>
                 </TouchableOpacity>
 
                 {/* Word Header */}
                 <View className="mb-6">
                   <View className="flex-row items-center justify-between mb-2">
                     <View className="flex-1 flex-row items-center flex-wrap">
-                      <Text className="text-4xl font-bold text-gray-900 mr-3">
-                        {wordDetailData.data.wordJp}
-                      </Text>
+                      <Text className="text-4xl font-bold text-gray-900 mr-3">{wordDetailData.data.wordJp}</Text>
                       {/* Pronunciation Button */}
                       <TouchableOpacity
                         className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center mr-2"
@@ -844,10 +719,7 @@ export default function DictionaryScreen() {
                         {isAudioLoading ? (
                           <ActivityIndicator size="small" color="#3b82f6" />
                         ) : (
-                          <Volume2
-                            size={20}
-                            color={isPronouncing ? "#3b82f6" : "#6b7280"}
-                          />
+                          <Volume2 size={20} color={isPronouncing ? "#3b82f6" : "#6b7280"} />
                         )}
                       </TouchableOpacity>
                     </View>
@@ -862,30 +734,22 @@ export default function DictionaryScreen() {
                   </View>
                   <View className="flex-row items-center flex-wrap mb-2">
                     {wordDetailData.data.reading && (
-                      <Text className="text-xl text-gray-600 mr-2">
-                        {wordDetailData.data.reading}
-                      </Text>
+                      <Text className="text-xl text-gray-600 mr-2">{wordDetailData.data.reading}</Text>
                     )}
                     {wordDetailData.data.kanjiMeaning && (
-                      <Text className="text-lg text-gray-500">
-                        ({wordDetailData.data.kanjiMeaning})
-                      </Text>
+                      <Text className="text-lg text-gray-500">({wordDetailData.data.kanjiMeaning})</Text>
                     )}
                   </View>
                   {(wordDetailData.data.levelN || formattedWordType) && (
                     <View className="flex-row flex-wrap items-center gap-2 mt-2">
                       {wordDetailData.data.levelN && (
                         <View className="bg-blue-100 rounded-full px-3 py-1">
-                          <Text className="text-sm font-semibold text-blue-700">
-                            N{wordDetailData.data.levelN}
-                          </Text>
+                          <Text className="text-sm font-semibold text-blue-700">N{wordDetailData.data.levelN}</Text>
                         </View>
                       )}
                       {formattedWordType && (
                         <View className="bg-emerald-100 rounded-full px-3 py-1">
-                          <Text className="text-sm font-semibold text-emerald-700">
-                            {formattedWordType}
-                          </Text>
+                          <Text className="text-sm font-semibold text-emerald-700">{formattedWordType}</Text>
                         </View>
                       )}
                     </View>
@@ -900,76 +764,54 @@ export default function DictionaryScreen() {
                 </View>
 
                 {/* Meanings */}
-                {wordDetailData.data.meanings &&
-                  wordDetailData.data.meanings.length > 0 && (
-                    <View className="mb-6">
-                      <Text className="text-2xl font-semibold text-gray-900 mb-4">
-                        {t("dictionary.meanings")}
-                      </Text>
-                      {wordDetailData.data.meanings.map(
-                        (meaning: IComponents.WordMeaning, index: number) => (
-                          <View
-                            key={`meaning-${index}-${meaning.meaning || index}`}
-                            className="mb-4 pb-4 border-b border-gray-100"
-                          >
-                            {meaning.wordType && (
-                              <Text className="text-sm font-semibold text-blue-600 uppercase mb-2">
-                                {meaning.wordType.replace(/_/g, " ")}
-                              </Text>
-                            )}
-                            {meaning.meaning && (
-                              <Text className="text-2xl text-gray-800 mb-4 leading-8">
-                                {meaning.meaning}
-                              </Text>
-                            )}
-                            {meaning.exampleSentenceJp && (
-                              <View className="mt-3">
-                                <Text className="text-lg text-gray-500 mb-3">
-                                  {t("dictionary.example")}
-                                </Text>
-                                <Text className="text-2xl text-gray-900 mb-3 leading-9">
-                                  {meaning.exampleSentenceJp}
-                                </Text>
-                                {meaning.exampleSentence && (
-                                  <Text className="text-xl text-gray-600 leading-7">
-                                    {meaning.exampleSentence}
-                                  </Text>
-                                )}
-                              </View>
+                {wordDetailData.data.meanings && wordDetailData.data.meanings.length > 0 && (
+                  <View className="mb-6">
+                    <Text className="text-2xl font-semibold text-gray-900 mb-4">{t("dictionary.meanings")}</Text>
+                    {wordDetailData.data.meanings.map((meaning: IComponents.WordMeaning, index: number) => (
+                      <View
+                        key={`meaning-${index}-${meaning.meaning || index}`}
+                        className="mb-4 pb-4 border-b border-gray-100"
+                      >
+                        {meaning.wordType && (
+                          <Text className="text-sm font-semibold text-blue-600 uppercase mb-2">
+                            {meaning.wordType.replace(/_/g, " ")}
+                          </Text>
+                        )}
+                        {meaning.meaning && (
+                          <Text className="text-2xl text-gray-800 mb-4 leading-8">{meaning.meaning}</Text>
+                        )}
+                        {meaning.exampleSentenceJp && (
+                          <View className="mt-3">
+                            <Text className="text-lg text-gray-500 mb-3">{t("dictionary.example")}</Text>
+                            <Text className="text-2xl text-gray-900 mb-3 leading-9">{meaning.exampleSentenceJp}</Text>
+                            {meaning.exampleSentence && (
+                              <Text className="text-xl text-gray-600 leading-7">{meaning.exampleSentence}</Text>
                             )}
                           </View>
-                        )
-                      )}
-                    </View>
-                  )}
-
-                {/* Related Words */}
-                {wordDetailData.data.relatedWords &&
-                  wordDetailData.data.relatedWords.length > 0 && (
-                    <View className="mb-6">
-                      <Text className="text-2xl font-semibold text-gray-900 mb-4">
-                        {t("dictionary.related_words")}
-                      </Text>
-                      <View className="flex-row flex-wrap">
-                        {wordDetailData.data.relatedWords.map(
-                          (related: IComponents.RelatedWord) => (
-                            <TouchableOpacity
-                              key={related.id}
-                              className="bg-gray-100 rounded-full px-5 py-3 mr-2 mb-2"
-                              onPress={() =>
-                                handleSelectWord(related.id.toString())
-                              }
-                              activeOpacity={0.7}
-                            >
-                              <Text className="text-xl text-gray-900">
-                                {related.wordJp}
-                              </Text>
-                            </TouchableOpacity>
-                          )
                         )}
                       </View>
+                    ))}
+                  </View>
+                )}
+
+                {/* Related Words */}
+                {wordDetailData.data.relatedWords && wordDetailData.data.relatedWords.length > 0 && (
+                  <View className="mb-6">
+                    <Text className="text-2xl font-semibold text-gray-900 mb-4">{t("dictionary.related_words")}</Text>
+                    <View className="flex-row flex-wrap">
+                      {wordDetailData.data.relatedWords.map((related: IComponents.RelatedWord) => (
+                        <TouchableOpacity
+                          key={related.id}
+                          className="bg-gray-100 rounded-full px-5 py-3 mr-2 mb-2"
+                          onPress={() => handleSelectWord(related.id.toString())}
+                          activeOpacity={0.7}
+                        >
+                          <Text className="text-xl text-gray-900">{related.wordJp}</Text>
+                        </TouchableOpacity>
+                      ))}
                     </View>
-                  )}
+                  </View>
+                )}
               </View>
             </ScrollView>
           ) : wordDetailLoading ? (
@@ -977,10 +819,7 @@ export default function DictionaryScreen() {
               <ActivityIndicator size="large" color="#4A9FA2" />
             </View>
           ) : (
-            <DictionaryHomeContent
-              searchHistory={searchHistory}
-              onSearch={handleSearch}
-            />
+            <DictionaryHomeContent searchHistory={searchHistory} onSearch={handleSearch} />
           )}
         </View>
 
@@ -992,28 +831,18 @@ export default function DictionaryScreen() {
           onRequestClose={() => setShowFlashcardModal(false)}
         >
           <Pressable style={styles.modalOverlay} onPress={closeFlashcardModal}>
-            <Pressable
-              style={styles.modalContent}
-              onPress={handleStopPropagation}
-            >
+            <Pressable style={styles.modalContent} onPress={handleStopPropagation}>
               {/* Header */}
               <View className="flex-row items-center justify-between mb-4 pb-4 border-b border-gray-200">
-                <Text className="text-xl font-bold text-gray-900">
-                  {t("dictionary.add_to_flashcard")}
-                </Text>
-                <TouchableOpacity
-                  onPress={closeFlashcardModal}
-                  className="w-8 h-8 items-center justify-center"
-                >
+                <Text className="text-xl font-bold text-gray-900">{t("dictionary.add_to_flashcard")}</Text>
+                <TouchableOpacity onPress={closeFlashcardModal} className="w-8 h-8 items-center justify-center">
                   <X size={20} color="#6b7280" />
                 </TouchableOpacity>
               </View>
 
               {/* Notes Input */}
               <View className="mb-4">
-                <Text className="text-sm font-semibold text-gray-700 mb-2">
-                  {t("dictionary.notes_label")}
-                </Text>
+                <Text className="text-sm font-semibold text-gray-700 mb-2">{t("dictionary.notes_label")}</Text>
                 <TextInput
                   className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-base text-gray-900 min-h-[80px]"
                   placeholder={t("dictionary.notes_placeholder")}
@@ -1035,9 +864,7 @@ export default function DictionaryScreen() {
                 <View className="w-8 h-8 bg-blue-600 rounded-full items-center justify-center mr-2">
                   <Plus size={18} color="white" />
                 </View>
-                <Text className="text-blue-600 font-semibold text-base">
-                  {t("dictionary.create_flashcard_deck")}
-                </Text>
+                <Text className="text-blue-600 font-semibold text-base">{t("dictionary.create_flashcard_deck")}</Text>
               </TouchableOpacity>
 
               {/* Flashcard Deck List */}
@@ -1046,10 +873,7 @@ export default function DictionaryScreen() {
                   <ActivityIndicator size="small" color="#4A9FA2" />
                 </View>
               ) : flashcardDecks.length > 0 ? (
-                <ScrollView
-                  style={styles.flashcardList}
-                  showsVerticalScrollIndicator={false}
-                >
+                <ScrollView style={styles.flashcardList} showsVerticalScrollIndicator={false}>
                   {flashcardDecks.map((deck) => (
                     <TouchableOpacity
                       key={deck.id}
@@ -1058,9 +882,7 @@ export default function DictionaryScreen() {
                       activeOpacity={0.7}
                       disabled={addWordToFlashcardDeckMutation.isPending}
                     >
-                      <Text className="text-lg font-bold text-gray-900 mb-1">
-                        {deck.name}
-                      </Text>
+                      <Text className="text-lg font-bold text-gray-900 mb-1">{deck.name}</Text>
                       <Text className="text-sm text-gray-500">
                         {t("dictionary.created_date")} {formatDateVN(deck.createdAt, true)}
                       </Text>
@@ -1090,32 +912,19 @@ export default function DictionaryScreen() {
           animationType="fade"
           onRequestClose={closeCreateFlashcardModal}
         >
-          <Pressable
-            style={styles.modalOverlay}
-            onPress={closeCreateFlashcardModal}
-          >
-            <Pressable
-              style={styles.modalContent}
-              onPress={handleStopPropagation}
-            >
+          <Pressable style={styles.modalOverlay} onPress={closeCreateFlashcardModal}>
+            <Pressable style={styles.modalContent} onPress={handleStopPropagation}>
               {/* Header */}
               <View className="flex-row items-center justify-between mb-4 pb-4 border-b border-gray-200">
-                <Text className="text-xl font-bold text-gray-900">
-                  {t("dictionary.create_new_flashcard_deck")}
-                </Text>
-                <TouchableOpacity
-                  onPress={closeCreateFlashcardModal}
-                  className="w-8 h-8 items-center justify-center"
-                >
+                <Text className="text-xl font-bold text-gray-900">{t("dictionary.create_new_flashcard_deck")}</Text>
+                <TouchableOpacity onPress={closeCreateFlashcardModal} className="w-8 h-8 items-center justify-center">
                   <X size={20} color="#6b7280" />
                 </TouchableOpacity>
               </View>
 
               {/* Input */}
               <View className="mb-4">
-                <Text className="text-sm font-semibold text-gray-700 mb-2">
-                  {t("dictionary.flashcard_name")}
-                </Text>
+                <Text className="text-sm font-semibold text-gray-700 mb-2">{t("dictionary.flashcard_name")}</Text>
                 <TextInput
                   className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-base text-gray-900"
                   placeholder={t("dictionary.flashcard_name_placeholder")}
@@ -1134,25 +943,18 @@ export default function DictionaryScreen() {
                   onPress={closeCreateFlashcardModal}
                   activeOpacity={0.7}
                 >
-                  <Text className="text-gray-700 font-semibold text-base">
-                    {t("dictionary.cancel")}
-                  </Text>
+                  <Text className="text-gray-700 font-semibold text-base">{t("dictionary.cancel")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   className="flex-1 bg-blue-600 rounded-xl px-4 py-3 items-center justify-center"
                   onPress={handleCreateFlashcardDeck}
                   activeOpacity={0.8}
-                  disabled={
-                    !newFlashcardName.trim() ||
-                    createFlashcardDeckMutation.isPending
-                  }
+                  disabled={!newFlashcardName.trim() || createFlashcardDeckMutation.isPending}
                 >
                   {createFlashcardDeckMutation.isPending ? (
                     <ActivityIndicator size="small" color="white" />
                   ) : (
-                    <Text className="text-white font-semibold text-base">
-                      {t("dictionary.create")}
-                    </Text>
+                    <Text className="text-white font-semibold text-base">{t("dictionary.create")}</Text>
                   )}
                 </TouchableOpacity>
               </View>
@@ -1183,11 +985,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: 999,// For Android, slightly lower than dropdown
+    zIndex: 999, // For Android, slightly lower than dropdown
   },
   dropdownWrapper: {
     position: "absolute",
-    zIndex: 1000,// For Android
+    zIndex: 1000, // For Android
   },
   dropdownContainer: {
     // maxHeight will be set dynamically

@@ -6,11 +6,7 @@ import { ThemedText } from "@components/ThemedText";
 import { ThemedView } from "@components/ThemedView";
 import { getSocket } from "@configs/socket";
 import useAuth from "@hooks/useAuth";
-import {
-  useChoosePokemon,
-  useListMatchRound,
-  useListUserPokemonRound,
-} from "@hooks/useBattle";
+import { useChoosePokemon, useListMatchRound, useListUserPokemonRound } from "@hooks/useBattle";
 import { useListElemental } from "@hooks/useElemental";
 import { IBattleMatchRound } from "@models/battle/battle.response";
 import { IElementalEntity } from "@models/elemental/elemental.entity";
@@ -50,11 +46,10 @@ export default function PickPokemonScreen() {
 
   const { data: listElemental } = useListElemental();
   const language = useGlobalStore((s) => s.language);
-  const { data: matchRound, isLoading: isLoadingMatchRound } =
-    useListMatchRound(matchId) as {
-      data: IBattleMatchRound;
-      isLoading: boolean;
-    };
+  const { data: matchRound, isLoading: isLoadingMatchRound } = useListMatchRound(matchId) as {
+    data: IBattleMatchRound;
+    isLoading: boolean;
+  };
 
   const { user } = useAuth();
   const currentUserId = user?.data?.id as number | undefined;
@@ -72,10 +67,10 @@ export default function PickPokemonScreen() {
 
   const [typeId, setTypeId] = useState<number>(1);
   const [timeLimitMs, setTimeLimitMs] = useState<number>(5000);
-  const {
-    data: listUserPokemonRound,
-    isLoading: isLoadingListUserPokemonRound,
-  } = useListUserPokemonRound(typeId, matchId);
+  const { data: listUserPokemonRound, isLoading: isLoadingListUserPokemonRound } = useListUserPokemonRound(
+    typeId,
+    matchId,
+  );
 
   const setStartRoundPayload = useMatchingStore((s) => s.setStartRoundPayload);
   const setServerTimeOffset = useMatchingStore((s) => s.setServerTimeOffset);
@@ -99,31 +94,23 @@ export default function PickPokemonScreen() {
     const opponentMatchParticipantId = opponent?.id;
     const playerMatchParticipantId = player?.id;
 
-    let currentRoundIndex = matchRound.rounds.findIndex(
-      (r) => r.status === "SELECTING_POKEMON"
-    );
+    let currentRoundIndex = matchRound.rounds.findIndex((r) => r.status === "SELECTING_POKEMON");
 
     if (currentRoundIndex === -1) {
       const reversedRounds = [...matchRound.rounds].reverse();
-      const lastPendingReversedIndex = reversedRounds.findIndex(
-        (r) => r.status === "PENDING"
-      );
+      const lastPendingReversedIndex = reversedRounds.findIndex((r) => r.status === "PENDING");
 
       if (lastPendingReversedIndex !== -1) {
-        currentRoundIndex =
-          matchRound.rounds.length - 1 - lastPendingReversedIndex;
+        currentRoundIndex = matchRound.rounds.length - 1 - lastPendingReversedIndex;
       }
     }
 
-    const safeCurrentRoundIndex =
-      currentRoundIndex === -1 ? 0 : currentRoundIndex;
+    const safeCurrentRoundIndex = currentRoundIndex === -1 ? 0 : currentRoundIndex;
 
     const currentRound = matchRound.rounds[safeCurrentRoundIndex];
-    const currentPlayer = currentRound?.participants.find(
-      (rp) => rp.matchParticipantId === playerMatchParticipantId
-    );
+    const currentPlayer = currentRound?.participants.find((rp) => rp.matchParticipantId === playerMatchParticipantId);
     const currentOpponent = currentRound?.participants.find(
-      (rp) => rp.matchParticipantId === opponentMatchParticipantId
+      (rp) => rp.matchParticipantId === opponentMatchParticipantId,
     );
 
     let isPlayerTurn = false;
@@ -156,15 +143,9 @@ export default function PickPokemonScreen() {
       isOpponentTurn = p2Turn;
     }
 
-    const currentPicker: "player" | "opponent" | null = isPlayerTurn
-      ? "player"
-      : isOpponentTurn
-        ? "opponent"
-        : null;
+    const currentPicker: "player" | "opponent" | null = isPlayerTurn ? "player" : isOpponentTurn ? "opponent" : null;
 
-    const validateDeadline = (
-      deadlineStr: string | undefined | null
-    ): string | null => {
+    const validateDeadline = (deadlineStr: string | undefined | null): string | null => {
       if (!deadlineStr) return null;
       try {
         const deadlineTs = new Date(deadlineStr).getTime();
@@ -176,10 +157,7 @@ export default function PickPokemonScreen() {
     };
 
     const pickDeadline = (() => {
-      if (
-        currentRound?.status === "SELECTING_POKEMON" ||
-        currentRound?.status === "PENDING"
-      ) {
+      if (currentRound?.status === "SELECTING_POKEMON" || currentRound?.status === "PENDING") {
         // Ưu tiên deadline của người đang có lượt
         let activeDeadline: string | null = null;
         if (currentPicker === "player") {
@@ -202,7 +180,7 @@ export default function PickPokemonScreen() {
         const roundDeadline = validateDeadline(currentRound?.endTimeRound);
         if (roundDeadline) return roundDeadline;
 
-        // Nếu tất cả đều null, có thể server chưa gửi deadline. 
+        // Nếu tất cả đều null, có thể server chưa gửi deadline.
         // Không tự ý tạo deadline để tránh sai lệch thêm.
       }
       return null;
@@ -213,36 +191,20 @@ export default function PickPokemonScreen() {
     const pickedPokemonMap = new Map<number, any>();
 
     matchRound.rounds.forEach((round, idx) => {
-      const rpPlayer = round.participants.find(
-        (rp) => rp.matchParticipantId === playerMatchParticipantId
-      );
-      const rpOpponent = round.participants.find(
-        (rp) => rp.matchParticipantId === opponentMatchParticipantId
-      );
+      const rpPlayer = round.participants.find((rp) => rp.matchParticipantId === playerMatchParticipantId);
+      const rpOpponent = round.participants.find((rp) => rp.matchParticipantId === opponentMatchParticipantId);
 
-      const playerPickId =
-        rpPlayer?.selectedUserPokemon?.pokemon?.id ??
-        rpPlayer?.selectedUserPokemonId ??
-        null;
-      const opponentPickId =
-        rpOpponent?.selectedUserPokemon?.pokemon?.id ??
-        rpOpponent?.selectedUserPokemonId ??
-        null;
+      const playerPickId = rpPlayer?.selectedUserPokemon?.pokemon?.id ?? rpPlayer?.selectedUserPokemonId ?? null;
+      const opponentPickId = rpOpponent?.selectedUserPokemon?.pokemon?.id ?? rpOpponent?.selectedUserPokemonId ?? null;
 
       playerPicks[idx] = playerPickId;
       opponentPicks[idx] = opponentPickId;
 
       if (playerPickId && rpPlayer?.selectedUserPokemon?.pokemon) {
-        pickedPokemonMap.set(
-          playerPickId,
-          rpPlayer.selectedUserPokemon.pokemon
-        );
+        pickedPokemonMap.set(playerPickId, rpPlayer.selectedUserPokemon.pokemon);
       }
       if (opponentPickId && rpOpponent?.selectedUserPokemon?.pokemon) {
-        pickedPokemonMap.set(
-          opponentPickId,
-          rpOpponent.selectedUserPokemon.pokemon
-        );
+        pickedPokemonMap.set(opponentPickId, rpOpponent.selectedUserPokemon.pokemon);
       }
     });
 
@@ -279,11 +241,7 @@ export default function PickPokemonScreen() {
     const fromCurrent = parseRoundNumber(battleContext?.currentRound?.roundNumber);
     if (fromCurrent) return fromCurrent;
     return (battleContext?.currentRoundIndex ?? 0) + 1;
-  }, [
-    battleContext?.currentRound?.roundNumber,
-    battleContext?.currentRoundIndex,
-    roundStartingData?.roundNumber,
-  ]);
+  }, [battleContext?.currentRound?.roundNumber, battleContext?.currentRoundIndex, roundStartingData?.roundNumber]);
   const roundIndicatorText = t("battle.pick.round_indicator", {
     current: displayedRoundNumber,
     total: totalRounds,
@@ -368,7 +326,7 @@ export default function PickPokemonScreen() {
             duration: 800,
             useNativeDriver: true,
           }),
-        ])
+        ]),
       ).start();
       Animated.loop(
         Animated.sequence([
@@ -382,7 +340,7 @@ export default function PickPokemonScreen() {
             duration: 1000,
             useNativeDriver: false,
           }),
-        ])
+        ]),
       ).start();
     } else {
       playerPulseAnim.setValue(1);
@@ -404,7 +362,7 @@ export default function PickPokemonScreen() {
             duration: 800,
             useNativeDriver: true,
           }),
-        ])
+        ]),
       ).start();
       Animated.loop(
         Animated.sequence([
@@ -418,7 +376,7 @@ export default function PickPokemonScreen() {
             duration: 1000,
             useNativeDriver: false,
           }),
-        ])
+        ]),
       ).start();
     } else {
       opponentPulseAnim.setValue(1);
@@ -435,8 +393,7 @@ export default function PickPokemonScreen() {
 
   const roundList: any[] = useMemo(() => {
     const dataAny: any = listUserPokemonRound as any;
-    if (dataAny?.results && Array.isArray(dataAny.results))
-      return dataAny.results as any[];
+    if (dataAny?.results && Array.isArray(dataAny.results)) return dataAny.results as any[];
     if (Array.isArray(dataAny)) return dataAny as any[];
     return [];
   }, [listUserPokemonRound]);
@@ -454,23 +411,17 @@ export default function PickPokemonScreen() {
   }, [roundList]);
 
   const availableTypes = Object.keys(pokemonByType);
-  const [currentTypeFilter, setCurrentTypeFilter] = useState<string | null>(
-    null
-  );
+  const [currentTypeFilter, setCurrentTypeFilter] = useState<string | null>(null);
   const displayPokemons = useMemo(() => {
     if (!currentTypeFilter) return roundList;
     return pokemonByType[currentTypeFilter] || [];
   }, [roundList, currentTypeFilter, pokemonByType]);
 
   const currentElementalName = useMemo(() => {
-    const elemental = listElemental?.results?.find(
-      (elem: IElementalEntity) => elem.id === typeId
-    );
+    const elemental = listElemental?.results?.find((elem: IElementalEntity) => elem.id === typeId);
     if (!elemental) return "";
     return (
-      elemental.display_name?.[
-      language as keyof typeof elemental.display_name
-      ] ||
+      elemental.display_name?.[language as keyof typeof elemental.display_name] ||
       elemental.display_name?.vi ||
       elemental.display_name?.en ||
       elemental.display_name?.ja ||
@@ -490,10 +441,7 @@ export default function PickPokemonScreen() {
           if (participant.selectedUserPokemon?.pokemon?.id === pokemonId) {
             return participant.selectedUserPokemon.pokemon;
           }
-          if (
-            participant.selectedUserPokemonId === pokemonId &&
-            participant.selectedUserPokemon?.pokemon
-          ) {
+          if (participant.selectedUserPokemonId === pokemonId && participant.selectedUserPokemon?.pokemon) {
             return participant.selectedUserPokemon.pokemon;
           }
         }
@@ -531,10 +479,7 @@ export default function PickPokemonScreen() {
     );
   };
 
-  const rarityStyles: Record<
-    string,
-    { bg: string; border: string; text: string }
-  > = {
+  const rarityStyles: Record<string, { bg: string; border: string; text: string }> = {
     COMMON: { bg: "rgba(148, 163, 184, 0.2)", border: "#cbd5f5", text: "#e2e8f0" },
     UNCOMMON: { bg: "rgba(16, 185, 129, 0.2)", border: "#34d399", text: "#bbf7d0" },
     RARE: { bg: "rgba(59, 130, 246, 0.2)", border: "#60a5fa", text: "#bfdbfe" },
@@ -542,9 +487,7 @@ export default function PickPokemonScreen() {
     LEGENDARY: { bg: "rgba(251, 191, 36, 0.25)", border: "#facc15", text: "#fef3c7" },
   };
 
-  const [selectedPokemonId, setSelectedPokemonId] = useState<number | null>(
-    null
-  );
+  const [selectedPokemonId, setSelectedPokemonId] = useState<number | null>(null);
   const handlePickPokemon = (pokemonId: number) => {
     const isSelected =
       (battleContext?.playerPicks || []).includes(pokemonId) ||
@@ -561,11 +504,7 @@ export default function PickPokemonScreen() {
     if (isSelected) {
       setSelectedPokemonId(null);
     }
-  }, [
-    battleContext?.playerPicks,
-    battleContext?.opponentPicks,
-    selectedPokemonId,
-  ]);
+  }, [battleContext?.playerPicks, battleContext?.opponentPicks, selectedPokemonId]);
 
   const [infoPokemonId, setInfoPokemonId] = useState<number | null>(null);
   const [showInfoModal, setShowInfoModal] = useState(false);
@@ -587,10 +526,7 @@ export default function PickPokemonScreen() {
       (battleContext.opponentPicks || []).includes(selectedPokemonId);
     if (isAlreadyPicked) {
       setSelectedPokemonId(null);
-      Alert.alert(
-        t("battle.pick.alerts.pokemon_chosen_title"),
-        t("battle.pick.alerts.pokemon_chosen_message")
-      );
+      Alert.alert(t("battle.pick.alerts.pokemon_chosen_title"), t("battle.pick.alerts.pokemon_chosen_message"));
       return;
     }
     try {
@@ -635,10 +571,7 @@ export default function PickPokemonScreen() {
 
     const handleSelectPokemon = (payload: any) => {
       console.log("handleSelectPokemon", payload);
-      if (
-        payload?.matchId &&
-        payload.matchId.toString() === matchId.toString()
-      ) {
+      if (payload?.matchId && payload.matchId.toString() === matchId.toString()) {
         if (payload?.timeLimitMs) {
           setTimeLimitMs(payload.timeLimitMs);
         }
@@ -665,11 +598,7 @@ export default function PickPokemonScreen() {
         const offset = new Date(payload.startTime).getTime() - delayMs - Date.now();
         setServerTimeOffset(offset);
       }
-      if (
-        payload?.matchId &&
-        payload?.roundNumber &&
-        payload?.delaySeconds !== undefined
-      ) {
+      if (payload?.matchId && payload?.roundNumber && payload?.delaySeconds !== undefined) {
         setRoundStartingData({
           matchId: payload.matchId,
           roundNumber: payload.roundNumber,
@@ -702,10 +631,7 @@ export default function PickPokemonScreen() {
         pathname: ROUTES.APP.ARENA,
         params: {
           matchId: matchId,
-          roundNumber:
-            payload.round?.roundNumber ||
-            roundStartingData?.roundNumber ||
-            "ONE",
+          roundNumber: payload.round?.roundNumber || roundStartingData?.roundNumber || "ONE",
         },
       });
     };
@@ -748,9 +674,7 @@ export default function PickPokemonScreen() {
         >
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="#22d3ee" />
-            <ThemedText
-              style={{ color: "#93c5fd", marginTop: 16, fontSize: 16 }}
-            >
+            <ThemedText style={{ color: "#93c5fd", marginTop: 16, fontSize: 16 }}>
               {t("battle.pick.loading_match")}
             </ThemedText>
           </View>
@@ -769,42 +693,30 @@ export default function PickPokemonScreen() {
         {/* Header */}
         <View className="px-5 pt-16 pb-6">
           <View className="flex-row items-center justify-between mb-4">
-            <ThemedText
-              style={{ color: "#fbbf24", fontSize: 20, fontWeight: "800" }}
-            >
+            <ThemedText style={{ color: "#fbbf24", fontSize: 20, fontWeight: "800" }}>
               {t("battle.pick.title")}
             </ThemedText>
             <View className="flex-row items-center gap-2">
               <Clock size={16} color="#22d3ee" />
-              <ThemedText style={{ color: "#cbd5e1", fontSize: 14 }}>
-                {roundIndicatorText}
-              </ThemedText>
+              <ThemedText style={{ color: "#cbd5e1", fontSize: 14 }}>{roundIndicatorText}</ThemedText>
             </View>
           </View>
 
           {/* Opponent vs Player */}
           <View className="flex-row items-center justify-between">
             {/* Opponent */}
-            <View
-              className="items-center flex-1"
-              style={{ position: "relative" }}
-            >
+            <View className="items-center flex-1" style={{ position: "relative" }}>
               <Animated.View
                 style={{
                   transform: [
                     {
-                      scale: battleContext?.isOpponentTurn
-                        ? opponentPulseAnim
-                        : 1,
+                      scale: battleContext?.isOpponentTurn ? opponentPulseAnim : 1,
                     },
                   ],
                   zIndex: 2,
                 }}
               >
-                <UserAvatar
-                  name={displayOpponentName}
-                  size="large"
-                />
+                <UserAvatar name={displayOpponentName} size="large" />
               </Animated.View>
 
               <ThemedText
@@ -891,10 +803,7 @@ export default function PickPokemonScreen() {
             </TWLinearGradient>
 
             {/* Player */}
-            <View
-              className="items-center flex-1"
-              style={{ position: "relative" }}
-            >
+            <View className="items-center flex-1" style={{ position: "relative" }}>
               <Animated.View
                 style={{
                   transform: [
@@ -955,23 +864,14 @@ export default function PickPokemonScreen() {
         <View className="px-5 mb-4">
           <View className="flex-row justify-between gap-2">
             <View className="flex-1">
-              <ThemedText
-                style={{ color: "#94a3b8", fontSize: 12, marginBottom: 8 }}
-              >
-                {opponentPicksLabel}
-              </ThemedText>
+              <ThemedText style={{ color: "#94a3b8", fontSize: 12, marginBottom: 8 }}>{opponentPicksLabel}</ThemedText>
               <View className="flex-row flex-wrap gap-2">
                 {[0, 1, 2].map((idx) => {
                   const opponentPickId = battleContext?.opponentPicks[idx];
-                  const opponentPokemon = opponentPickId
-                    ? getPokemonById(opponentPickId)
-                    : null;
+                  const opponentPokemon = opponentPickId ? getPokemonById(opponentPickId) : null;
 
                   return (
-                    <View
-                      key={idx}
-                      className="w-16 h-16 rounded-xl border border-white/20 bg-black/40"
-                    >
+                    <View key={idx} className="w-16 h-16 rounded-xl border border-white/20 bg-black/40">
                       {opponentPokemon ? (
                         <View className="flex-1 items-center justify-center">
                           <Image
@@ -995,23 +895,14 @@ export default function PickPokemonScreen() {
 
             {/* Player Picks */}
             <View className="flex-1">
-              <ThemedText
-                style={{ color: "#94a3b8", fontSize: 12, marginBottom: 8 }}
-              >
-                {playerLabel}
-              </ThemedText>
+              <ThemedText style={{ color: "#94a3b8", fontSize: 12, marginBottom: 8 }}>{playerLabel}</ThemedText>
               <View className="flex-row flex-wrap gap-2">
                 {[0, 1, 2].map((idx) => {
                   const playerPickId = battleContext?.playerPicks[idx];
-                  const playerPokemon = playerPickId
-                    ? getPokemonById(playerPickId)
-                    : null;
+                  const playerPokemon = playerPickId ? getPokemonById(playerPickId) : null;
 
                   return (
-                    <View
-                      key={idx}
-                      className="w-16 h-16 rounded-xl border border-white/20 bg-black/40"
-                    >
+                    <View key={idx} className="w-16 h-16 rounded-xl border border-white/20 bg-black/40">
                       {playerPokemon ? (
                         <View className="flex-1 items-center justify-center">
                           <Image
@@ -1043,10 +934,9 @@ export default function PickPokemonScreen() {
                 <HapticPressable
                   key={elem?.id}
                   onPress={() => setTypeId(elem?.id)}
-                  className={`px-4 py-2 rounded-full border ${elem?.id === typeId
-                    ? "border-cyan-400 bg-cyan-500/20"
-                    : "border-white/20 bg-white/5"
-                    }`}
+                  className={`px-4 py-2 rounded-full border ${
+                    elem?.id === typeId ? "border-cyan-400 bg-cyan-500/20" : "border-white/20 bg-white/5"
+                  }`}
                 >
                   <ThemedText
                     style={{
@@ -1055,9 +945,7 @@ export default function PickPokemonScreen() {
                       fontWeight: "600",
                     }}
                   >
-                    {elem?.display_name?.[
-                      language as keyof typeof elem.display_name
-                    ] ||
+                    {elem?.display_name?.[language as keyof typeof elem.display_name] ||
                       elem?.display_name?.vi ||
                       elem?.type_name ||
                       t("battle.pick.filters.elemental_fallback")}
@@ -1075,20 +963,14 @@ export default function PickPokemonScreen() {
                 {availableTypes.map((type) => (
                   <HapticPressable
                     key={type}
-                    onPress={() =>
-                      setCurrentTypeFilter(
-                        currentTypeFilter === type ? null : type
-                      )
-                    }
-                    className={`px-4 py-2 rounded-full border ${currentTypeFilter === type
-                      ? "border-cyan-400 bg-cyan-500/20"
-                      : "border-white/20 bg-white/5"
-                      }`}
+                    onPress={() => setCurrentTypeFilter(currentTypeFilter === type ? null : type)}
+                    className={`px-4 py-2 rounded-full border ${
+                      currentTypeFilter === type ? "border-cyan-400 bg-cyan-500/20" : "border-white/20 bg-white/5"
+                    }`}
                   >
                     <ThemedText
                       style={{
-                        color:
-                          currentTypeFilter === type ? "#22d3ee" : "#cbd5e1",
+                        color: currentTypeFilter === type ? "#22d3ee" : "#cbd5e1",
                         fontSize: 13,
                         fontWeight: "600",
                       }}
@@ -1106,13 +988,12 @@ export default function PickPokemonScreen() {
           <View className="px-5 mb-4">
             <HapticPressable
               onPress={handleChoosePokemon}
-              disabled={
-                choosePokemonMutation.isPending || !battleContext?.isPlayerTurn
-              }
-              className={`w-full py-4 rounded-xl border-2 items-center justify-center ${battleContext?.isPlayerTurn && !choosePokemonMutation.isPending
-                ? "bg-green-500/20 border-green-500"
-                : "bg-gray-500/20 border-gray-500"
-                }`}
+              disabled={choosePokemonMutation.isPending || !battleContext?.isPlayerTurn}
+              className={`w-full py-4 rounded-xl border-2 items-center justify-center ${
+                battleContext?.isPlayerTurn && !choosePokemonMutation.isPending
+                  ? "bg-green-500/20 border-green-500"
+                  : "bg-gray-500/20 border-gray-500"
+              }`}
             >
               {choosePokemonMutation.isPending ? (
                 <ActivityIndicator size="small" color="#86efac" />
@@ -1133,16 +1014,11 @@ export default function PickPokemonScreen() {
           </View>
         )}
 
-        <ScrollView
-          className="flex-1 px-5"
-          showsVerticalScrollIndicator={false}
-        >
+        <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
           {isLoadingListUserPokemonRound ? (
             <View className="flex-1 items-center justify-center py-20">
               <ActivityIndicator size="large" color="#22d3ee" />
-              <ThemedText
-                style={{ color: "#64748b", marginTop: 16, fontSize: 14 }}
-              >
+              <ThemedText style={{ color: "#64748b", marginTop: 16, fontSize: 14 }}>
                 {t("battle.pick.loading_pokemon")}
               </ThemedText>
             </View>
@@ -1158,8 +1034,8 @@ export default function PickPokemonScreen() {
               >
                 {currentElementalName
                   ? t("battle.pick.empty_by_type", {
-                    type: currentElementalName,
-                  })
+                      type: currentElementalName,
+                    })
                   : t("battle.pick.empty_default")}
               </ThemedText>
             </View>
@@ -1184,21 +1060,16 @@ export default function PickPokemonScreen() {
                     style={{ width: "31%", marginBottom: 16 }}
                   >
                     <View
-                      className={`h-52 rounded-3xl overflow-hidden border-white/20 ${isSelected ? "opacity-50" : "opacity-100"
-                        } ${isCurrentlySelected
-                          ? "scale-105 border-green-400 border-2"
-                          : "scale-100"
-                        }`}
+                      className={`h-52 rounded-3xl overflow-hidden border-white/20 ${
+                        isSelected ? "opacity-50" : "opacity-100"
+                      } ${isCurrentlySelected ? "scale-105 border-green-400 border-2" : "scale-100"}`}
                       style={{
                         borderWidth: isCurrentlySelected ? 2 : 1,
                         width: "100%",
                       }}
                     >
                       <TWLinearGradient
-                        colors={[
-                          "rgba(248, 250, 252, 0.1)",
-                          "rgba(226, 232, 240, 0.15)",
-                        ]}
+                        colors={["rgba(248, 250, 252, 0.1)", "rgba(226, 232, 240, 0.15)"]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
                         style={{
@@ -1224,12 +1095,7 @@ export default function PickPokemonScreen() {
                           borderColor: rarityStyle.border,
                         }}
                       >
-                        <Star
-                          size={12}
-                          color={rarityStyle.text}
-                          fill={rarityStyle.text}
-                          style={{ marginRight: 4 }}
-                        />
+                        <Star size={12} color={rarityStyle.text} fill={rarityStyle.text} style={{ marginRight: 4 }} />
                         <ThemedText
                           style={{
                             color: rarityStyle.text,
@@ -1300,9 +1166,7 @@ export default function PickPokemonScreen() {
                           </View>
                         )}
                         {weaknesses?.length > 0 && (
-                          <View
-                            className="rounded-2xl px-2 py-1 border border-red-400/30 bg-red-500/10 flex-row items-center"
-                          >
+                          <View className="rounded-2xl px-2 py-1 border border-red-400/30 bg-red-500/10 flex-row items-center">
                             <ShieldAlert size={12} color="#fca5a5" style={{ marginRight: 6 }} />
                             <View style={{ flex: 1 }}>
                               <ThemedText
@@ -1317,11 +1181,9 @@ export default function PickPokemonScreen() {
                                   .slice(0, 2)
                                   .map(
                                     (weak: any) =>
-                                      weak?.display_name?.[
-                                      language as keyof typeof weak.display_name
-                                      ] ||
+                                      weak?.display_name?.[language as keyof typeof weak.display_name] ||
                                       weak?.display_name?.vi ||
-                                      weak?.type_name
+                                      weak?.type_name,
                                   )
                                   .join(" • ")}
                               </ThemedText>
@@ -1336,10 +1198,8 @@ export default function PickPokemonScreen() {
                                   .slice(0, 2)
                                   .map((weak: any) =>
                                     weak?.effectiveness_multiplier
-                                      ? `x${Number(
-                                        weak.effectiveness_multiplier
-                                      ).toFixed(1)}`
-                                      : "x1.5"
+                                      ? `x${Number(weak.effectiveness_multiplier).toFixed(1)}`
+                                      : "x1.5",
                                   )
                                   .join("  ")}
                               </ThemedText>

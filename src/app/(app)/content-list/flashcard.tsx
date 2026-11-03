@@ -1,9 +1,6 @@
 import { ThemedText } from "@components/ThemedText";
 import { FlashcardContentType } from "@constants/flashcard.enum";
-import {
-  useFlashcardDeckCards,
-  useMarkFlashcardCardRead,
-} from "@hooks/useFlashcard";
+import { useFlashcardDeckCards, useMarkFlashcardCardRead } from "@hooks/useFlashcard";
 import { useLesson } from "@hooks/useLessons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
@@ -56,7 +53,12 @@ const normalizeVocabularyMeanings = (meanings?: any): string[] => {
 
 const VocabularyFlashcardScreen = () => {
   const { t } = useTranslation();
-  const { id, deckId: deckIdParam, contentType, practiceSource } = useLocalSearchParams<{
+  const {
+    id,
+    deckId: deckIdParam,
+    contentType,
+    practiceSource,
+  } = useLocalSearchParams<{
     id?: string;
     deckId?: string;
     contentType?: string;
@@ -66,33 +68,26 @@ const VocabularyFlashcardScreen = () => {
   const isDeckPractice = !!deckIdParam || practiceSource === "deck";
   const deckId = deckIdParam || undefined;
   const numericDeckId = deckId ? Number(deckId) : undefined;
-  const lessonId = !isDeckPractice ? (id || "") : "";
+  const lessonId = !isDeckPractice ? id || "" : "";
 
-  const {
-    data: lessonData,
-    isLoading: isLessonLoading,
-  } = useLesson(lessonId);
+  const { data: lessonData, isLoading: isLessonLoading } = useLesson(lessonId);
 
-  const {
-    data: deckCardsData,
-    isLoading: isDeckCardsLoading,
-  } = useFlashcardDeckCards(
+  const { data: deckCardsData, isLoading: isDeckCardsLoading } = useFlashcardDeckCards(
     isDeckPractice && deckId ? deckId : null,
     {
       currentPage: 1,
       pageSize: 9999,
       contentType: FlashcardContentType.VOCABULARY,
-    }
+    },
   );
-  
+
   const deckFromPractice = useMemo(() => {
     if (!isDeckPractice) return [];
     const cards = deckCardsData?.data?.results ?? [];
 
     return cards
       .map((card) => {
-        const vocabulary =
-          card.vocabulary || (card as any).metadata || undefined;
+        const vocabulary = card.vocabulary || (card as any).metadata || undefined;
         if (!vocabulary) return null;
         return {
           ...vocabulary,
@@ -133,7 +128,7 @@ const VocabularyFlashcardScreen = () => {
   const [stackMode, setStackMode] = useState<"overlap" | "offset">("offset"); // "overlap" = chồng hoàn toàn, "offset" = hở một chút
   const [showOptions, setShowOptions] = useState(false);
   const [optionsTab, setOptionsTab] = useState<"front" | "back">("front");
-  
+
   // Display options for front and back of cards
   const [frontOptions, setFrontOptions] = useState({
     sound: true,
@@ -142,7 +137,7 @@ const VocabularyFlashcardScreen = () => {
     phonetic: true,
     notes: false,
   });
-  
+
   const [backOptions, setBackOptions] = useState({
     sound: true,
     vocabulary: true,
@@ -159,7 +154,7 @@ const VocabularyFlashcardScreen = () => {
   useFocusEffect(
     useCallback(() => {
       setStackMode("offset");
-    }, [])
+    }, []),
   );
 
   useEffect(() => {
@@ -193,10 +188,9 @@ const VocabularyFlashcardScreen = () => {
 
   // Gesture handlers (RNGH)
   const onPanGestureEvent = useRef(
-    Animated.event(
-      [{ nativeEvent: { translationX: translateX, translationY: translateY } }],
-      { useNativeDriver: true }
-    )
+    Animated.event([{ nativeEvent: { translationX: translateX, translationY: translateY } }], {
+      useNativeDriver: true,
+    }),
   ).current;
 
   const handleSwipe = useCallback(
@@ -206,12 +200,7 @@ const VocabularyFlashcardScreen = () => {
       stackReveal.setValue(0);
 
       const practiceCard = deck[currentIndex] as any;
-      if (
-        isDeckPractice &&
-        numericDeckId &&
-        practiceCard?.__cardId &&
-        !markCardReadMutation.isPending
-      ) {
+      if (isDeckPractice && numericDeckId && practiceCard?.__cardId && !markCardReadMutation.isPending) {
         markCardReadMutation.mutate({
           deckId: numericDeckId,
           cardId: practiceCard.__cardId,
@@ -245,9 +234,7 @@ const VocabularyFlashcardScreen = () => {
         setIsFrontSide(true);
 
         Haptics.notificationAsync(
-          result === "known"
-            ? Haptics.NotificationFeedbackType.Success
-            : Haptics.NotificationFeedbackType.Warning
+          result === "known" ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Warning,
         );
 
         if (result === "known") {
@@ -269,32 +256,35 @@ const VocabularyFlashcardScreen = () => {
       stackReveal,
       translateX,
       translateY,
-    ]
+    ],
   );
 
-  const onPanEnded = useCallback((event: any) => {
-    const dx = event?.nativeEvent?.translationX ?? 0;
-    if (dx > SWIPE_THRESHOLD) {
-      handleSwipe("known");
-      return;
-    }
-    if (dx < -SWIPE_THRESHOLD) {
-      handleSwipe("unknown");
-      return;
-    }
-    Animated.spring(translateX, {
-      toValue: 0,
-      useNativeDriver: true,
-      tension: 150,
-      friction: 12,
-    }).start();
-    Animated.spring(translateY, {
-      toValue: 0,
-      useNativeDriver: true,
-      tension: 150,
-      friction: 12,
-    }).start();
-  }, [handleSwipe, translateX, translateY]);
+  const onPanEnded = useCallback(
+    (event: any) => {
+      const dx = event?.nativeEvent?.translationX ?? 0;
+      if (dx > SWIPE_THRESHOLD) {
+        handleSwipe("known");
+        return;
+      }
+      if (dx < -SWIPE_THRESHOLD) {
+        handleSwipe("unknown");
+        return;
+      }
+      Animated.spring(translateX, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 150,
+        friction: 12,
+      }).start();
+      Animated.spring(translateY, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 150,
+        friction: 12,
+      }).start();
+    },
+    [handleSwipe, translateX, translateY],
+  );
 
   const resetDeck = () => {
     setCurrentIndex(0);
@@ -323,9 +313,7 @@ const VocabularyFlashcardScreen = () => {
   const progress = totalCount === 0 ? 0 : (reviewedCount / totalCount) * 100;
   const progressLabel = useMemo(() => {
     const typeKey =
-      contentTypeValue === "grammar" ||
-      contentTypeValue === "kanji" ||
-      contentTypeValue === "vocabulary"
+      contentTypeValue === "grammar" || contentTypeValue === "kanji" || contentTypeValue === "vocabulary"
         ? contentTypeValue
         : "vocabulary";
 
@@ -363,18 +351,16 @@ const VocabularyFlashcardScreen = () => {
   }, [currentIndex, totalCount]);
 
   // Render một card trong stack
-  const renderCard = (
-    cardIndex: number,
-    stackIndex: number,
-    isActive: boolean
-  ) => {
+  const renderCard = (cardIndex: number, stackIndex: number, isActive: boolean) => {
     const card: any = deck[cardIndex];
     if (!card) return null;
 
     const meanings = isVocabulary ? normalizeVocabularyMeanings(card?.meanings) : [];
 
     const kanjiExplanation = isKanji
-      ? (typeof card?.explanationMeaning === "string" ? card.explanationMeaning : "")
+      ? typeof card?.explanationMeaning === "string"
+        ? card.explanationMeaning
+        : ""
       : "";
 
     const offset = stackIndex * cardSpacing;
@@ -407,15 +393,13 @@ const VocabularyFlashcardScreen = () => {
     const opacityValue = isActive
       ? 1
       : isSecondCard
-      ? stackReveal.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0.9, 1],
-        })
-      : 0.85;
+        ? stackReveal.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0.9, 1],
+          })
+        : 0.85;
 
-    const cardShadowStyle = isActive
-      ? {}
-      : {};
+    const cardShadowStyle = isActive ? {} : {};
 
     const cardBaseStyle = {
       paddingTop: 64,
@@ -428,11 +412,11 @@ const VocabularyFlashcardScreen = () => {
     const backgroundColorValue = isActive
       ? "#ffffff"
       : isSecondCard
-      ? stackReveal.interpolate({
-          inputRange: [0, 1],
-          outputRange: ["#f1f5f9", "#ffffff"],
-        })
-      : "#f1f5f9";
+        ? stackReveal.interpolate({
+            inputRange: [0, 1],
+            outputRange: ["#f1f5f9", "#ffffff"],
+          })
+        : "#f1f5f9";
 
     const frontCardStyle = isActive
       ? {
@@ -475,11 +459,7 @@ const VocabularyFlashcardScreen = () => {
           position: "absolute",
           width: "100%",
           opacity: opacityValue,
-          transform: [
-            { scale: scaleValue },
-            { translateX: translateXValue },
-            { translateY: translateYValue },
-          ],
+          transform: [{ scale: scaleValue }, { translateX: translateXValue }, { translateY: translateYValue }],
           zIndex,
         }}
         pointerEvents={isActive ? "auto" : "none"}
@@ -487,7 +467,7 @@ const VocabularyFlashcardScreen = () => {
         <TapGestureHandler
           enabled={isActive}
           onActivated={toggleCardSide}
-          waitFor={isActive && !cardIsFrontSide ? backScrollRef as any : undefined}
+          waitFor={isActive && !cardIsFrontSide ? (backScrollRef as any) : undefined}
         >
           <View style={{ position: "relative", width: "100%" }}>
             {/* Front Card */}
@@ -495,7 +475,9 @@ const VocabularyFlashcardScreen = () => {
               style={[cardBaseStyle, cardShadowStyle, { backgroundColor: backgroundColorValue }, frontCardStyle]}
               pointerEvents={cardIsFrontSide ? "auto" : "none"}
             >
-              <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingTop: 4, paddingBottom: 4 }}>
+              <View
+                style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingTop: 4, paddingBottom: 4 }}
+              >
                 {isKanji ? (
                   <View
                     style={{
@@ -505,7 +487,15 @@ const VocabularyFlashcardScreen = () => {
                       paddingHorizontal: 12,
                     }}
                   >
-                    <ThemedText style={{ fontSize: 52, fontWeight: "bold", color: "#b45309", textAlign: "center", lineHeight: 62 }}>
+                    <ThemedText
+                      style={{
+                        fontSize: 52,
+                        fontWeight: "bold",
+                        color: "#b45309",
+                        textAlign: "center",
+                        lineHeight: 62,
+                      }}
+                    >
                       {card?.character || ""}
                     </ThemedText>
                   </View>
@@ -518,7 +508,15 @@ const VocabularyFlashcardScreen = () => {
                       paddingHorizontal: 12,
                     }}
                   >
-                    <ThemedText style={{ fontSize: 30, fontWeight: "bold", color: "#0e7490", textAlign: "center", lineHeight: 38 }}>
+                    <ThemedText
+                      style={{
+                        fontSize: 30,
+                        fontWeight: "bold",
+                        color: "#0e7490",
+                        textAlign: "center",
+                        lineHeight: 38,
+                      }}
+                    >
                       {card?.title || ""}
                     </ThemedText>
                     {card?.structure && (
@@ -537,7 +535,15 @@ const VocabularyFlashcardScreen = () => {
                     }}
                   >
                     {frontOptions.vocabulary && (
-                      <ThemedText style={{ fontSize: 44, fontWeight: "bold", color: "#0369a1", textAlign: "center", lineHeight: 52 }}>
+                      <ThemedText
+                        style={{
+                          fontSize: 44,
+                          fontWeight: "bold",
+                          color: "#0369a1",
+                          textAlign: "center",
+                          lineHeight: 52,
+                        }}
+                      >
                         {card?.wordJp || ""}
                       </ThemedText>
                     )}
@@ -601,7 +607,15 @@ const VocabularyFlashcardScreen = () => {
                           className="py-5 px-6 mb-5 rounded-2xl bg-amber-50 border border-amber-100"
                           style={{ width: width - 160 }}
                         >
-                          <ThemedText style={{ fontSize: 36, fontWeight: "600", color: "#92400e", textAlign: "center", lineHeight: 48 }}>
+                          <ThemedText
+                            style={{
+                              fontSize: 36,
+                              fontWeight: "600",
+                              color: "#92400e",
+                              textAlign: "center",
+                              lineHeight: 48,
+                            }}
+                          >
                             {card.meaning}
                           </ThemedText>
                         </View>
@@ -616,22 +630,33 @@ const VocabularyFlashcardScreen = () => {
                           </ThemedText>
                         </View>
                       ) : (
-                        <ThemedText style={{ fontSize: 24, color: "#d97706", textAlign: "center", width: width - 160, lineHeight: 36 }}>
-                          {t(
-                            "content_list.flashcard.no_explanation",
-                            "No explanation available"
-                          )}
+                        <ThemedText
+                          style={{
+                            fontSize: 24,
+                            color: "#d97706",
+                            textAlign: "center",
+                            width: width - 160,
+                            lineHeight: 36,
+                          }}
+                        >
+                          {t("content_list.flashcard.no_explanation", "No explanation available")}
                         </ThemedText>
                       )}
                       {(card?.onReading || card?.kunReading) && (
                         <View className="mt-4" style={{ width: width - 160 }}>
                           <ThemedText style={{ fontSize: 20, color: "#d97706", textAlign: "center", lineHeight: 28 }}>
-                            {t("content_list.flashcard.on_label", "On reading")}:{" "}
-                            {card?.onReading || "-"}
+                            {t("content_list.flashcard.on_label", "On reading")}: {card?.onReading || "-"}
                           </ThemedText>
-                          <ThemedText style={{ fontSize: 20, color: "#d97706", textAlign: "center", marginTop: 8, lineHeight: 28 }}>
-                            {t("content_list.flashcard.kun_label", "Kun reading")}:{" "}
-                            {card?.kunReading || "-"}
+                          <ThemedText
+                            style={{
+                              fontSize: 20,
+                              color: "#d97706",
+                              textAlign: "center",
+                              marginTop: 8,
+                              lineHeight: 28,
+                            }}
+                          >
+                            {t("content_list.flashcard.kun_label", "Kun reading")}: {card?.kunReading || "-"}
                           </ThemedText>
                         </View>
                       )}
@@ -643,7 +668,15 @@ const VocabularyFlashcardScreen = () => {
                           className="py-5 px-6 rounded-2xl bg-cyan-50 border border-cyan-100 mb-5"
                           style={{ width: width - 160, alignSelf: "center" }}
                         >
-                          <ThemedText style={{ fontSize: 32, fontWeight: "600", color: "#155e75", textAlign: "center", lineHeight: 46 }}>
+                          <ThemedText
+                            style={{
+                              fontSize: 32,
+                              fontWeight: "600",
+                              color: "#155e75",
+                              textAlign: "center",
+                              lineHeight: 46,
+                            }}
+                          >
                             {card.description}
                           </ThemedText>
                         </View>
@@ -655,21 +688,23 @@ const VocabularyFlashcardScreen = () => {
                         >
                           <ThemedText style={{ fontSize: 26, color: "#0e7490", textAlign: "center", lineHeight: 38 }}>
                             <ThemedText style={{ fontWeight: "bold" }}>
-                              {t(
-                                "content_list.flashcard.usage_label",
-                                "Usage:"
-                              )}
+                              {t("content_list.flashcard.usage_label", "Usage:")}
                             </ThemedText>{" "}
                             {card.usage}
                           </ThemedText>
                         </View>
                       )}
                       {!card?.description && !card?.usage && (
-                        <ThemedText style={{ fontSize: 26, color: "#0891b2", textAlign: "center", width: width - 160, lineHeight: 38 }}>
-                          {t(
-                            "content_list.flashcard.no_details",
-                            "No detailed description"
-                          )}
+                        <ThemedText
+                          style={{
+                            fontSize: 26,
+                            color: "#0891b2",
+                            textAlign: "center",
+                            width: width - 160,
+                            lineHeight: 38,
+                          }}
+                        >
+                          {t("content_list.flashcard.no_details", "No detailed description")}
                         </ThemedText>
                       )}
                     </View>
@@ -680,7 +715,15 @@ const VocabularyFlashcardScreen = () => {
                           className="py-5 px-6 mb-4 rounded-2xl bg-sky-50 border border-sky-100"
                           style={{ width: width - 160 }}
                         >
-                          <ThemedText style={{ fontSize: 36, fontWeight: "600", color: "#0369a1", textAlign: "center", lineHeight: 48 }}>
+                          <ThemedText
+                            style={{
+                              fontSize: 36,
+                              fontWeight: "600",
+                              color: "#0369a1",
+                              textAlign: "center",
+                              lineHeight: 48,
+                            }}
+                          >
                             {card.wordJp}
                           </ThemedText>
                         </View>
@@ -695,23 +738,39 @@ const VocabularyFlashcardScreen = () => {
                           </ThemedText>
                         </View>
                       )}
-                      {backOptions.meaning && meanings.length > 0 ? (
-                        meanings.map((meaning: string, idx: number) => (
-                          <View
-                            key={idx}
-                            className="py-5 px-6 mb-4 rounded-2xl bg-sky-50 border border-sky-100"
-                            style={{ width: width - 160 }}
-                          >
-                            <ThemedText style={{ fontSize: 36, fontWeight: "600", color: "#0369a1", textAlign: "center", lineHeight: 48 }}>
-                              {meaning}
+                      {backOptions.meaning && meanings.length > 0
+                        ? meanings.map((meaning: string, idx: number) => (
+                            <View
+                              key={idx}
+                              className="py-5 px-6 mb-4 rounded-2xl bg-sky-50 border border-sky-100"
+                              style={{ width: width - 160 }}
+                            >
+                              <ThemedText
+                                style={{
+                                  fontSize: 36,
+                                  fontWeight: "600",
+                                  color: "#0369a1",
+                                  textAlign: "center",
+                                  lineHeight: 48,
+                                }}
+                              >
+                                {meaning}
+                              </ThemedText>
+                            </View>
+                          ))
+                        : backOptions.meaning && (
+                            <ThemedText
+                              style={{
+                                fontSize: 32,
+                                color: "#0369a1",
+                                textAlign: "center",
+                                width: width - 160,
+                                lineHeight: 46,
+                              }}
+                            >
+                              {t("lessons.no_meaning", "No meaning")}
                             </ThemedText>
-                          </View>
-                        ))
-                      ) : backOptions.meaning && (
-                        <ThemedText style={{ fontSize: 32, color: "#0369a1", textAlign: "center", width: width - 160, lineHeight: 46 }}>
-                          {t("lessons.no_meaning", "No meaning")}
-                        </ThemedText>
-                      )}
+                          )}
                       {backOptions.notes && card?.notes && (
                         <View
                           className="py-5 px-6 mb-4 rounded-2xl bg-amber-50 border border-amber-100"
@@ -749,10 +808,7 @@ const VocabularyFlashcardScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <LinearGradient
-        colors={["#9DE0FF", "#B8F5FF", "#E3FDFD"]}
-        style={{ flex: 1 }}
-      >
+      <LinearGradient colors={["#9DE0FF", "#B8F5FF", "#E3FDFD"]} style={{ flex: 1 }}>
         <View className="px-6 py-4 flex-row items-center justify-between">
           <TouchableOpacity onPress={() => router.back()} className="p-2">
             <ChevronLeft size={24} color="#1f2937" />
@@ -761,10 +817,7 @@ const VocabularyFlashcardScreen = () => {
             {t("content_list.flashcard.title")}
           </ThemedText>
           <View className="flex-row items-center gap-2">
-            <TouchableOpacity
-              onPress={() => setShowOptions(true)}
-              className="p-2 rounded-full bg-white/50"
-            >
+            <TouchableOpacity onPress={() => setShowOptions(true)} className="p-2 rounded-full bg-white/50">
               <Settings2 size={20} color="#1f2937" />
             </TouchableOpacity>
             <TouchableOpacity onPress={resetDeck} className="p-2">
@@ -778,10 +831,7 @@ const VocabularyFlashcardScreen = () => {
             {progressLabel}
           </ThemedText>
           <View className="w-full h-2 rounded-full bg-white/50 overflow-hidden">
-            <View
-              style={{ width: `${progress}%` }}
-              className="h-full bg-sky-400"
-            />
+            <View style={{ width: `${progress}%` }} className="h-full bg-sky-400" />
           </View>
         </View>
 
@@ -793,22 +843,18 @@ const VocabularyFlashcardScreen = () => {
           ) : totalCount === 0 ? (
             <View className="bg-white/70 rounded-3xl p-8 items-center">
               <ThemedText style={{ fontSize: 18, color: "#4b5563", textAlign: "center" }}>
-                {t(
-                  "content_list.flashcard.empty_state",
-                  "No data to display"
-                )}
+                {t("content_list.flashcard.empty_state", "No data to display")}
               </ThemedText>
             </View>
           ) : reviewedCount >= totalCount ? (
             <View className="bg-white/80 rounded-3xl p-8 items-center">
-              <ThemedText style={{ fontSize: 24, fontWeight: "bold", color: "#0284c7", textAlign: "center", marginBottom: 8 }}>
+              <ThemedText
+                style={{ fontSize: 24, fontWeight: "bold", color: "#0284c7", textAlign: "center", marginBottom: 8 }}
+              >
                 {t("content_list.flashcard.complete_title", "Completed!")}
               </ThemedText>
               <ThemedText style={{ fontSize: 16, color: "#4b5563", textAlign: "center" }}>
-                {t(
-                  "content_list.flashcard.complete_subtitle",
-                  "You can review again by tapping the refresh icon."
-                )}
+                {t("content_list.flashcard.complete_subtitle", "You can review again by tapping the refresh icon.")}
               </ThemedText>
             </View>
           ) : (
@@ -820,9 +866,7 @@ const VocabularyFlashcardScreen = () => {
               }}
             >
               {/* Stack các card phía sau */}
-              {previewIndices.map((cardIndex, arrayIndex) =>
-                renderCard(cardIndex, arrayIndex + 1, false)
-              )}
+              {previewIndices.map((cardIndex, arrayIndex) => renderCard(cardIndex, arrayIndex + 1, false))}
 
               {/* Card hiện tại (có thể tương tác) */}
               <PanGestureHandler
@@ -836,12 +880,7 @@ const VocabularyFlashcardScreen = () => {
                   style={{
                     position: "absolute",
                     width: "100%",
-                    transform: [
-                      { perspective: 1000 },
-                      { translateX },
-                      { translateY },
-                      { rotate },
-                    ],
+                    transform: [{ perspective: 1000 }, { translateX }, { translateY }, { rotate }],
                     opacity: cardOpacity,
                     zIndex: totalCount + 10,
                   }}
@@ -879,7 +918,15 @@ const VocabularyFlashcardScreen = () => {
             <View className="flex-1 bg-black/40 justify-center items-center px-6">
               <TouchableWithoutFeedback>
                 <View className="w-full max-w-md rounded-3xl bg-white p-6">
-                  <ThemedText style={{ fontSize: 18, fontWeight: "bold", color: "#1f2937", marginBottom: 16, textAlign: "center" }}>
+                  <ThemedText
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: "#1f2937",
+                      marginBottom: 16,
+                      textAlign: "center",
+                    }}
+                  >
                     {t("content_list.flashcard.options.title")}
                   </ThemedText>
 
@@ -1056,10 +1103,7 @@ const VocabularyFlashcardScreen = () => {
                     </View>
                   </View>
 
-                  <TouchableOpacity
-                    className="mt-6 py-3 rounded-2xl bg-gray-100"
-                    onPress={() => setShowOptions(false)}
-                  >
+                  <TouchableOpacity className="mt-6 py-3 rounded-2xl bg-gray-100" onPress={() => setShowOptions(false)}>
                     <ThemedText style={{ textAlign: "center", color: "#374151", fontWeight: "500" }}>
                       {t("content_list.flashcard.options.close")}
                     </ThemedText>

@@ -20,7 +20,7 @@ describe("toApiError", () => {
         error: "UNPROCESSABLE_ENTITY",
         message: "Dữ liệu không hợp lệ",
         errors: [{ field: "email", message: "Trường này là bắt buộc" }],
-      })
+      }),
     );
 
     expect(result).toMatchObject({
@@ -58,7 +58,7 @@ describe("getApiErrorMessage", () => {
 
   it("uses the backend message, or the fallback when there is none", () => {
     expect(getApiErrorMessage(httpError(401, { message: "Sai email hoặc mật khẩu" }), "x")).toBe(
-      "Sai email hoặc mật khẩu"
+      "Sai email hoặc mật khẩu",
     );
     expect(getApiErrorMessage(httpError(500, {}), "fallback")).toBe("fallback");
   });

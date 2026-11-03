@@ -1,155 +1,158 @@
-import AuthScreenLayout from '@components/layouts/AuthScreenLayout';
-import BackScreen from '@components/molecules/Back';
-import BounceButton from '@components/ui/BounceButton';
-import { AuthType } from '@constants/auth.enum';
-import { useMinimalAlert } from '@hooks/useMinimalAlert';
-import { IBackendResponse } from '@models/backend/common';
-import { ROUTES } from '@routes/routes';
-import authService from '@services/auth';
-import { useEmailSelector } from '@stores/user/user.selectors';
-import { getCheckEmailOutcome } from '@utils/auth.utils';
-import { saveSecureStorage } from '@utils/secure-storage';
-import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Image, Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import AuthScreenLayout from "@components/layouts/AuthScreenLayout";
+import BackScreen from "@components/molecules/Back";
+import BounceButton from "@components/ui/BounceButton";
+import { AuthType } from "@constants/auth.enum";
+import { useMinimalAlert } from "@hooks/useMinimalAlert";
+import { IBackendResponse } from "@models/backend/common";
+import { ROUTES } from "@routes/routes";
+import authService from "@services/auth";
+import { useEmailSelector } from "@stores/user/user.selectors";
+import { getCheckEmailOutcome } from "@utils/auth.utils";
+import { saveSecureStorage } from "@utils/secure-storage";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Image, Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
 export default function OTPScreen() {
-    /**
-     * Define variables
-     */
-    const { t } = useTranslation();
-    const { showAlert } = useMinimalAlert();
-    const email = useEmailSelector();
-    const { type } = useLocalSearchParams<{ type: string }>();
-    //-----------------------End-----------------------//
+  /**
+   * Define variables
+   */
+  const { t } = useTranslation();
+  const { showAlert } = useMinimalAlert();
+  const email = useEmailSelector();
+  const { type } = useLocalSearchParams<{ type: string }>();
+  //-----------------------End-----------------------//
 
-    const [timer, setTimer] = useState<number>(60);
+  const [timer, setTimer] = useState<number>(60);
 
-    /**
-     * Handle timer
-     */
-    useEffect(() => {
-        if (timer === 0) return;
-        const interval = setInterval(() => {
-            setTimer(prev => prev - 1);
-        }, 1000);
-        return () => clearInterval(interval);
-    }, [timer]);
-    //-----------------------End-----------------------//
+  /**
+   * Handle timer
+   */
+  useEffect(() => {
+    if (timer === 0) return;
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timer]);
+  //-----------------------End-----------------------//
 
-    /**
-     * Handle verify OTP
-     * Handle resend OTP
-     */
-    const [code, setCode] = useState<string>('');
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  /**
+   * Handle verify OTP
+   * Handle resend OTP
+   */
+  const [code, setCode] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-    const handleVerify = async () => {
-        if (code.length !== 6) return;
+  const handleVerify = async () => {
+    if (code.length !== 6) return;
 
-        setIsSubmitting(true);
-        try {
-            const res = await authService.verifyOtp({ email, code, type });
+    setIsSubmitting(true);
+    try {
+      const res = await authService.verifyOtp({ email, code, type });
 
-            if (res.data.statusCode === 201 && type === AuthType.REGISTER) {
-                showAlert(res.data.message, 'success');
-                setTimeout(() => {
-                    router.replace(ROUTES.AUTH.CREATE_ACCOUNT);
-                }, 100);
-            } else if (res.data.statusCode === 201 && type === AuthType.LOGIN) {
-                showAlert(res.data.message, 'success');
-                setTimeout(() => {
-                    router.replace(ROUTES.AUTH.PASSWORD);
-                }, 100);
-            } else if (res.data.statusCode === 200 && type === AuthType.FORGOT_PASSWORD) {
-                showAlert(res.data.message, 'success');
-                saveSecureStorage('accessToken', res.data.data.accessToken);
-                setTimeout(() => {
-                    router.replace(ROUTES.AUTH.RESET_PASSWORD);
-                }, 100);
-            }
-        } catch (error: any) {
-            showAlert(error.message, 'error');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+      if (res.data.statusCode === 201 && type === AuthType.REGISTER) {
+        showAlert(res.data.message, "success");
+        setTimeout(() => {
+          router.replace(ROUTES.AUTH.CREATE_ACCOUNT);
+        }, 100);
+      } else if (res.data.statusCode === 201 && type === AuthType.LOGIN) {
+        showAlert(res.data.message, "success");
+        setTimeout(() => {
+          router.replace(ROUTES.AUTH.PASSWORD);
+        }, 100);
+      } else if (res.data.statusCode === 200 && type === AuthType.FORGOT_PASSWORD) {
+        showAlert(res.data.message, "success");
+        saveSecureStorage("accessToken", res.data.data.accessToken);
+        setTimeout(() => {
+          router.replace(ROUTES.AUTH.RESET_PASSWORD);
+        }, 100);
+      }
+    } catch (error: any) {
+      showAlert(error.message, "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-    const handleResend = async () => {
-        if (timer > 0) return;
+  const handleResend = async () => {
+    if (timer > 0) return;
 
-        if (type === AuthType.FORGOT_PASSWORD) {
-            const res = await authService.forgotPassword({ email }) as IBackendResponse<any>
-            switch (res.data.statusCode) {
-                case 200:
-                    showAlert(t('auth.a-new-code-has-been-sent-to-your-email'), 'success');
-                    setTimer(60);
-                    break;
-            }
-        } else {
-            const res = await authService.checkEmail(email) as IBackendResponse<any>
+    if (type === AuthType.FORGOT_PASSWORD) {
+      const res = (await authService.forgotPassword({ email })) as IBackendResponse<any>;
+      switch (res.data.statusCode) {
+        case 200:
+          showAlert(t("auth.a-new-code-has-been-sent-to-your-email"), "success");
+          setTimer(60);
+          break;
+      }
+    } else {
+      const res = (await authService.checkEmail(email)) as IBackendResponse<any>;
 
-            if (getCheckEmailOutcome(res.data)?.requiresOtp) {
-                showAlert(t('auth.a-new-code-has-been-sent-to-your-email'), 'success');
-                setTimer(60);
-            }
-        }
-    };
-    //-----------------------End-----------------------//
+      if (getCheckEmailOutcome(res.data)?.requiresOtp) {
+        showAlert(t("auth.a-new-code-has-been-sent-to-your-email"), "success");
+        setTimer(60);
+      }
+    }
+  };
+  //-----------------------End-----------------------//
 
-    return (
-        <AuthScreenLayout>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View className="flex-1">
-                    <BackScreen title={t('auth.enter-code')} />
+  return (
+    <AuthScreenLayout>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View className="flex-1">
+          <BackScreen title={t("auth.enter-code")} />
 
-                    <View className="flex-1 px-5 pt-16">
-                        <View className="absolute inset-0 justify-center items-center -z-10">
-                            <Image source={require('../../../assets/images/PokeNihongoLogo.png')} className='w-80 h-52 object-contain opacity-20' />
-                        </View>
+          <View className="flex-1 px-5 pt-16">
+            <View className="absolute inset-0 justify-center items-center -z-10">
+              <Image
+                source={require("../../../assets/images/PokeNihongoLogo.png")}
+                className="w-80 h-52 object-contain opacity-20"
+              />
+            </View>
 
-                        <Text className="text-3xl font-bold text-white mb-2">{t('auth.enter-code')}</Text>
-                        <Text className="text-base text-white/80 mb-12">
-                            {t('auth.we-sent-a-6-digit-code-to')} {'\n'}
-                            <Text className="font-bold">{email}</Text>
-                        </Text>
+            <Text className="text-3xl font-bold text-white mb-2">{t("auth.enter-code")}</Text>
+            <Text className="text-base text-white/80 mb-12">
+              {t("auth.we-sent-a-6-digit-code-to")} {"\n"}
+              <Text className="font-bold">{email}</Text>
+            </Text>
 
-                        {/* Ô nhập OTP */}
-                        <TextInput
-                            value={code}
-                            onChangeText={setCode}
-                            className="text-white text-4xl text-center font-bold tracking-[16px]"
-                            maxLength={6}
-                            keyboardType="number-pad"
-                            autoFocus={true}
-                        />
-                        {/* Đường gạch chân giả */}
-                        <View className="w-full h-px bg-white/30 mt-2" />
+            {/* Ô nhập OTP */}
+            <TextInput
+              value={code}
+              onChangeText={setCode}
+              className="text-white text-4xl text-center font-bold tracking-[16px]"
+              maxLength={6}
+              keyboardType="number-pad"
+              autoFocus={true}
+            />
+            {/* Đường gạch chân giả */}
+            <View className="w-full h-px bg-white/30 mt-2" />
 
-                        <View className="flex-row justify-center mt-6">
-                            <Text className="text-base text-white/80">{t('auth.didnt-receive-a-code')} </Text>
-                            <TouchableOpacity onPress={handleResend} disabled={timer > 0}>
-                                <Text className={`text-base font-bold ${timer > 0 ? 'text-white/50' : 'text-white'}`}>
-                                    {t('auth.resend')} {timer > 0 ? `(${timer}s)` : ''}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+            <View className="flex-row justify-center mt-6">
+              <Text className="text-base text-white/80">{t("auth.didnt-receive-a-code")} </Text>
+              <TouchableOpacity onPress={handleResend} disabled={timer > 0}>
+                <Text className={`text-base font-bold ${timer > 0 ? "text-white/50" : "text-white"}`}>
+                  {t("auth.resend")} {timer > 0 ? `(${timer}s)` : ""}
+                </Text>
+              </TouchableOpacity>
+            </View>
 
-                        <View className="mt-auto pb-5">
-                            <BounceButton
-                                variant="solid"
-                                loading={isSubmitting}
-                                // Nút bị vô hiệu hóa khi chưa nhập đủ 6 số
-                                disabled={code.length !== 6 || isSubmitting}
-                                onPress={handleVerify}
-                            >
-                                <Text className="text-white font-bold text-lg">{t('auth.verify')}</Text>
-                            </BounceButton>
-                        </View>
-                    </View>
-                </View>
-            </TouchableWithoutFeedback>
-        </AuthScreenLayout>
-    );
+            <View className="mt-auto pb-5">
+              <BounceButton
+                variant="solid"
+                loading={isSubmitting}
+                // Nút bị vô hiệu hóa khi chưa nhập đủ 6 số
+                disabled={code.length !== 6 || isSubmitting}
+                onPress={handleVerify}
+              >
+                <Text className="text-white font-bold text-lg">{t("auth.verify")}</Text>
+              </BounceButton>
+            </View>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    </AuthScreenLayout>
+  );
 }

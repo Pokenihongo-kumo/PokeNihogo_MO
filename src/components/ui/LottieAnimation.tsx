@@ -42,7 +42,7 @@ export interface LottieAnimationProps {
 
 /**
  * Component để hiển thị Lottie animation
- * 
+ *
  * @example
  * // Sử dụng file JSON local
  * <LottieAnimation
@@ -52,7 +52,7 @@ export interface LottieAnimationProps {
  *   width={200}
  *   height={200}
  * />
- * 
+ *
  * @example
  * // Sử dụng URL từ LottieFiles
  * <LottieAnimation
@@ -78,10 +78,7 @@ export default function LottieAnimation({
         autoPlay={autoPlay}
         loop={loop}
         speed={speed}
-        style={[
-          width && height ? { width, height } : styles.defaultSize,
-          style,
-        ]}
+        style={[width && height ? { width, height } : styles.defaultSize, style]}
         onAnimationFinish={onAnimationFinish}
       />
     </View>
@@ -98,4 +95,3 @@ const styles = StyleSheet.create({
     height: 200,
   },
 });
-

@@ -7,17 +7,22 @@ import { useQuery } from "@tanstack/react-query";
  * @returns Shop banner data
  */
 export const useShopBanner = () => {
-    const language = useGlobalStore((state) => state.language);
-    const { data: shopBanner, isLoading, isError, error } = useQuery({
-        queryKey: ['shop-banner', language],
-        queryFn: () => shopBannerService.getShopBannerToday(),
-    });
+  const language = useGlobalStore((state) => state.language);
+  const {
+    data: shopBanner,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["shop-banner", language],
+    queryFn: () => shopBannerService.getShopBannerToday(),
+  });
 
-    return {
-        shopBanner: shopBanner?.data.data,
-        isLoading,
-        isError,
-        error,
-    }
-}
+  return {
+    shopBanner: shopBanner?.data.data,
+    isLoading,
+    isError,
+    error,
+  };
+};
 //------------------------End------------------------//

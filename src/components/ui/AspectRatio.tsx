@@ -1,9 +1,9 @@
-import React from 'react'
-import { View, ViewProps } from 'react-native'
+import React from "react";
+import { View, ViewProps } from "react-native";
 
 interface AspectRatioProps extends ViewProps {
-  children: React.ReactNode
-  ratio?: number
+  children: React.ReactNode;
+  ratio?: number;
 }
 
 const AspectRatio = ({ children, ratio = 1, style, ...props }: AspectRatioProps) => {
@@ -12,7 +12,7 @@ const AspectRatio = ({ children, ratio = 1, style, ...props }: AspectRatioProps)
       style={[
         {
           aspectRatio: ratio,
-          overflow: 'hidden',
+          overflow: "hidden",
         },
         style,
       ]}
@@ -20,9 +20,8 @@ const AspectRatio = ({ children, ratio = 1, style, ...props }: AspectRatioProps)
     >
       {children}
     </View>
-  )
-}
+  );
+};
 
-export { AspectRatio }
-export type { AspectRatioProps }
-
+export { AspectRatio };
+export type { AspectRatioProps };

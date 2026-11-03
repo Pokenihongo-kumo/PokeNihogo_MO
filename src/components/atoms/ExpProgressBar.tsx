@@ -21,8 +21,7 @@ export default function ExpProgressBar({
 }: ExpProgressBarProps) {
   // expToNextLevel is now nextLevel.requiredExp (total exp needed to reach next level)
   const totalExp = expToNextLevel;
-  const percentage =
-    totalExp > 0 ? (currentExp / totalExp) * 100 : 0;
+  const percentage = totalExp > 0 ? (currentExp / totalExp) * 100 : 0;
   const expNeeded = Math.max(0, totalExp - currentExp);
   const isLarge = size === "large";
   const { t } = useTranslation();
@@ -30,14 +29,8 @@ export default function ExpProgressBar({
     <View style={[styles.container, style]}>
       {showText && (
         <View style={styles.textContainer}>
-          <Text
-            style={[
-              styles.progressText,
-              isLarge ? styles.progressTextLarge : styles.progressTextSmall,
-            ]}
-          >
-            {currentExp?.toLocaleString()} / {totalExp.toLocaleString()}{" "}
-            {t("profile.xp")}
+          <Text style={[styles.progressText, isLarge ? styles.progressTextLarge : styles.progressTextSmall]}>
+            {currentExp?.toLocaleString()} / {totalExp.toLocaleString()} {t("profile.xp")}
           </Text>
           {/* {isLarge && (
             <Text style={styles.percentageText}>{percentage.toFixed(1)}%</Text>
@@ -45,12 +38,7 @@ export default function ExpProgressBar({
         </View>
       )}
 
-      <View
-        style={[
-          styles.progressBarBg,
-          isLarge ? styles.progressBarBgLarge : styles.progressBarBgSmall,
-        ]}
-      >
+      <View style={[styles.progressBarBg, isLarge ? styles.progressBarBgLarge : styles.progressBarBgSmall]}>
         <View
           style={[
             styles.progressBarFill,
@@ -62,9 +50,7 @@ export default function ExpProgressBar({
 
       {isLarge && showText && (
         <Text style={styles.remainingText}>
-          {expNeeded.toLocaleString()} {t("profile.xp")}{" "}
-          {t("profile.to")} {t("profile.level")}{" "}
-          {currentLevel + 1}
+          {expNeeded.toLocaleString()} {t("profile.xp")} {t("profile.to")} {t("profile.level")} {currentLevel + 1}
         </Text>
       )}
     </View>

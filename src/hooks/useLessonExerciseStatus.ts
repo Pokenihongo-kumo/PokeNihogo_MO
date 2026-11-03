@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
-export type ExerciseStatus = 'IN_PROGRESS' | 'COMPLETED' | 'ABANDONED' | 'FAIL';
+export type ExerciseStatus = "IN_PROGRESS" | "COMPLETED" | "ABANDONED" | "FAIL";
 
 export interface LessonExerciseStatus {
   id: string;
@@ -16,7 +16,7 @@ export interface ExerciseStatusResponse {
 
 export function useLessonExerciseStatus(lessonId: string) {
   return useQuery<ExerciseStatusResponse>({
-    queryKey: ['lesson-exercise-status', lessonId],
+    queryKey: ["lesson-exercise-status", lessonId],
     queryFn: async () => {
       const { data } = await axios.get(`/api/lesson/${lessonId}/exercises-status`);
       return data as ExerciseStatusResponse;

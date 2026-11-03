@@ -3,7 +3,7 @@
 export const getJLPTLevelColor = (slug: string): string => {
   const colorMap: Record<string, string> = {
     "jlpt-n5": "#10b981",
-    "jlpt-n4": "#3b82f6", 
+    "jlpt-n4": "#3b82f6",
     "jlpt-n3": "#8b5cf6",
     "jlpt-n2": "#f59e0b",
     "jlpt-n1": "#ef4444",
@@ -84,11 +84,11 @@ export const getRarityColor = (rarity: string): string => {
 export const getCategoryIcon = (categoryName: string): string => {
   const name = categoryName.toLowerCase();
   const iconMap: Record<string, string> = {
-    "n5": "1.circle.fill",
-    "n4": "2.circle.fill", 
-    "n3": "3.circle.fill",
-    "n2": "4.circle.fill",
-    "n1": "5.circle.fill",
+    n5: "1.circle.fill",
+    n4: "2.circle.fill",
+    n3: "3.circle.fill",
+    n2: "4.circle.fill",
+    n1: "5.circle.fill",
     vocabulary: "textformat.abc",
     grammar: "textformat.123",
     reading: "book.fill",

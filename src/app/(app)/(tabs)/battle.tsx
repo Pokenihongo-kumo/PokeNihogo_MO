@@ -19,10 +19,7 @@ import { BATTLE_STATUS } from "@constants/battle.enum";
 import useAuth from "@hooks/useAuth";
 import { useJoinNewSeason, useMatchTracking } from "@hooks/useBattle";
 import { useUserStatsSeason } from "@hooks/useSeason";
-import {
-  IBattleMatchFound,
-  IBattleMatchTrackingResponse,
-} from "@models/battle/battle.response";
+import { IBattleMatchFound, IBattleMatchTrackingResponse } from "@models/battle/battle.response";
 import { ROUTES } from "@routes/routes";
 import battleService from "@services/battle";
 import { useAuthStore } from "@stores/auth/auth.config";
@@ -32,15 +29,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { Crown, History, Info, Trophy } from "lucide-react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Alert,
-  Animated,
-  Easing,
-  ImageBackground,
-  StatusBar,
-  StyleSheet,
-  View,
-} from "react-native";
+import { Alert, Animated, Easing, ImageBackground, StatusBar, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Socket } from "socket.io-client";
 import { getApiErrorMessage } from "@utils/api-error.utils";
@@ -52,8 +41,7 @@ export default function BattleLobbyScreen() {
     returnObjects: true,
   });
   const queueMessages =
-    Array.isArray(queueMessagesTranslation) &&
-      queueMessagesTranslation.length > 0
+    Array.isArray(queueMessagesTranslation) && queueMessagesTranslation.length > 0
       ? (queueMessagesTranslation as string[])
       : [t("battle.lobby.queue_status.searching")];
   const [showHistory, setShowHistory] = useState(false);
@@ -65,11 +53,7 @@ export default function BattleLobbyScreen() {
   const insets = useSafeAreaInsets();
 
   // Season state management
-  const {
-    data: seasonData,
-    responseType,
-    isLoading: isLoadingSeason,
-  } = useUserStatsSeason();
+  const { data: seasonData, responseType, isLoading: isLoadingSeason } = useUserStatsSeason();
   const [showSeasonEndedModal, setShowSeasonEndedModal] = useState(false);
   const [showNewSeasonModal, setShowNewSeasonModal] = useState(false);
   const [showFirstTimeModal, setShowFirstTimeModal] = useState(false);
@@ -82,10 +66,7 @@ export default function BattleLobbyScreen() {
     data: matchTrackingData,
     refetch: refetchMatchTracking,
     isLoading: isLoadingMatchTracking,
-  } = useMatchTracking(
-    responseType === "ACTIVE",
-    responseType === "ACTIVE" ? 5000 : 0
-  );
+  } = useMatchTracking(responseType === "ACTIVE", responseType === "ACTIVE" ? 5000 : 0);
 
   const hasCheckedMatchTracking = useRef(false);
   const lastProcessedMatchId = useRef<number | null>(null);
@@ -102,7 +83,7 @@ export default function BattleLobbyScreen() {
         duration: 2000,
         easing: Easing.linear,
         useNativeDriver: true,
-      })
+      }),
     );
     loop.start();
     return () => loop.stop();
@@ -124,7 +105,7 @@ export default function BattleLobbyScreen() {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
     loop.start();
     return () => loop.stop();
@@ -142,18 +123,10 @@ export default function BattleLobbyScreen() {
     setStartRoundPayload,
   } = useMatchingStore();
 
-  const clearLastMatchResult = useMatchingStore(
-    (s) => (s as any).clearLastMatchResult
-  );
-  const setLastMatchResult = useMatchingStore(
-    (s) => (s as any).setLastMatchResult
-  );
-  const [matchedPlayer, setMatchedPlayer] = useState<IBattleMatchFound | null>(
-    null
-  );
-  const [statusMatch, setStatusMatch] = useState<"reject" | "accept" | null>(
-    null
-  );
+  const clearLastMatchResult = useMatchingStore((s) => (s as any).clearLastMatchResult);
+  const setLastMatchResult = useMatchingStore((s) => (s as any).setLastMatchResult);
+  const [matchedPlayer, setMatchedPlayer] = useState<IBattleMatchFound | null>(null);
+  const [statusMatch, setStatusMatch] = useState<"reject" | "accept" | null>(null);
 
   // --- ACTIONS ---
   const handleStartRanked = async () => {
@@ -188,11 +161,8 @@ export default function BattleLobbyScreen() {
   const handleOpenLeaderboard = () => setShowLeaderboard(true);
   const handleViewTopRewards = () => setShowRewards(true);
   const handleViewRankInfo = () =>
-    Alert.alert(
-      t("battle.lobby.alerts.rank_info_title"),
-      t("battle.lobby.alerts.rank_info_message")
-    );
-  const handleSeasonEndedContinue = () => { };
+    Alert.alert(t("battle.lobby.alerts.rank_info_title"), t("battle.lobby.alerts.rank_info_message"));
+  const handleSeasonEndedContinue = () => {};
 
   const handleClaimRewardComplete = async () => {
     setShowSeasonEndedModal(false);
@@ -237,10 +207,7 @@ export default function BattleLobbyScreen() {
 
   // --- MATCH TRACKING HANDLER ---
   const handleMatchTrackingData = useCallback(
-    (
-      data: IBattleMatchTrackingResponse | undefined,
-      forceProcess: boolean = false
-    ) => {
+    (data: IBattleMatchTrackingResponse | undefined, forceProcess: boolean = false) => {
       // [FIX 2] Nếu cờ chặn đang bật, TUYỆT ĐỐI KHÔNG XỬ LÝ (tránh hiện modal do data cũ)
       if (!data || isBlockingUpdates.current) return;
 
@@ -252,27 +219,16 @@ export default function BattleLobbyScreen() {
         lastProcessedMatchId.current === currentMatchId &&
         lastProcessedStatus.current === currentStatus;
 
-      if (
-        !forceProcess &&
-        isSameMatchAndStatus &&
-        data.type !== BATTLE_STATUS.MATCH_TRACKING_STATUS.NO_ACTIVE_MATCH
-      ) {
+      if (!forceProcess && isSameMatchAndStatus && data.type !== BATTLE_STATUS.MATCH_TRACKING_STATUS.NO_ACTIVE_MATCH) {
         return;
       }
 
-      console.log(
-        "[MATCH_TRACKING] Processing:",
-        currentStatus,
-        "ID:",
-        currentMatchId
-      );
+      console.log("[MATCH_TRACKING] Processing:", currentStatus, "ID:", currentMatchId);
 
       if (currentMatchId) {
         lastProcessedMatchId.current = currentMatchId;
         lastProcessedStatus.current = currentStatus;
-      } else if (
-        data.type === BATTLE_STATUS.MATCH_TRACKING_STATUS.NO_ACTIVE_MATCH
-      ) {
+      } else if (data.type === BATTLE_STATUS.MATCH_TRACKING_STATUS.NO_ACTIVE_MATCH) {
         lastProcessedMatchId.current = null;
         lastProcessedStatus.current = null;
       }
@@ -285,12 +241,7 @@ export default function BattleLobbyScreen() {
 
       switch (data.type) {
         case BATTLE_STATUS.MATCH_TRACKING_STATUS.MATCH_FOUND:
-          if (
-            data.match &&
-            data.opponent &&
-            data.participant &&
-            !data.participant.hasAccepted
-          ) {
+          if (data.match && data.opponent && data.participant && !data.participant.hasAccepted) {
             const matchId = data.matchId || data.match.id;
             const matchFoundPayload: IBattleMatchFound = {
               type: BATTLE_STATUS.BATTLE_TYPE_EVENT.MATCH_FOUND,
@@ -327,13 +278,9 @@ export default function BattleLobbyScreen() {
           const pickPokemonMatchId = data.matchId || data.match?.id;
           if (!pickPokemonMatchId) break;
 
-          const pickRoundNumber =
-            (data as any).round?.roundNumber || data.roundNumber || "ONE";
+          const pickRoundNumber = (data as any).round?.roundNumber || data.roundNumber || "ONE";
 
-          console.log(
-            "[MATCH_TRACKING] -> Pick Pokemon. Round:",
-            pickRoundNumber
-          );
+          console.log("[MATCH_TRACKING] -> Pick Pokemon. Round:", pickRoundNumber);
 
           if (socket && pickPokemonMatchId) {
             socket.emit("join-matching-room", { matchId: pickPokemonMatchId });
@@ -368,8 +315,7 @@ export default function BattleLobbyScreen() {
           const arenaMatchId = data.matchId || data.match?.id;
           if (!arenaMatchId) break;
 
-          const arenaRoundNumber =
-            (data as any).round?.roundNumber || data.roundNumber || "ONE";
+          const arenaRoundNumber = (data as any).round?.roundNumber || data.roundNumber || "ONE";
 
           console.log("[MATCH_TRACKING] -> Arena. Round:", arenaRoundNumber);
 
@@ -416,13 +362,12 @@ export default function BattleLobbyScreen() {
       socketRef,
       accessToken,
       setStartRoundPayload,
-    ]
+    ],
   );
 
   const checkMatchTrackingAndNavigate = useCallback(() => {
     if (hasCheckedMatchTracking.current) return;
-    if (responseType !== "ACTIVE" || isLoadingSeason || isLoadingMatchTracking)
-      return;
+    if (responseType !== "ACTIVE" || isLoadingSeason || isLoadingMatchTracking) return;
 
     const data = matchTrackingData as IBattleMatchTrackingResponse | undefined;
     if (data) {
@@ -432,13 +377,7 @@ export default function BattleLobbyScreen() {
         hasCheckedMatchTracking.current = false;
       }, 1000);
     }
-  }, [
-    responseType,
-    isLoadingSeason,
-    isLoadingMatchTracking,
-    matchTrackingData,
-    handleMatchTrackingData,
-  ]);
+  }, [responseType, isLoadingSeason, isLoadingMatchTracking, matchTrackingData, handleMatchTrackingData]);
 
   const hasInitializedSeasonCheck = useRef(false);
   const isBattleScreenFocused = useRef(false);
@@ -447,25 +386,14 @@ export default function BattleLobbyScreen() {
   useEffect(() => {
     if (isBlockingUpdates.current) return; // Chặn ngay!
 
-    if (
-      matchTrackingData &&
-      responseType === "ACTIVE" &&
-      !isLoadingSeason &&
-      !isLoadingMatchTracking
-    ) {
+    if (matchTrackingData && responseType === "ACTIVE" && !isLoadingSeason && !isLoadingMatchTracking) {
       const data = matchTrackingData as IBattleMatchTrackingResponse;
       const currentMatchId = data.matchId || data.match?.id;
       const currentStatus = data.type;
-      const requiresNavigation =
-        data.type !== BATTLE_STATUS.MATCH_TRACKING_STATUS.NO_ACTIVE_MATCH;
-      const isNewMatch =
-        !lastProcessedMatchId.current ||
-        lastProcessedMatchId.current !== currentMatchId;
+      const requiresNavigation = data.type !== BATTLE_STATUS.MATCH_TRACKING_STATUS.NO_ACTIVE_MATCH;
+      const isNewMatch = !lastProcessedMatchId.current || lastProcessedMatchId.current !== currentMatchId;
       const isDifferentStatus = lastProcessedStatus.current !== currentStatus;
-      const shouldProcess =
-        !hasCheckedMatchTracking.current &&
-        requiresNavigation &&
-        (isNewMatch || isDifferentStatus);
+      const shouldProcess = !hasCheckedMatchTracking.current && requiresNavigation && (isNewMatch || isDifferentStatus);
 
       if (shouldProcess) {
         hasCheckedMatchTracking.current = true;
@@ -475,13 +403,7 @@ export default function BattleLobbyScreen() {
         }, 1000);
       }
     }
-  }, [
-    matchTrackingData,
-    responseType,
-    isLoadingSeason,
-    isLoadingMatchTracking,
-    handleMatchTrackingData,
-  ]);
+  }, [matchTrackingData, responseType, isLoadingSeason, isLoadingMatchTracking, handleMatchTrackingData]);
 
   // --- [FIX 4] useFocusEffect: LOGIC QUAN TRỌNG NHẤT ---
   useFocusEffect(
@@ -511,11 +433,7 @@ export default function BattleLobbyScreen() {
         // Đợi một chút nếu season chưa load xong (vẫn giữ trạng thái Block)
         if (responseType !== "ACTIVE" || isLoadingSeason) {
           const retryTimer = setTimeout(async () => {
-            if (
-              responseType === "ACTIVE" &&
-              !isLoadingSeason &&
-              !hasCheckedMatchTracking.current
-            ) {
+            if (responseType === "ACTIVE" && !isLoadingSeason && !hasCheckedMatchTracking.current) {
               await performCheck();
             }
           }, 1000);
@@ -530,9 +448,7 @@ export default function BattleLobbyScreen() {
 
           // 5. Gọi API lấy dữ liệu MỚI
           const trackingResult = await refetchMatchTracking();
-          const data = trackingResult.data?.data?.data as
-            | IBattleMatchTrackingResponse
-            | undefined;
+          const data = trackingResult.data?.data?.data as IBattleMatchTrackingResponse | undefined;
 
           // 6. MỞ CỔNG: Chỉ sau khi API có kết quả mới thì mới cho phép xử lý
           console.log("Refetch done. Unblocking updates.");
@@ -562,13 +478,7 @@ export default function BattleLobbyScreen() {
         isBlockingUpdates.current = true;
         setShowAcceptModal(false);
       };
-    }, [
-      responseType,
-      isLoadingSeason,
-      refetchMatchTracking,
-      handleMatchTrackingData,
-      queryClient,
-    ])
+    }, [responseType, isLoadingSeason, refetchMatchTracking, handleMatchTrackingData, queryClient]),
   );
 
   useEffect(() => {
@@ -611,9 +521,7 @@ export default function BattleLobbyScreen() {
           showGlobalMatchFound(payload, match.id.toString());
         }
       }
-      if (
-        payload?.type === BATTLE_STATUS.BATTLE_TYPE_EVENT.MATCH_STATUS_UPDATE
-      ) {
+      if (payload?.type === BATTLE_STATUS.BATTLE_TYPE_EVENT.MATCH_STATUS_UPDATE) {
         if (payload.status === "IN_PROGRESS" && payload.matchId) {
           socket.emit("join-matching-room", { matchId: payload.matchId });
           socket.emit("join-user-match-room", { matchId: payload.matchId });
@@ -626,7 +534,7 @@ export default function BattleLobbyScreen() {
           hideGlobalMatchFound();
           try {
             clearLastMatchResult();
-          } catch (e) { }
+          } catch (e) {}
           queryClient.invalidateQueries({ queryKey: ["list-match-round"] });
           queryClient.invalidateQueries({
             queryKey: ["list-user-pokemon-round"],
@@ -646,7 +554,7 @@ export default function BattleLobbyScreen() {
           hideGlobalMatchFound();
           Alert.alert(
             t("battle.lobby.alerts.match_cancelled_title"),
-            payload.message || t("battle.lobby.alerts.match_cancelled_default")
+            payload.message || t("battle.lobby.alerts.match_cancelled_default"),
           );
         }
       }
@@ -660,9 +568,7 @@ export default function BattleLobbyScreen() {
         if (payload.reason || payload.message)
           Alert.alert(
             t("common.error"),
-            payload.reason ||
-            payload.message ||
-            t("battle.lobby.alerts.queue_error_message")
+            payload.reason || payload.message || t("battle.lobby.alerts.queue_error_message"),
           );
       }
     };
@@ -681,7 +587,7 @@ export default function BattleLobbyScreen() {
             params: { matchId: String(matchId) },
           } as any);
         }
-      } catch (e) { }
+      } catch (e) {}
     };
     socket.on("match-completed", onMatchCompleted);
 
@@ -709,11 +615,7 @@ export default function BattleLobbyScreen() {
         imageStyle={styles.bgImage}
       >
         <TWLinearGradient
-          colors={[
-            "rgba(17,24,39,0.85)",
-            "rgba(17,24,39,0.6)",
-            "rgba(17,24,39,0.85)",
-          ]}
+          colors={["rgba(17,24,39,0.85)", "rgba(17,24,39,0.6)", "rgba(17,24,39,0.85)"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.overlay}
@@ -736,29 +638,19 @@ export default function BattleLobbyScreen() {
             onPress={() => setShowHistory(true)}
           >
             <History size={16} color="#22d3ee" />
-            <ThemedText
-              style={{ color: "#22d3ee", fontSize: 13, fontWeight: "600" }}
-            >
+            <ThemedText style={{ color: "#22d3ee", fontSize: 13, fontWeight: "600" }}>
               {t("battle.lobby.history_button")}
             </ThemedText>
           </HapticPressable>
         </View>
         <View className="flex-1 items-center justify-center">
           <View className="items-center justify-center">
-            <GlowingRingEffect
-              color="#22d3ee"
-              ringSize={260}
-              particleCount={18}
-            />
+            <GlowingRingEffect color="#22d3ee" ringSize={260} particleCount={18} />
             <View className="absolute items-center gap-2">
               <View className="flex-row items-center gap-5 mt-2">
                 <View className="items-center gap-1">
                   <Animated.View style={{ transform: [{ scale: pulse }] }}>
-                    <UserAvatar
-                      avatar={user?.data?.avatar}
-                      name={user?.data?.name || ""}
-                      size="large"
-                    />
+                    <UserAvatar avatar={user?.data?.avatar} name={user?.data?.name || ""} size="large" />
                   </Animated.View>
                   <ThemedText
                     style={{
@@ -803,9 +695,7 @@ export default function BattleLobbyScreen() {
                       fontWeight: "600",
                     }}
                   >
-                    {inQueue
-                      ? t("battle.lobby.queue_status.searching")
-                      : t("battle.lobby.queue_status.waiting")}
+                    {inQueue ? t("battle.lobby.queue_status.searching") : t("battle.lobby.queue_status.waiting")}
                   </ThemedText>
                 </View>
               </View>
@@ -813,9 +703,7 @@ export default function BattleLobbyScreen() {
                 <HapticPressable
                   className="rounded-full overflow-hidden"
                   onPress={handleStartRanked}
-                  disabled={
-                    inQueue || responseType !== "ACTIVE" || isLoadingSeason
-                  }
+                  disabled={inQueue || responseType !== "ACTIVE" || isLoadingSeason}
                 >
                   <TWLinearGradient
                     colors={
@@ -845,9 +733,7 @@ export default function BattleLobbyScreen() {
                           letterSpacing: 1.2,
                         }}
                       >
-                        {inQueue
-                          ? t("battle.lobby.buttons.queueing")
-                          : t("battle.lobby.buttons.find_match")}
+                        {inQueue ? t("battle.lobby.buttons.queueing") : t("battle.lobby.buttons.find_match")}
                       </ThemedText>
                     </Animated.View>
                   </TWLinearGradient>
@@ -857,22 +743,14 @@ export default function BattleLobbyScreen() {
                     className="px-5 py-3 rounded-full border border-red-400/40 bg-red-500/20"
                     onPress={handleCancelQueue}
                   >
-                    <ThemedText style={{ color: "#fca5a5", fontWeight: "700" }}>
-                      {t("common.cancel")}
-                    </ThemedText>
+                    <ThemedText style={{ color: "#fca5a5", fontWeight: "700" }}>{t("common.cancel")}</ThemedText>
                   </HapticPressable>
                 ) : null}
               </View>
             </View>
           </View>
           <View className="mt-6">
-            {inQueue ? (
-              <TypingText
-                messages={queueMessages}
-                loop
-                textStyle={{ color: "#93c5fd" }}
-              />
-            ) : null}
+            {inQueue ? <TypingText messages={queueMessages} loop textStyle={{ color: "#93c5fd" }} /> : null}
           </View>
         </View>
         <View className="px-5 pb-6">
@@ -883,9 +761,7 @@ export default function BattleLobbyScreen() {
             >
               <View className="flex-row items-center gap-2 mb-1">
                 <Trophy size={18} color="#22d3ee" />
-                <ThemedText
-                  style={{ color: "#e5e7eb", fontWeight: "700", fontSize: 14 }}
-                >
+                <ThemedText style={{ color: "#e5e7eb", fontWeight: "700", fontSize: 14 }}>
                   {t("battle.lobby.sections.leaderboard_title")}
                 </ThemedText>
               </View>
@@ -899,9 +775,7 @@ export default function BattleLobbyScreen() {
             >
               <View className="flex-row items-center gap-2 mb-1">
                 <Crown size={18} color="#fbbf24" />
-                <ThemedText
-                  style={{ color: "#e5e7eb", fontWeight: "700", fontSize: 14 }}
-                >
+                <ThemedText style={{ color: "#e5e7eb", fontWeight: "700", fontSize: 14 }}>
                   {t("battle.lobby.sections.rewards_title")}
                 </ThemedText>
               </View>
@@ -916,9 +790,7 @@ export default function BattleLobbyScreen() {
           >
             <View className="flex-row items-center gap-2 mb-1">
               <Info size={18} color="#60a5fa" />
-              <ThemedText
-                style={{ color: "#e5e7eb", fontWeight: "700", fontSize: 14 }}
-              >
+              <ThemedText style={{ color: "#e5e7eb", fontWeight: "700", fontSize: 14 }}>
                 {t("battle.lobby.sections.rank_info_title")}
               </ThemedText>
             </View>
@@ -929,19 +801,9 @@ export default function BattleLobbyScreen() {
         </View>
         <View pointerEvents="none" style={styles.scanline} />
       </ImageBackground>
-      <ModalBattleHistory
-        visible={showHistory}
-        onRequestClose={() => setShowHistory(false)}
-      />
-      <ModalLeaderboard
-        visible={showLeaderboard}
-        onRequestClose={() => setShowLeaderboard(false)}
-        rankName="N5"
-      />
-      <ModalRewardLeaderboard
-        visible={showRewards}
-        onRequestClose={() => setShowRewards(false)}
-      />
+      <ModalBattleHistory visible={showHistory} onRequestClose={() => setShowHistory(false)} />
+      <ModalLeaderboard visible={showLeaderboard} onRequestClose={() => setShowLeaderboard(false)} rankName="N5" />
+      <ModalRewardLeaderboard visible={showRewards} onRequestClose={() => setShowRewards(false)} />
       <ModalBattleAccept
         showAcceptModal={showAcceptModal}
         matchedPlayer={matchedPlayer as IBattleMatchFound}

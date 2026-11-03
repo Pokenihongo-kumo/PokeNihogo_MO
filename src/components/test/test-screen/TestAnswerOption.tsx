@@ -10,13 +10,7 @@ interface TestAnswerOptionProps {
   onPress: () => void;
 }
 
-export const TestAnswerOption: React.FC<TestAnswerOptionProps> = ({
-  text,
-  index,
-  isSelected,
-  scaleAnim,
-  onPress,
-}) => {
+export const TestAnswerOption: React.FC<TestAnswerOptionProps> = ({ text, index, isSelected, scaleAnim, onPress }) => {
   return (
     <Animated.View
       style={[
@@ -32,12 +26,8 @@ export const TestAnswerOption: React.FC<TestAnswerOptionProps> = ({
         style={[styles.optionButton, isSelected && styles.optionSelected]}
       >
         <View style={styles.optionContent}>
-          <View
-            style={[styles.optionCircle, isSelected && styles.circleSelected]}
-          >
-            <Text style={styles.optionLabel}>
-              {String.fromCharCode(65 + index)}
-            </Text>
+          <View style={[styles.optionCircle, isSelected && styles.circleSelected]}>
+            <Text style={styles.optionLabel}>{String.fromCharCode(65 + index)}</Text>
           </View>
           <Text style={styles.optionText}>{text}</Text>
         </View>

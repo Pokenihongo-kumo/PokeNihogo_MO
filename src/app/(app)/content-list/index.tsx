@@ -14,17 +14,7 @@ import * as Speech from "expo-speech";
 import { ChevronLeft, Pencil, Sparkles, Volume2, X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Alert,
-  Animated,
-  Dimensions,
-  Easing,
-  Modal,
-  Platform,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Animated, Dimensions, Easing, Modal, Platform, ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
@@ -32,10 +22,7 @@ const { width } = Dimensions.get("window");
 // Helper: Play audio from URL
 const playAudio = async (url: string) => {
   try {
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: url },
-      { shouldPlay: true }
-    );
+    const { sound } = await Audio.Sound.createAsync({ uri: url }, { shouldPlay: true });
     sound.setOnPlaybackStatusUpdate((status) => {
       if (status.isLoaded && status.didJustFinish) {
         sound.unloadAsync();
@@ -95,13 +82,7 @@ const ModernCard = ({ children, style }: any) => (
 );
 
 // --- Expandable Vocabulary Card (Flip Card) ---
-const ExpandableVocabularyCard = ({
-  item,
-  index,
-}: {
-  item: any;
-  index: number;
-}) => {
+const ExpandableVocabularyCard = ({ item, index }: { item: any; index: number }) => {
   const { t } = useTranslation();
   const [isFlipped, setIsFlipped] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -343,18 +324,10 @@ const ExpandableVocabularyCard = ({
 };
 
 // --- Expandable Grammar Card (Flip Card) ---
-const ExpandableGrammarCard = ({
-  item,
-  index,
-}: {
-  item: any;
-  index: number;
-}) => {
+const ExpandableGrammarCard = ({ item, index }: { item: any; index: number }) => {
   return (
     <View style={{ width: "100%", top: 7 }}>
-      <ModernCardExpandable
-        style={{ paddingTop: 28, paddingBottom: 28, paddingHorizontal: 20 }}
-      >
+      <ModernCardExpandable style={{ paddingTop: 28, paddingBottom: 28, paddingHorizontal: 20 }}>
         <View
           style={{
             minHeight: 160,
@@ -396,8 +369,7 @@ const ExpandableKanjiCard = ({
   const [isFlipped, setIsFlipped] = useState(false);
   const flipAnim = useRef(new Animated.Value(0)).current;
 
-  const meaning =
-    item.meaning?.split("##")[0] || item.meaning || t("lessons.no_meaning");
+  const meaning = item.meaning?.split("##")[0] || item.meaning || t("lessons.no_meaning");
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -459,9 +431,7 @@ const ExpandableKanjiCard = ({
           ]}
           pointerEvents={isFlipped ? "none" : "auto"}
         >
-          <ModernCardExpandable
-            style={{ paddingTop: 24, paddingBottom: 24, paddingHorizontal: 20 }}
-          >
+          <ModernCardExpandable style={{ paddingTop: 24, paddingBottom: 24, paddingHorizontal: 20 }}>
             <TouchableOpacity onPress={handlePress} activeOpacity={0.9}>
               <View
                 style={{
@@ -626,11 +596,7 @@ const VocabularyCard = ({ item, index }: { item: any; index: number }) => {
             )}
           </View>
           {meanings.length > 0 && (
-            <ThemedText
-              style={{ fontSize: 16, color: "#374151", lineHeight: 22 }}
-            >
-              {meanings[0]}
-            </ThemedText>
+            <ThemedText style={{ fontSize: 16, color: "#374151", lineHeight: 22 }}>{meanings[0]}</ThemedText>
           )}
         </View>
         <TouchableOpacity
@@ -684,13 +650,8 @@ const GrammarListCard = ({ item, index }: { item: any; index: number }) => {
         )}
         {item.usage && (
           <View className="bg-cyan-50 p-3 rounded-xl mt-2">
-            <ThemedText
-              style={{ fontSize: 16, color: "#155e75", flexShrink: 1 }}
-            >
-              <ThemedText style={{ fontWeight: "bold" }}>
-                {t("lessons.usage")}:
-              </ThemedText>{" "}
-              {item.usage}
+            <ThemedText style={{ fontSize: 16, color: "#155e75", flexShrink: 1 }}>
+              <ThemedText style={{ fontWeight: "bold" }}>{t("lessons.usage")}:</ThemedText> {item.usage}
             </ThemedText>
           </View>
         )}
@@ -713,8 +674,7 @@ const KanjiListCard = ({
 }) => {
   const { t } = useTranslation();
 
-  const meaning =
-    item.meaning?.split("##")[0] || item.meaning || t("lessons.no_meaning");
+  const meaning = item.meaning?.split("##")[0] || item.meaning || t("lessons.no_meaning");
 
   const handleWrite = (e: any) => {
     e.stopPropagation();
@@ -734,9 +694,7 @@ const KanjiListCard = ({
   return (
     <TouchableOpacity onPress={handleCardPress} activeOpacity={0.7}>
       <ModernCard>
-        <View
-          style={{ flexDirection: "row", alignItems: "center", minHeight: 90 }}
-        >
+        <View style={{ flexDirection: "row", alignItems: "center", minHeight: 90 }}>
           <View
             className="bg-amber-100 rounded-2xl mr-3"
             style={{
@@ -756,9 +714,7 @@ const KanjiListCard = ({
               {item.character}
             </ThemedText>
           </View>
-          <View
-            style={{ flex: 1, minWidth: 0, marginRight: 8, paddingVertical: 4 }}
-          >
+          <View style={{ flex: 1, minWidth: 0, marginRight: 8, paddingVertical: 4 }}>
             <ThemedText
               style={{
                 fontSize: 18,
@@ -870,14 +826,12 @@ const VocabularyListScreen = () => {
   const [selectedKanji, setSelectedKanji] = useState<string>("");
 
   // State for Kanji Explanation Modal
-  const [showKanjiExplanationModal, setShowKanjiExplanationModal] =
-    useState(false);
+  const [showKanjiExplanationModal, setShowKanjiExplanationModal] = useState(false);
   const [selectedKanjiItem, setSelectedKanjiItem] = useState<any>(null);
 
   // State for Retry Confirmation Modal
   const [showRetryModal, setShowRetryModal] = useState(false);
-  const [pendingCategory, setPendingCategory] =
-    useState<ExerciseCategory | null>(null);
+  const [pendingCategory, setPendingCategory] = useState<ExerciseCategory | null>(null);
 
   // Ref for horizontal scroll view
   const horizontalScrollRef = useRef<ScrollView>(null);
@@ -934,7 +888,7 @@ const VocabularyListScreen = () => {
           return t("lessons.lesson_types.vocabulary", "Vocabulary");
       }
     },
-    [t]
+    [t],
   );
 
   const getActivityTitle = () => {
@@ -943,29 +897,21 @@ const VocabularyListScreen = () => {
     if (activityType === "learn") {
       return t(
         `content_list.activity.learn.${typeKey}`,
-        typeKey === "grammar"
-          ? "Learn grammar"
-          : typeKey === "kanji"
-            ? "Learn kanji"
-            : "Learn vocabulary"
+        typeKey === "grammar" ? "Learn grammar" : typeKey === "kanji" ? "Learn kanji" : "Learn vocabulary",
       );
     }
 
     if (activityType === "test") {
       return t(
         `content_list.activity.test.${typeKey}`,
-        typeKey === "grammar"
-          ? "Grammar test"
-          : typeKey === "kanji"
-            ? "Kanji test"
-            : "Vocabulary test"
+        typeKey === "grammar" ? "Grammar test" : typeKey === "kanji" ? "Kanji test" : "Vocabulary test",
       );
     }
 
     if (activityType === "match" || activityType === "reflex") {
       return t(
         `content_list.activity.${activityType}`,
-        activityType === "match" ? "Card matching game" : "Reflex practice"
+        activityType === "match" ? "Card matching game" : "Reflex practice",
       );
     }
 
@@ -980,11 +926,7 @@ const VocabularyListScreen = () => {
     const typeKey = (contentTypeValue as ExerciseCategory) || "vocabulary";
     return t(
       `content_list.banner.${typeKey}`,
-      typeKey === "grammar"
-        ? "Lesson grammar"
-        : typeKey === "kanji"
-          ? "Lesson kanji"
-          : "Lesson vocabulary"
+      typeKey === "grammar" ? "Lesson grammar" : typeKey === "kanji" ? "Lesson kanji" : "Lesson vocabulary",
     );
   };
 
@@ -997,7 +939,7 @@ const VocabularyListScreen = () => {
         ? "No grammar available"
         : typeKey === "kanji"
           ? "No kanji available"
-          : "No vocabulary available"
+          : "No vocabulary available",
     );
   };
 
@@ -1031,7 +973,7 @@ const VocabularyListScreen = () => {
       if (!exerciseAttemptId) {
         Alert.alert(
           t("common.error") || "Error",
-          t("common.something_wrong", "Something went wrong. Please try again.")
+          t("common.something_wrong", "Something went wrong. Please try again."),
         );
         return;
       }
@@ -1050,18 +992,12 @@ const VocabularyListScreen = () => {
       proceedToExercise(category, exerciseAttemptId);
     } catch (e) {
       console.warn("Failed to start exercise", e);
-      Alert.alert(
-        t("common.error") || "Error",
-        t("common.something_wrong", "Something went wrong. Please try again.")
-      );
+      Alert.alert(t("common.error") || "Error", t("common.something_wrong", "Something went wrong. Please try again."));
     }
   };
 
   // Proceed to exercise
-  const proceedToExercise = (
-    category: ExerciseCategory,
-    exerciseAttemptId: number | string
-  ) => {
+  const proceedToExercise = (category: ExerciseCategory, exerciseAttemptId: number | string) => {
     Haptics.selectionAsync();
     router.push({
       pathname: ROUTES.QUIZ.QUIZ,
@@ -1078,10 +1014,7 @@ const VocabularyListScreen = () => {
 
     const exerciseAttemptId = attemptIdByCategory[pendingCategory];
     if (!exerciseAttemptId) {
-      Alert.alert(
-        t("common.error") || "Error",
-        t("common.something_wrong", "Something went wrong. Please try again.")
-      );
+      Alert.alert(t("common.error") || "Error", t("common.something_wrong", "Something went wrong. Please try again."));
       return;
     }
 
@@ -1145,8 +1078,7 @@ const VocabularyListScreen = () => {
     }
 
     const totalItems = contentData.length;
-    const targetWidth =
-      ((currentCardIndex + 1) / totalItems) * progressContainerWidth;
+    const targetWidth = ((currentCardIndex + 1) / totalItems) * progressContainerWidth;
 
     Animated.timing(progressAnim, {
       toValue: targetWidth,
@@ -1154,12 +1086,7 @@ const VocabularyListScreen = () => {
       easing: Easing.out(Easing.ease),
       useNativeDriver: false,
     }).start();
-  }, [
-    currentCardIndex,
-    contentData.length,
-    progressContainerWidth,
-    progressAnim,
-  ]);
+  }, [currentCardIndex, contentData.length, progressContainerWidth, progressAnim]);
 
   if (isLoading) {
     return (
@@ -1176,21 +1103,14 @@ const VocabularyListScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <LinearGradient
-        colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
-        style={{ flex: 1 }}
-      >
+      <LinearGradient colors={["#79B4C4", "#85C3C3", "#9BC7B9"]} style={{ flex: 1 }}>
         {/* Sticky Header */}
         <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row rounded-b-3xl items-center justify-between">
           <TouchableOpacity onPress={() => router.back()}>
             <ChevronLeft size={24} color="#6b7280" />
           </TouchableOpacity>
           <View style={{ flex: 1, alignItems: "center" }}>
-            <ThemedText
-              style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}
-            >
-              {getActivityTitle()}
-            </ThemedText>
+            <ThemedText style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}>{getActivityTitle()}</ThemedText>
           </View>
           <View style={{ width: 24 }} />
         </View>
@@ -1227,11 +1147,7 @@ const VocabularyListScreen = () => {
                     {contentTypeValue === "grammar" ? (
                       <ExpandableGrammarCard item={item} index={i} />
                     ) : contentTypeValue === "kanji" ? (
-                      <ExpandableKanjiCard
-                        item={item}
-                        index={i}
-                        onWrite={handleWriteKanji}
-                      />
+                      <ExpandableKanjiCard item={item} index={i} onWrite={handleWriteKanji} />
                     ) : (
                       <ExpandableVocabularyCard item={item} index={i} />
                     )}
@@ -1241,10 +1157,7 @@ const VocabularyListScreen = () => {
 
               {/* Progress Bar */}
               {contentData.length > 0 && (
-                <View
-                  className="items-center justify-center mt-6 mb-4"
-                  style={{ paddingHorizontal: 24 }}
-                >
+                <View className="items-center justify-center mt-6 mb-4" style={{ paddingHorizontal: 24 }}>
                   <View
                     style={{
                       width: "100%",
@@ -1283,10 +1196,7 @@ const VocabularyListScreen = () => {
 
             {/* === ACTIVITY BLOCKS === */}
             <View className="mb-6">
-              <View
-                className="flex-row flex-wrap justify-between"
-                style={{ gap: 12 }}
-              >
+              <View className="flex-row flex-wrap justify-between" style={{ gap: 12 }}>
                 {/* Học từ mới/Kanji - Chỉ hiển thị khi không phải grammar */}
                 {contentTypeValue !== "grammar" && (
                   <TouchableOpacity
@@ -1316,9 +1226,7 @@ const VocabularyListScreen = () => {
                           overflow: "hidden",
                         }}
                       >
-                        <ThemedText style={{ fontSize: 32, lineHeight: 32 }}>
-                          ⚡
-                        </ThemedText>
+                        <ThemedText style={{ fontSize: 32, lineHeight: 32 }}>⚡</ThemedText>
                       </View>
                     </View>
                     <ThemedText
@@ -1333,9 +1241,7 @@ const VocabularyListScreen = () => {
                         contentTypeValue === "kanji"
                           ? "content_list.activity.learn.kanji"
                           : "content_list.activity.learn.vocabulary",
-                        contentTypeValue === "kanji"
-                          ? "Learn kanji"
-                          : "Learn vocabulary"
+                        contentTypeValue === "kanji" ? "Learn kanji" : "Learn vocabulary",
                       )}
                     </ThemedText>
                   </TouchableOpacity>
@@ -1370,9 +1276,7 @@ const VocabularyListScreen = () => {
                           overflow: "hidden",
                         }}
                       >
-                        <ThemedText style={{ fontSize: 32, lineHeight: 32 }}>
-                          🎯
-                        </ThemedText>
+                        <ThemedText style={{ fontSize: 32, lineHeight: 32 }}>🎯</ThemedText>
                       </View>
                     </View>
                     <ThemedText
@@ -1387,9 +1291,7 @@ const VocabularyListScreen = () => {
                         contentTypeValue === "kanji"
                           ? "content_list.activity.match.kanji"
                           : "content_list.activity.match.vocabulary",
-                        contentTypeValue === "kanji"
-                          ? "Match kanji"
-                          : "Match vocabulary"
+                        contentTypeValue === "kanji" ? "Match kanji" : "Match vocabulary",
                       )}
                     </ThemedText>
                   </TouchableOpacity>
@@ -1424,9 +1326,7 @@ const VocabularyListScreen = () => {
                           overflow: "hidden",
                         }}
                       >
-                        <ThemedText style={{ fontSize: 32, lineHeight: 32 }}>
-                          🔤
-                        </ThemedText>
+                        <ThemedText style={{ fontSize: 32, lineHeight: 32 }}>🔤</ThemedText>
                       </View>
                     </View>
                     <ThemedText
@@ -1441,9 +1341,7 @@ const VocabularyListScreen = () => {
                         contentTypeValue === "kanji"
                           ? "content_list.activity.scramble.kanji"
                           : "content_list.activity.scramble.vocabulary",
-                        contentTypeValue === "kanji"
-                          ? "Scramble kanji"
-                          : "Scramble vocabulary"
+                        contentTypeValue === "kanji" ? "Scramble kanji" : "Scramble vocabulary",
                       )}
                     </ThemedText>
                   </TouchableOpacity>
@@ -1563,10 +1461,7 @@ const VocabularyListScreen = () => {
                   }}
                   className="rounded-3xl p-6 shadow-lg"
                   style={{
-                    width:
-                      contentTypeValue === "grammar"
-                        ? width - 48
-                        : (width - 48 - 12) / 2,
+                    width: contentTypeValue === "grammar" ? width - 48 : (width - 48 - 12) / 2,
                     backgroundColor: "#FEF3C7",
                   }}
                 >
@@ -1580,9 +1475,7 @@ const VocabularyListScreen = () => {
                         overflow: "hidden",
                       }}
                     >
-                      <ThemedText style={{ fontSize: 32, lineHeight: 32 }}>
-                        🔥
-                      </ThemedText>
+                      <ThemedText style={{ fontSize: 32, lineHeight: 32 }}>🔥</ThemedText>
                     </View>
                   </View>
                   <ThemedText
@@ -1605,7 +1498,7 @@ const VocabularyListScreen = () => {
                         ? "Grammar test"
                         : contentTypeValue === "kanji"
                           ? "Kanji test"
-                          : "Vocabulary test"
+                          : "Vocabulary test",
                     )}
                   </ThemedText>
                 </TouchableOpacity>
@@ -1613,10 +1506,7 @@ const VocabularyListScreen = () => {
             </View>
 
             {/* === BANNER === */}
-            <View
-              className="mb-2"
-              style={{ zIndex: 10, width: "85%", alignSelf: "center" }}
-            >
+            <View className="mb-2" style={{ zIndex: 10, width: "85%", alignSelf: "center" }}>
               {/* Lớp ngoài */}
               <View>
                 {/* Ốc vít bên trái */}
@@ -1710,9 +1600,7 @@ const VocabularyListScreen = () => {
             >
               {contentData.length === 0 ? (
                 <View className="items-center justify-center py-20">
-                  <ThemedText style={{ color: "#6b7280", fontSize: 18 }}>
-                    {getEmptyMessage()}
-                  </ThemedText>
+                  <ThemedText style={{ color: "#6b7280", fontSize: 18 }}>{getEmptyMessage()}</ThemedText>
                 </View>
               ) : (
                 contentData.map((item: any, i: number) => {
@@ -1749,9 +1637,7 @@ const VocabularyListScreen = () => {
             <View className="flex-1">
               {/* Modal Header */}
               <View className="flex-row items-center justify-between px-6 py-4 border-b border-gray-200">
-                <ThemedText
-                  style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}
-                >
+                <ThemedText style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}>
                   {t("lessons.practice_writing") || "Luyện viết Kanji"}
                 </ThemedText>
                 <TouchableOpacity
@@ -1774,20 +1660,14 @@ const VocabularyListScreen = () => {
                     character={selectedKanji}
                     mode="practice"
                     onComplete={(totalMistakes) => {
-                      console.log(
-                        `Completed writing ${selectedKanji} with ${totalMistakes} mistakes`
-                      );
-                      Haptics.notificationAsync(
-                        Haptics.NotificationFeedbackType.Success
-                      );
+                      console.log(`Completed writing ${selectedKanji} with ${totalMistakes} mistakes`);
+                      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                     }}
                     onCorrectStroke={() => {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     }}
                     onMistake={() => {
-                      Haptics.notificationAsync(
-                        Haptics.NotificationFeedbackType.Error
-                      );
+                      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
                     }}
                   />
                 )}
@@ -1803,10 +1683,7 @@ const VocabularyListScreen = () => {
           presentationStyle="pageSheet"
           onRequestClose={handleCloseKanjiExplanation}
         >
-          <SafeAreaView
-            className="flex-1"
-            style={{ backgroundColor: "#f8fafc" }}
-          >
+          <SafeAreaView className="flex-1" style={{ backgroundColor: "#f8fafc" }}>
             <View className="flex-1">
               {/* Modal Header with Gradient */}
               <LinearGradient
@@ -1922,10 +1799,7 @@ const VocabularyListScreen = () => {
                                 letterSpacing: 0.5,
                               }}
                             >
-                              {t(
-                                "content_list.kanji_modal.meaning_label",
-                                "Meaning"
-                              )}
+                              {t("content_list.kanji_modal.meaning_label", "Meaning")}
                             </ThemedText>
                             <ThemedText
                               style={{
@@ -1941,8 +1815,7 @@ const VocabularyListScreen = () => {
                         )}
 
                         {/* Readings */}
-                        {(selectedKanjiItem.onReading ||
-                          selectedKanjiItem.kunReading) && (
+                        {(selectedKanjiItem.onReading || selectedKanjiItem.kunReading) && (
                           <View style={{ flexDirection: "row", gap: 12 }}>
                             {selectedKanjiItem.onReading && (
                               <View
@@ -1963,10 +1836,7 @@ const VocabularyListScreen = () => {
                                     marginBottom: 4,
                                   }}
                                 >
-                                  {t(
-                                    "content_list.kanji_modal.on_reading",
-                                    "On reading"
-                                  )}
+                                  {t("content_list.kanji_modal.on_reading", "On reading")}
                                 </ThemedText>
                                 <ThemedText
                                   style={{
@@ -1998,10 +1868,7 @@ const VocabularyListScreen = () => {
                                     marginBottom: 4,
                                   }}
                                 >
-                                  {t(
-                                    "content_list.kanji_modal.kun_reading",
-                                    "Kun reading"
-                                  )}
+                                  {t("content_list.kanji_modal.kun_reading", "Kun reading")}
                                 </ThemedText>
                                 <ThemedText
                                   style={{
@@ -2049,10 +1916,7 @@ const VocabularyListScreen = () => {
                                   marginBottom: 2,
                                 }}
                               >
-                                {t(
-                                  "content_list.kanji_modal.stroke_count",
-                                  "Stroke count"
-                                )}
+                                {t("content_list.kanji_modal.stroke_count", "Stroke count")}
                               </ThemedText>
                               <ThemedText
                                 style={{
@@ -2073,9 +1937,7 @@ const VocabularyListScreen = () => {
                     </View>
 
                     {/* Kanji Image */}
-                    {(selectedKanjiItem.imageUrl ||
-                      selectedKanjiItem.image ||
-                      selectedKanjiItem.imgUrl) && (
+                    {(selectedKanjiItem.imageUrl || selectedKanjiItem.image || selectedKanjiItem.imgUrl) && (
                       <View
                         style={{
                           backgroundColor: "#ffffff",
@@ -2088,10 +1950,7 @@ const VocabularyListScreen = () => {
                         <Image
                           source={{
                             uri:
-                              selectedKanjiItem.imageUrl ||
-                              selectedKanjiItem.image ||
-                              selectedKanjiItem.imgUrl ||
-                              "",
+                              selectedKanjiItem.imageUrl || selectedKanjiItem.image || selectedKanjiItem.imgUrl || "",
                           }}
                           style={{
                             width: "100%",
@@ -2139,38 +1998,32 @@ const VocabularyListScreen = () => {
                                   letterSpacing: 0.5,
                                 }}
                               >
-                                {t(
-                                  "content_list.kanji_modal.details_heading",
-                                  "📖 Detailed explanation"
-                                )}
+                                {t("content_list.kanji_modal.details_heading", "📖 Detailed explanation")}
                               </ThemedText>
                             </LinearGradient>
                             <View style={{ padding: 20 }}>
-                              {sections.map(
-                                (section: string, index: number) => (
-                                  <View
-                                    key={index}
+                              {sections.map((section: string, index: number) => (
+                                <View
+                                  key={index}
+                                  style={{
+                                    marginBottom: index < sections.length - 1 ? 16 : 0,
+                                    paddingLeft: 12,
+                                    borderLeftWidth: 3,
+                                    borderLeftColor: "#c7d2fe",
+                                  }}
+                                >
+                                  <ThemedText
                                     style={{
-                                      marginBottom:
-                                        index < sections.length - 1 ? 16 : 0,
-                                      paddingLeft: 12,
-                                      borderLeftWidth: 3,
-                                      borderLeftColor: "#c7d2fe",
+                                      color: "#374151",
+                                      fontSize: 16,
+                                      lineHeight: 26,
+                                      letterSpacing: 0.2,
                                     }}
                                   >
-                                    <ThemedText
-                                      style={{
-                                        color: "#374151",
-                                        fontSize: 16,
-                                        lineHeight: 26,
-                                        letterSpacing: 0.2,
-                                      }}
-                                    >
-                                      {section}
-                                    </ThemedText>
-                                  </View>
-                                )
-                              )}
+                                    {section}
+                                  </ThemedText>
+                                </View>
+                              ))}
                             </View>
                           </View>
                         );
@@ -2188,7 +2041,7 @@ const VocabularyListScreen = () => {
           title={t("content_list.retry_modal.title", "Làm lại bài tập?")}
           message={t(
             "content_list.retry_modal.message",
-            "Bạn đã hoàn thành bài tập này rồi. Nếu làm lại, bạn sẽ chỉ nhận được 10% phần thưởng so với lần trước."
+            "Bạn đã hoàn thành bài tập này rồi. Nếu làm lại, bạn sẽ chỉ nhận được 10% phần thưởng so với lần trước.",
           )}
           buttons={[
             {

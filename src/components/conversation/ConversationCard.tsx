@@ -17,11 +17,7 @@ interface ConversationCardProps {
   onSwipeableClose?: () => void;
 }
 
-const formatRelativeTime = (
-  dateString: string | undefined,
-  locale: string,
-  t: TFunction
-): string => {
+const formatRelativeTime = (dateString: string | undefined, locale: string, t: TFunction): string => {
   if (!dateString) return "";
   try {
     const date = new Date(dateString);
@@ -74,22 +70,17 @@ const ConversationCardComponent: React.FC<ConversationCardProps> = ({
   const { t, i18n } = useTranslation();
   const [isSwipeOpen, setIsSwipeOpen] = useState(false);
   const timeTextOpacity = useRef(new Animated.Value(1)).current;
-  
-  const title =
-    conversation.title ||
-    t("home.ai.conversation.card_new_conversation", "New conversation");
-  const lastMessage =
-    conversation.lastMessage ||
-    t("home.ai.conversation.card_no_messages", "No messages yet");
+
+  const title = conversation.title || t("home.ai.conversation.card_new_conversation", "New conversation");
+  const lastMessage = conversation.lastMessage || t("home.ai.conversation.card_no_messages", "No messages yet");
   const lastMessageTime = useMemo(
-    () =>
-      formatRelativeTime(conversation.lastMessageAt, i18n.language, t),
-    [conversation.lastMessageAt, i18n.language, t]
+    () => formatRelativeTime(conversation.lastMessageAt, i18n.language, t),
+    [conversation.lastMessageAt, i18n.language, t],
   );
 
   const renderRightActions = (
     progress: Animated.AnimatedInterpolation<number>,
-    dragX: Animated.AnimatedInterpolation<number>
+    dragX: Animated.AnimatedInterpolation<number>,
   ) => {
     const scale = dragX.interpolate({
       inputRange: [-100, 0],
@@ -98,11 +89,7 @@ const ConversationCardComponent: React.FC<ConversationCardProps> = ({
     });
 
     return (
-      <TouchableOpacity
-        onPress={onDelete}
-        style={styles.deleteButton}
-        activeOpacity={0.8}
-      >
+      <TouchableOpacity onPress={onDelete} style={styles.deleteButton} activeOpacity={0.8}>
         <Animated.View style={[styles.deleteButtonContent, { transform: [{ scale }] }]}>
           <Trash2 size={20} color="#ffffff" />
         </Animated.View>
@@ -111,18 +98,10 @@ const ConversationCardComponent: React.FC<ConversationCardProps> = ({
   };
 
   const cardContent = (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={0.7}
-      style={[styles.card, isActive && styles.cardActive]}
-    >
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={[styles.card, isActive && styles.cardActive]}>
       <View style={styles.row}>
         <View style={styles.avatarWrapper}>
-          <Image
-            source={require("@assets/images/PokeNihongoLogo.png")}
-            style={styles.avatarImage}
-            resizeMode="cover"
-          />
+          <Image source={require("@assets/images/PokeNihongoLogo.png")} style={styles.avatarImage} resizeMode="cover" />
         </View>
 
         <View style={styles.content}>
@@ -254,10 +233,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const arePropsEqual = (
-  prev: ConversationCardProps,
-  next: ConversationCardProps
-) => {
+const arePropsEqual = (prev: ConversationCardProps, next: ConversationCardProps) => {
   const prevRoom = prev.conversation;
   const nextRoom = next.conversation;
   const hasSameConversation =

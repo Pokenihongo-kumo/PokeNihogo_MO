@@ -9,10 +9,7 @@ interface UserProfileHeaderAtomicProps {
   style?: any;
 }
 
-export default function UserProfileHeaderAtomic({
-  user,
-  style,
-}: UserProfileHeaderAtomicProps) {
+export default function UserProfileHeaderAtomic({ user, style }: UserProfileHeaderAtomicProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const slideAnim = useRef(new Animated.Value(-300)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
@@ -37,36 +34,39 @@ export default function UserProfileHeaderAtomic({
     ]).start();
   }, [slideAnim, opacityAnim]);
 
-  const handleClose = useCallback((onComplete?: () => void) => {
-    // Start navigation slightly before animation completes for seamless transition
-    const navigationDelay = 200; // Start navigation at ~67% of animation
-    
-    if (onComplete) {
-      setTimeout(() => {
-        onComplete();
-      }, navigationDelay);
-    }
+  const handleClose = useCallback(
+    (onComplete?: () => void) => {
+      // Start navigation slightly before animation completes for seamless transition
+      const navigationDelay = 200; // Start navigation at ~67% of animation
 
-    Animated.parallel([
-      Animated.timing(slideAnim, {
-        toValue: -300,
-        duration: 300,
-        useNativeDriver: true,
-        easing: Easing.in(Easing.ease),
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.ease),
-      }),
-    ]).start(() => {
-      // Defer state update to avoid "useInsertionEffect must not schedule updates" error
-      InteractionManager.runAfterInteractions(() => {
-        setIsExpanded(false);
+      if (onComplete) {
+        setTimeout(() => {
+          onComplete();
+        }, navigationDelay);
+      }
+
+      Animated.parallel([
+        Animated.timing(slideAnim, {
+          toValue: -300,
+          duration: 300,
+          useNativeDriver: true,
+          easing: Easing.in(Easing.ease),
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.ease),
+        }),
+      ]).start(() => {
+        // Defer state update to avoid "useInsertionEffect must not schedule updates" error
+        InteractionManager.runAfterInteractions(() => {
+          setIsExpanded(false);
+        });
       });
-    });
-  }, [slideAnim, opacityAnim]);
+    },
+    [slideAnim, opacityAnim],
+  );
 
   const handleCloseWithoutCallback = useCallback(() => {
     handleClose();
@@ -75,18 +75,9 @@ export default function UserProfileHeaderAtomic({
   return (
     <>
       {/* Compact Header Bar */}
-      <CompactHeader
-        user={user}
-        onPress={handleOpen}
-        style={style}
-      />
+      <CompactHeader user={user} onPress={handleOpen} style={style} />
       {/* Overlay Modal */}
-      <Modal
-        visible={isExpanded}
-        transparent
-        animationType="fade"
-        onRequestClose={handleCloseWithoutCallback}
-      >
+      <Modal visible={isExpanded} transparent animationType="fade" onRequestClose={handleCloseWithoutCallback}>
         <Animated.View
           style={[
             styles.modalOverlay,
@@ -95,10 +86,7 @@ export default function UserProfileHeaderAtomic({
             },
           ]}
         >
-          <Pressable 
-            style={styles.overlayPressable}
-            onPress={handleCloseWithoutCallback}
-          >
+          <Pressable style={styles.overlayPressable} onPress={handleCloseWithoutCallback}>
             <Animated.View
               style={[
                 styles.modalContent,

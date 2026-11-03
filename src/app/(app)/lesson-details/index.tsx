@@ -8,12 +8,7 @@ import { ROUTES } from "@routes/routes";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import {
-  BookOpen,
-  ChevronLeft,
-  ChevronRight,
-  Sparkles,
-} from "lucide-react-native";
+import { BookOpen, ChevronLeft, ChevronRight, Sparkles } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, TouchableOpacity, View } from "react-native";
@@ -59,7 +54,8 @@ const DashboardCard = ({
         backgroundColor: "white",
         borderRadius: 24,
         padding: 20,
-        marginBottom: 16,borderWidth: 2,
+        marginBottom: 16,
+        borderWidth: 2,
         borderColor: bgColor,
       }}
     >
@@ -251,18 +247,14 @@ const LessonDetailScreen = () => {
   const { t } = useTranslation();
   const { id, status } = useLocalSearchParams<{ id?: string; status?: string }>();
   const { data: lessonData, isLoading, refetch: refetchLesson } = useLesson(id || "");
-  const { data: lessonExercisesResponse, refetch: refetchLessonExercises } =
-    useLessonExercises(id || "");
+  const { data: lessonExercisesResponse, refetch: refetchLessonExercises } = useLessonExercises(id || "");
   const {
     data: exerciseAttemptData,
     isLoading: isExerciseAttemptLoading,
     refetch: refetchExerciseAttempts,
   } = useUserExerciseAttempt(id || "");
   const lesson: any = lessonData?.data || {};
-  const lessonExercises: any[] = React.useMemo(
-    () => lessonExercisesResponse?.data || [],
-    [lessonExercisesResponse]
-  );
+  const lessonExercises: any[] = React.useMemo(() => lessonExercisesResponse?.data || [], [lessonExercisesResponse]);
 
   // Try multiple property names in case of mock/real difference, fallback to []
   const voca: any[] = lesson.voca || lesson.vocabulary || [];
@@ -310,7 +302,7 @@ const LessonDetailScreen = () => {
           return t("lessons.lesson_types.vocabulary", "Vocabulary");
       }
     },
-    [t]
+    [t],
   );
 
   const exerciseRewards = React.useMemo(() => {
@@ -319,7 +311,7 @@ const LessonDetailScreen = () => {
     }
 
     const exercisesWithRewards = lessonExercises.filter(
-      (item) => Array.isArray(item?.rewards) && item.rewards.length > 0
+      (item) => Array.isArray(item?.rewards) && item.rewards.length > 0,
     );
 
     const exerciseRewardsList = exercisesWithRewards.map((item, index) => {
@@ -345,7 +337,7 @@ const LessonDetailScreen = () => {
     // Lấy rewardLesson từ exercise đầu tiên (vì tất cả đều giống nhau)
     const firstExercise = lessonExercises[0];
     const rewardLesson = firstExercise?.rewardLesson || [];
-    
+
     // Tính số lượng exercises đã hoàn thành
     const completedExercises = exercisesWithRewards.filter((item) => {
       const typeKey = (item.exerciseType || "").toLowerCase();
@@ -366,9 +358,7 @@ const LessonDetailScreen = () => {
       // Phần thưởng cuối cùng chỉ được nhận khi lesson status là COMPLETED
       // Ưu tiên lấy từ params (từ màn hình trước), fallback về lesson object
       const lessonStatus = (status || lesson.status || lesson.lessonProgress?.status || "").toUpperCase();
-      const finalRewardStatus = lessonStatus === "COMPLETED" 
-        ? ExerciseAttemptStatus.COMPLETED 
-        : undefined;
+      const finalRewardStatus = lessonStatus === "COMPLETED" ? ExerciseAttemptStatus.COMPLETED : undefined;
 
       exerciseRewardsList.push({
         id: "reward-lesson-final",
@@ -390,10 +380,7 @@ const LessonDetailScreen = () => {
       if (!attempt) return null;
       const normalized = (attempt.status || "").toUpperCase();
 
-      const statusStyles: Record<
-        string,
-        { label: string; bgColor: string; textColor: string }
-      > = {
+      const statusStyles: Record<string, { label: string; bgColor: string; textColor: string }> = {
         NOT_STARTED: {
           label: t("lesson_detail.status.not_started", "Chưa bắt đầu"),
           bgColor: "#e0f2fe",
@@ -444,7 +431,7 @@ const LessonDetailScreen = () => {
         }
       );
     },
-    [exerciseAttemptMap, isExerciseAttemptLoading, t]
+    [exerciseAttemptMap, isExerciseAttemptLoading, t],
   );
 
   useFocusEffect(
@@ -453,7 +440,7 @@ const LessonDetailScreen = () => {
       refetchLesson();
       refetchLessonExercises();
       refetchExerciseAttempts();
-    }, [id, refetchLesson, refetchLessonExercises, refetchExerciseAttempts])
+    }, [id, refetchLesson, refetchLessonExercises, refetchExerciseAttempts]),
   );
 
   if (isLoading) {
@@ -504,10 +491,7 @@ const LessonDetailScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <LinearGradient
-        colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
-        style={{ flex: 1 }}
-      >
+      <LinearGradient colors={["#79B4C4", "#85C3C3", "#9BC7B9"]} style={{ flex: 1 }}>
         {/* Sticky Header */}
         <View
           style={{
@@ -515,7 +499,8 @@ const LessonDetailScreen = () => {
             paddingHorizontal: 24,
             paddingVertical: 16,
             borderBottomLeftRadius: 24,
-            borderBottomRightRadius: 24,}}
+            borderBottomRightRadius: 24,
+          }}
         >
           <View
             style={{
@@ -586,16 +571,16 @@ const LessonDetailScreen = () => {
                 }}
               >
                 <BookOpen size={20} color="#3b82f6" />
-              <ThemedText
-                style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
-                  color: "#1f2937",
-                  marginLeft: 8,
-                }}
-              >
-                {t("lesson_detail.about_title", "Về bài học này")}
-              </ThemedText>
+                <ThemedText
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color: "#1f2937",
+                    marginLeft: 8,
+                  }}
+                >
+                  {t("lesson_detail.about_title", "Về bài học này")}
+                </ThemedText>
               </View>
               <ThemedText
                 style={{
@@ -692,10 +677,7 @@ const LessonDetailScreen = () => {
                 marginTop: 4,
               }}
             >
-              {t(
-                "lesson_detail.content_list.subtitle",
-                "Chọn phần muốn học"
-              )}
+              {t("lesson_detail.content_list.subtitle", "Chọn phần muốn học")}
             </ThemedText>
           </View>
 
@@ -703,10 +685,7 @@ const LessonDetailScreen = () => {
           {voca.length > 0 && (
             <DashboardCard
               title={t("lesson_detail.cards.vocabulary.title", "Từ vựng")}
-              subtitle={t(
-                "lesson_detail.cards.vocabulary.subtitle",
-                "Học từ mới tiếng Nhật"
-              )}
+              subtitle={t("lesson_detail.cards.vocabulary.subtitle", "Học từ mới tiếng Nhật")}
               count={voca.length}
               emoji="📚"
               bgColor="#EEF2FF"
@@ -723,10 +702,7 @@ const LessonDetailScreen = () => {
           {grammar.length > 0 && (
             <DashboardCard
               title={t("lesson_detail.cards.grammar.title", "Ngữ pháp")}
-              subtitle={t(
-                "lesson_detail.cards.grammar.subtitle",
-                "Cấu trúc câu và mẫu câu"
-              )}
+              subtitle={t("lesson_detail.cards.grammar.subtitle", "Cấu trúc câu và mẫu câu")}
               count={grammar.length}
               emoji="✏️"
               bgColor="#ECFEFF"
@@ -743,10 +719,7 @@ const LessonDetailScreen = () => {
           {kanji.length > 0 && (
             <DashboardCard
               title={t("lesson_detail.cards.kanji.title", "Kanji")}
-              subtitle={t(
-                "lesson_detail.cards.kanji.subtitle",
-                "Chữ Hán trong tiếng Nhật"
-              )}
+              subtitle={t("lesson_detail.cards.kanji.subtitle", "Chữ Hán trong tiếng Nhật")}
               count={kanji.length}
               emoji="🈯"
               bgColor="#FEF3C7"
@@ -762,12 +735,7 @@ const LessonDetailScreen = () => {
           {/* Start Button */}
           {testId && (
             <View style={{ marginTop: 8 }}>
-              <BounceButton
-                variant="solid"
-                size="full"
-                onPress={handleStartTest}
-                disabled={!checkLastTest}
-              >
+              <BounceButton variant="solid" size="full" onPress={handleStartTest} disabled={!checkLastTest}>
                 <View
                   style={{
                     flexDirection: "row",
@@ -775,11 +743,7 @@ const LessonDetailScreen = () => {
                     justifyContent: "center",
                   }}
                 >
-                  <Sparkles
-                    size={20}
-                    color={checkLastTest ? "white" : "#9ca3af"}
-                    style={{ marginRight: 8 }}
-                  />
+                  <Sparkles size={20} color={checkLastTest ? "white" : "#9ca3af"} style={{ marginRight: 8 }} />
                   <ThemedText
                     style={{
                       color: checkLastTest ? "white" : "#9ca3af",
@@ -801,10 +765,7 @@ const LessonDetailScreen = () => {
                     fontStyle: "italic",
                   }}
                 >
-                  {t(
-                    "lesson_detail.test.locked_hint",
-                    "Hoàn thành tất cả các phần học để bắt đầu kiểm tra"
-                  )}
+                  {t("lesson_detail.test.locked_hint", "Hoàn thành tất cả các phần học để bắt đầu kiểm tra")}
                 </ThemedText>
               )}
             </View>

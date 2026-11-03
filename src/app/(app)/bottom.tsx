@@ -1,15 +1,15 @@
 /**
  * Màn hình demo BottomSheet component
- * 
+ *
  * Component này có thể slide từ dưới màn hình lên, dừng lại ở 50% màn hình (có thể tùy chỉnh),
  * và có thể scroll nội dung bên trong nếu nội dung quá nhiều.
  */
 
-import { router } from 'expo-router'
-import React from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { ThemedText } from '../../components/ThemedText'
+import { router } from "expo-router";
+import React from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ThemedText } from "../../components/ThemedText";
 import {
   BottomSheet,
   BottomSheetClose,
@@ -19,8 +19,8 @@ import {
   BottomSheetHeader,
   BottomSheetTitle,
   BottomSheetTrigger,
-} from '../../components/ui/BottomSheet'
-import { Button } from '../../components/ui/Button'
+} from "../../components/ui/BottomSheet";
+import { Button } from "../../components/ui/Button";
 
 export default function BottomSheetDemoScreen() {
   return (
@@ -48,7 +48,7 @@ export default function BottomSheetDemoScreen() {
               <BottomSheetTrigger>
                 <Button>Mở Bottom Sheet</Button>
               </BottomSheetTrigger>
-              
+
               <BottomSheetContent>
                 <BottomSheetHeader>
                   <BottomSheetTitle>Tiêu đề Bottom Sheet</BottomSheetTitle>
@@ -56,12 +56,12 @@ export default function BottomSheetDemoScreen() {
                     Đây là mô tả của bottom sheet. Bạn có thể thêm nội dung ở đây.
                   </BottomSheetDescription>
                 </BottomSheetHeader>
-                
+
                 <View style={styles.content}>
                   <Text>Nội dung của bottom sheet</Text>
                   <Text>Bạn có thể thêm nhiều nội dung ở đây</Text>
                 </View>
-                
+
                 <BottomSheetFooter>
                   <BottomSheetClose>
                     <Button variant="outline">Đóng</Button>
@@ -80,15 +80,13 @@ export default function BottomSheetDemoScreen() {
               <BottomSheetTrigger>
                 <Button>Mở Bottom Sheet với Nội dung Dài</Button>
               </BottomSheetTrigger>
-              
+
               <BottomSheetContent>
                 <BottomSheetHeader>
                   <BottomSheetTitle>Nội dung Dài</BottomSheetTitle>
-                  <BottomSheetDescription>
-                    Bottom sheet này có nhiều nội dung và có thể scroll
-                  </BottomSheetDescription>
+                  <BottomSheetDescription>Bottom sheet này có nhiều nội dung và có thể scroll</BottomSheetDescription>
                 </BottomSheetHeader>
-                
+
                 <View style={styles.scrollableContent}>
                   {Array.from({ length: 50 }, (_, i) => (
                     <View key={i} style={styles.item}>
@@ -96,7 +94,7 @@ export default function BottomSheetDemoScreen() {
                     </View>
                   ))}
                 </View>
-                
+
                 <BottomSheetFooter>
                   <BottomSheetClose>
                     <Button variant="outline">Đóng</Button>
@@ -115,15 +113,13 @@ export default function BottomSheetDemoScreen() {
               <BottomSheetTrigger>
                 <Button>Mở Bottom Sheet 75%</Button>
               </BottomSheetTrigger>
-              
+
               <BottomSheetContent snapPoints={[0.75]}>
                 <BottomSheetHeader>
                   <BottomSheetTitle>Bottom Sheet 75%</BottomSheetTitle>
-                  <BottomSheetDescription>
-                    Bottom sheet này chiếm 75% chiều cao màn hình
-                  </BottomSheetDescription>
+                  <BottomSheetDescription>Bottom sheet này chiếm 75% chiều cao màn hình</BottomSheetDescription>
                 </BottomSheetHeader>
-                
+
                 <View style={styles.content}>
                   <Text>Nội dung của bottom sheet</Text>
                 </View>
@@ -140,7 +136,7 @@ export default function BottomSheetDemoScreen() {
               <BottomSheetTrigger>
                 <Button>Mở Bottom Sheet (Không thể kéo)</Button>
               </BottomSheetTrigger>
-              
+
               <BottomSheetContent enablePanDownToClose={false}>
                 <BottomSheetHeader>
                   <BottomSheetTitle>Bottom Sheet Không thể Kéo</BottomSheetTitle>
@@ -148,11 +144,11 @@ export default function BottomSheetDemoScreen() {
                     Bottom sheet này không thể kéo xuống để đóng, chỉ có thể đóng bằng nút
                   </BottomSheetDescription>
                 </BottomSheetHeader>
-                
+
                 <View style={styles.content}>
                   <Text>Chỉ có thể đóng bằng cách nhấn backdrop hoặc nút đóng</Text>
                 </View>
-                
+
                 <BottomSheetFooter>
                   <BottomSheetClose>
                     <Button variant="outline">Đóng</Button>
@@ -164,13 +160,13 @@ export default function BottomSheetDemoScreen() {
         </View>
       </ScrollView>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   scrollView: {
     flex: 1,
@@ -183,13 +179,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 16,
     marginBottom: 8,
   },
   description: {
     fontSize: 16,
-    color: '#6b7280',
+    color: "#6b7280",
     marginBottom: 8,
   },
   examplesContainer: {
@@ -198,13 +194,13 @@ const styles = StyleSheet.create({
   exampleSection: {
     marginBottom: 24,
     padding: 16,
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
     borderRadius: 12,
     gap: 16,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
   },
   content: {
@@ -216,9 +212,8 @@ const styles = StyleSheet.create({
   },
   item: {
     padding: 16,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: "#f3f4f6",
     borderRadius: 8,
     marginBottom: 8,
   },
-})
-
+});

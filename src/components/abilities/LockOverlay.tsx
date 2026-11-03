@@ -66,7 +66,7 @@ export const LockOverlay: React.FC<LockOverlayProps> = ({
           color: particlePalette[index % particlePalette.length],
         };
       }),
-    [particleCount, radiusStart, radiusStep, particlePalette]
+    [particleCount, radiusStart, radiusStep, particlePalette],
   );
 
   const totalShakeDuration = shakeSegmentDuration * 3;
@@ -104,7 +104,7 @@ export const LockOverlay: React.FC<LockOverlayProps> = ({
           useNativeDriver: true,
         }),
         Animated.delay(shakePauseDuration),
-      ])
+      ]),
     );
 
     const particleLoop = Animated.loop(
@@ -122,7 +122,7 @@ export const LockOverlay: React.FC<LockOverlayProps> = ({
         }),
         Animated.delay(particlePauseAfter),
       ]),
-      { resetBeforeIteration: true }
+      { resetBeforeIteration: true },
     );
 
     shakeLoop.start();
@@ -294,4 +294,3 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
 });
-

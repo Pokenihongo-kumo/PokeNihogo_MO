@@ -1,9 +1,5 @@
 import { useUpsertUserTestAnswerLog } from "@hooks/useUserTestAnswerLog";
-import {
-  useAbandonTest,
-  useCheckTestCompletion,
-  useSubmitTestCompletion,
-} from "@hooks/useUserTestAttempt";
+import { useAbandonTest, useCheckTestCompletion, useSubmitTestCompletion } from "@hooks/useUserTestAttempt";
 import { ROUTES } from "@routes/routes";
 import { TestSet } from "@utils/test.utils";
 import { router } from "expo-router";
@@ -17,12 +13,7 @@ interface UseTestLogicProps {
   onAllowNavigate?: (allow: boolean) => void;
 }
 
-export const useTestLogic = ({
-  userTestAttemptId,
-  sets,
-  testType,
-  onAllowNavigate,
-}: UseTestLogicProps) => {
+export const useTestLogic = ({ userTestAttemptId, sets, testType, onAllowNavigate }: UseTestLogicProps) => {
   const [selections, setSelections] = useState<Record<string, string[]>>({});
   const [showExitConfirmModal, setShowExitConfirmModal] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
@@ -33,8 +24,7 @@ export const useTestLogic = ({
   const scaleAnims = useRef<Record<string, Animated.Value[]>>({}).current;
 
   const { mutate: upsertAnswer } = useUpsertUserTestAnswerLog();
-  const { mutate: checkCompletion, data: checkCompletionData } =
-    useCheckTestCompletion();
+  const { mutate: checkCompletion, data: checkCompletionData } = useCheckTestCompletion();
   const { mutate: submitCompletion } = useSubmitTestCompletion();
   const { mutate: abandonTest } = useAbandonTest();
 
@@ -57,12 +47,7 @@ export const useTestLogic = ({
     }
   }, [isTimerPaused]);
 
-  const handleAnswerSelect = (
-    bankId: string,
-    selected: string[],
-    optionIndex?: number,
-    uid?: string
-  ) => {
+  const handleAnswerSelect = (bankId: string, selected: string[], optionIndex?: number, uid?: string) => {
     const animKey = uid || bankId;
     if (uid) {
       setSelections((prev) => ({ ...prev, [uid]: selected }));
@@ -163,7 +148,7 @@ export const useTestLogic = ({
           // Reset allowNavigate on error
           onAllowNavigate?.(false);
         },
-      }
+      },
     );
   };
 

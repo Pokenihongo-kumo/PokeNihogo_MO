@@ -6,12 +6,14 @@ export const lessonStyles = StyleSheet.create({
   card: {
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
-    padding: 16,},
-  
+    padding: 16,
+  },
+
   cardLarge: {
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
-    padding: 20,},
+    padding: 20,
+  },
 
   // Header styles
   header: {
@@ -20,12 +22,12 @@ export const lessonStyles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 10,
   },
-  
+
   backButton: {
     marginRight: 12,
     padding: 4,
   },
-  
+
   title: {
     fontSize: 28,
     fontWeight: "bold",
@@ -40,7 +42,7 @@ export const lessonStyles = StyleSheet.create({
     gap: 12,
     marginBottom: 12,
   },
-  
+
   progressBar: {
     flex: 1,
     height: 6,
@@ -48,12 +50,12 @@ export const lessonStyles = StyleSheet.create({
     borderRadius: 3,
     overflow: "hidden",
   },
-  
+
   progressFill: {
     height: "100%",
     borderRadius: 3,
   },
-  
+
   progressText: {
     fontSize: 12,
     color: "#6b7280",
@@ -65,18 +67,18 @@ export const lessonStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
   },
-  
+
   progressStatItem: {
     alignItems: "center",
   },
-  
+
   progressStatNumber: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#3b82f6",
     marginBottom: 4,
   },
-  
+
   progressStatLabel: {
     fontSize: 12,
     color: "#6b7280",
@@ -92,7 +94,7 @@ export const lessonStyles = StyleSheet.create({
     justifyContent: "center",
     marginRight: 12,
   },
-  
+
   iconContainerLarge: {
     width: 64,
     height: 64,
@@ -109,7 +111,7 @@ export const lessonStyles = StyleSheet.create({
     color: "#1f2937",
     marginBottom: 4,
   },
-  
+
   description: {
     fontSize: 14,
     color: "#6b7280",
@@ -121,13 +123,13 @@ export const lessonStyles = StyleSheet.create({
     fontWeight: "500",
     color: "#059669",
   },
-  
+
   statusInProgress: {
     fontSize: 12,
     fontWeight: "500",
     color: "#2563eb",
   },
-  
+
   statusNotStarted: {
     fontSize: 12,
     fontWeight: "500",
@@ -138,14 +140,14 @@ export const lessonStyles = StyleSheet.create({
   section: {
     marginBottom: 20,
   },
-  
+
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
   },
-  
+
   sectionTitle: {
     fontSize: 20,
     fontWeight: "600",

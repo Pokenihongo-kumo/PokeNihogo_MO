@@ -4,16 +4,7 @@ import * as FileSystem from "expo-file-system";
 import { router, useLocalSearchParams } from "expo-router";
 import { ArrowLeftIcon } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Animated,
-  Easing,
-  Image,
-  Platform,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Animated, Easing, Image, Platform, ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@components/ThemedText";
@@ -36,13 +27,7 @@ type Message = {
 type FeedbackWord = { word: string; correct: boolean; score?: number };
 
 // Helper component for user avatar with error handling
-const UserAvatarWithFallback = ({
-  avatar,
-  name,
-}: {
-  avatar?: string;
-  name: string;
-}) => {
+const UserAvatarWithFallback = ({ avatar, name }: { avatar?: string; name: string }) => {
   const [imageError, setImageError] = useState(false);
 
   return (
@@ -145,7 +130,7 @@ export default function ConversationScreen() {
               easing: Easing.inOut(Easing.sin),
               useNativeDriver: true,
             }),
-          ])
+          ]),
         );
 
       const loops = dotAnimsRef.map((a, idx) => createBounce(a, idx * 150));
@@ -208,10 +193,7 @@ export default function ConversationScreen() {
     }
   }, []);
 
-
-  const { data: testData, isLoading: isLoadingTest } = useTestFullUser(
-    topicId ? String(topicId) : null
-  );
+  const { data: testData, isLoading: isLoadingTest } = useTestFullUser(topicId ? String(topicId) : null);
 
   useEffect(() => {
     return () => {
@@ -225,10 +207,7 @@ export default function ConversationScreen() {
       const questions =
         testData?.testSets?.[0]?.questions
           ?.slice()
-          ?.sort(
-            (a: any, b: any) =>
-              (a?.questionOrder ?? 0) - (b?.questionOrder ?? 0)
-          ) ?? [];
+          ?.sort((a: any, b: any) => (a?.questionOrder ?? 0) - (b?.questionOrder ?? 0)) ?? [];
       setQueuedQuestions(questions);
       setCountdown(3);
       setIsLoading(false);
@@ -259,10 +238,7 @@ export default function ConversationScreen() {
         // Stop any currently playing sound before starting a new one
         await stopCurrentSound();
 
-        const { sound } = await Audio.Sound.createAsync(
-          { uri: audioUrl },
-          { shouldPlay: true }
-        );
+        const { sound } = await Audio.Sound.createAsync({ uri: audioUrl }, { shouldPlay: true });
         currentSoundRef.current = sound;
 
         // Wait for audio to finish
@@ -367,7 +343,7 @@ export default function ConversationScreen() {
 
   const sendToGemini = async (
     uri: string,
-    referenceText?: string
+    referenceText?: string,
   ): Promise<{
     feedbackText?: string;
     words?: FeedbackWord[];
@@ -377,13 +353,10 @@ export default function ConversationScreen() {
     aiAudioMimeType?: string;
     matchScore?: number;
   }> => {
-    const apiKey =
-      process.env.EXPO_PUBLIC_GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+    const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
     if (!apiKey) {
-      throw new Error(
-        "Missing Gemini API key (EXPO_PUBLIC_GEMINI_API_KEY/GOOGLE_API_KEY)"
-      );
+      throw new Error("Missing Gemini API key (EXPO_PUBLIC_GEMINI_API_KEY/GOOGLE_API_KEY)");
     }
 
     const audioBase64 = await FileSystem.readAsStringAsync(uri, {
@@ -396,8 +369,7 @@ export default function ConversationScreen() {
       if (lower.endsWith(".mp3")) return "audio/mpeg";
       if (lower.endsWith(".m4a")) return "audio/mp4";
       if (lower.endsWith(".aac")) return "audio/aac";
-      if (lower.endsWith(".3gp") || lower.endsWith(".3gpp"))
-        return "audio/3gpp";
+      if (lower.endsWith(".3gp") || lower.endsWith(".3gpp")) return "audio/3gpp";
       if (lower.endsWith(".webm")) return "audio/webm";
       return Platform.OS === "ios" ? "audio/mp4" : "audio/3gpp";
     };
@@ -453,15 +425,12 @@ export default function ConversationScreen() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(baseBody),
-          }
+          },
         );
 
         if (!res.ok) {
           const errText = await res.text();
-          if (
-            res.status === 404 ||
-            /NOT_FOUND|is not found|unsupported/i.test(errText)
-          ) {
+          if (res.status === 404 || /NOT_FOUND|is not found|unsupported/i.test(errText)) {
             continue;
           }
           throw new Error(`Gemini error: ${res.status} ${errText}`);
@@ -480,21 +449,10 @@ export default function ConversationScreen() {
         if (Array.isArray(parsed)) {
           wordsOut = parsed
             .map((it: any) => {
-              const ch =
-                typeof it?.character === "string"
-                  ? it.character
-                  : String(it?.character ?? "");
+              const ch = typeof it?.character === "string" ? it.character : String(it?.character ?? "");
               const acc = String(it?.accuracy ?? "").toLowerCase();
-              const score =
-                acc === "good"
-                  ? 100
-                  : acc === "ok" || acc === "medium"
-                    ? 60
-                    : acc
-                      ? 0
-                      : undefined;
-              const correct =
-                score !== undefined ? score >= 85 : acc === "good";
+              const score = acc === "good" ? 100 : acc === "ok" || acc === "medium" ? 60 : acc ? 0 : undefined;
+              const correct = score !== undefined ? score >= 85 : acc === "good";
               return ch ? { word: ch, correct, score } : undefined;
             })
             .filter(Boolean) as FeedbackWord[];
@@ -508,9 +466,7 @@ export default function ConversationScreen() {
                 typeof syl?.AccuracyScore === "number"
                   ? syl.AccuracyScore
                   : parseFloat(String(syl?.AccuracyScore ?? ""));
-              const score = isFinite(scoreNum)
-                ? Math.max(0, Math.min(100, Math.round(scoreNum)))
-                : undefined;
+              const score = isFinite(scoreNum) ? Math.max(0, Math.min(100, Math.round(scoreNum))) : undefined;
               const correct = score !== undefined ? score >= 85 : false;
               return word ? { word, correct, score } : undefined;
             })
@@ -519,17 +475,12 @@ export default function ConversationScreen() {
 
         // Extract MatchScore from response
         const matchScore =
-          typeof parsed.MatchScore === "number"
-            ? parsed.MatchScore
-            : parseFloat(String(parsed.MatchScore ?? ""));
+          typeof parsed.MatchScore === "number" ? parsed.MatchScore : parseFloat(String(parsed.MatchScore ?? ""));
 
         return {
           feedbackText: parsed.ReferenceText || parsed.feedbackText,
           words: wordsOut,
-          recognizedText:
-            parsed.TranscribedText ||
-            parsed.transcribedText ||
-            parsed.recognizedText,
+          recognizedText: parsed.TranscribedText || parsed.transcribedText || parsed.recognizedText,
           aiMessageText: parsed.aiMessageText,
           aiAudioBase64: parsed.aiAudioBase64,
           aiAudioMimeType: parsed.aiAudioMimeType,
@@ -541,28 +492,19 @@ export default function ConversationScreen() {
     }
 
     if (lastError) throw lastError;
-    throw new Error(
-      "Gemini models unavailable or unsupported for this endpoint."
-    );
+    throw new Error("Gemini models unavailable or unsupported for this endpoint.");
   };
 
   const normalizeJa = (s: string) =>
-    (s || "")
-      .replace(/[\s\u3000]/g, "")
-      .replace(/[「」『』（）()、。．・…~〜!！?？:：;；，,\.\-—]/g, "");
+    (s || "").replace(/[\s\u3000]/g, "").replace(/[「」『』（）()、。．・…~〜!！?？:：;；，,\.\-—]/g, "");
 
-  const buildFeedbackFromDiff = (
-    targetRaw: string,
-    spokenRaw: string
-  ): FeedbackWord[] => {
+  const buildFeedbackFromDiff = (targetRaw: string, spokenRaw: string): FeedbackWord[] => {
     const target = normalizeJa(targetRaw).split("");
     const spoken = normalizeJa(spokenRaw).split("");
     const m = target.length;
     const n = spoken.length;
 
-    const dp: number[][] = Array.from({ length: m + 1 }, () =>
-      new Array(n + 1).fill(0)
-    );
+    const dp: number[][] = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
 
     for (let i = 0; i <= m; i++) dp[i][0] = i;
     for (let j = 0; j <= n; j++) dp[0][j] = j;
@@ -570,11 +512,7 @@ export default function ConversationScreen() {
     for (let i = 1; i <= m; i++) {
       for (let j = 1; j <= n; j++) {
         const cost = target[i - 1] === spoken[j - 1] ? 0 : 1;
-        dp[i][j] = Math.min(
-          dp[i - 1][j] + 1,
-          dp[i][j - 1] + 1,
-          dp[i - 1][j - 1] + cost
-        );
+        dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
       }
     }
 
@@ -583,12 +521,7 @@ export default function ConversationScreen() {
     const aligned: { t?: string; s?: string }[] = [];
 
     while (i > 0 || j > 0) {
-      if (
-        i > 0 &&
-        j > 0 &&
-        dp[i][j] ===
-          dp[i - 1][j - 1] + (target[i - 1] === spoken[j - 1] ? 0 : 1)
-      ) {
+      if (i > 0 && j > 0 && dp[i][j] === dp[i - 1][j - 1] + (target[i - 1] === spoken[j - 1] ? 0 : 1)) {
         aligned.push({ t: target[i - 1], s: spoken[j - 1] });
         i--;
         j--;
@@ -612,9 +545,7 @@ export default function ConversationScreen() {
     }
 
     if (!tokens.length && targetRaw) {
-      return targetRaw
-        .split("")
-        .map((ch) => ({ word: ch, correct: false, score: 0 }));
+      return targetRaw.split("").map((ch) => ({ word: ch, correct: false, score: 0 }));
     }
 
     return tokens;
@@ -622,10 +553,8 @@ export default function ConversationScreen() {
 
   const isPredominantlyJapanese = (s: string, threshold = 0.6): boolean => {
     if (!s) return false;
-    const jpRegex =
-      /[\u3040-\u309F\u30A0-\u30FF\u31F0-\u31FF\u4E00-\u9FFF\u3400-\u4DBF\u3005\u3007\u30FC]/g;
-    const allowedPunct =
-      /[\u3001\u3002\uFF0C\uFF0E\uFF1F\uFF01\u30FB\u300C\u300D\u300E\u300F\u301C\uFF5E\s]/g;
+    const jpRegex = /[\u3040-\u309F\u30A0-\u30FF\u31F0-\u31FF\u4E00-\u9FFF\u3400-\u4DBF\u3005\u3007\u30FC]/g;
+    const allowedPunct = /[\u3001\u3002\uFF0C\uFF0E\uFF1F\uFF01\u30FB\u300C\u300D\u300E\u300F\u301C\uFF5E\s]/g;
     const total = s.replace(allowedPunct, "").length;
     if (total === 0) return false;
     const matches = s.match(jpRegex);
@@ -636,7 +565,7 @@ export default function ConversationScreen() {
   const projectModelScoresToReference = (
     referenceText: string,
     recognizedText: string,
-    modelWords?: FeedbackWord[]
+    modelWords?: FeedbackWord[],
   ): FeedbackWord[] => {
     const alignedTokens = buildFeedbackFromDiff(referenceText, recognizedText);
     if (!modelWords || !modelWords.length) {
@@ -661,10 +590,7 @@ export default function ConversationScreen() {
       }
       const list = queues.get(t.word);
       const score = list && list.length ? list.shift() : 100;
-      const normalized =
-        score !== undefined
-          ? Math.max(0, Math.min(100, Math.round(score)))
-          : 100;
+      const normalized = score !== undefined ? Math.max(0, Math.min(100, Math.round(score))) : 100;
       const isCorrect = normalized >= 85;
       return { word: t.word, correct: isCorrect, score: normalized };
     });
@@ -675,8 +601,7 @@ export default function ConversationScreen() {
   const handleRecordingComplete = async (uri: string, durationSec: number) => {
     try {
       const info = await FileSystem.getInfoAsync(uri);
-      const isLikelySilent =
-        !info.exists || (info.size ?? 0) < 2000 || (durationSec ?? 0) < 0.5;
+      const isLikelySilent = !info.exists || (info.size ?? 0) < 2000 || (durationSec ?? 0) < 0.5;
 
       if (isLikelySilent) {
         const displayText = nextUserPrompt || "";
@@ -691,7 +616,7 @@ export default function ConversationScreen() {
       const result = await sendToGemini(uri, nextUserPrompt);
       const displayText = result.feedbackText || nextUserPrompt || "";
       const recognized = String((result as any).recognizedText || "").trim();
-      
+
       // Kiểm tra MatchScore và recognizedText để phát hiện file im lặng/không hợp lệ
       const matchScore = result.matchScore ?? 1.0;
       const isAudioValid = matchScore > 0 && recognized && recognized.length > 0;
@@ -714,11 +639,7 @@ export default function ConversationScreen() {
       // Chỉ xử lý đánh giá nếu audio hợp lệ và có recognizedText
       let words: FeedbackWord[];
       if (result.words && Array.isArray(result.words) && result.words.length && matchScore > 0) {
-        words = projectModelScoresToReference(
-          displayText,
-          recognized,
-          result.words as any
-        );
+        words = projectModelScoresToReference(displayText, recognized, result.words as any);
       } else if (recognized && recognized.length > 0) {
         words = buildFeedbackFromDiff(displayText, recognized);
       } else {
@@ -742,7 +663,7 @@ export default function ConversationScreen() {
           alignItems: "center",
           flexDirection: "row",
           paddingHorizontal: 12,
-          paddingVertical:20,
+          paddingVertical: 20,
           position: "relative",
         }}
       >
@@ -765,9 +686,7 @@ export default function ConversationScreen() {
       </View>
 
       {isLoading ? (
-        <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
           <ActivityIndicator />
         </View>
       ) : (
@@ -829,14 +748,12 @@ export default function ConversationScreen() {
               </View>
             </View>
           ) : null}
-          <ScrollView
-            contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
-          >
+          <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}>
             {messages.map((m) => {
               const isUser = m.role === "user";
               const userAvatar = user?.avatar;
               const userName = user?.name || "User";
-              
+
               return (
                 <View
                   key={m.id}
@@ -936,17 +853,13 @@ export default function ConversationScreen() {
                           onPlayEnd={() => {
                             // Reset if this was the currently playing message
                             // Don't reset if it's the special stop-all value
-                            if (
-                              currentlyPlayingMessageId === m.id &&
-                              currentlyPlayingMessageId !== "__STOP_ALL__"
-                            ) {
+                            if (currentlyPlayingMessageId === m.id && currentlyPlayingMessageId !== "__STOP_ALL__") {
                               setCurrentlyPlayingMessageId(null);
                             }
                           }}
                           shouldStop={
                             currentlyPlayingMessageId === "__STOP_ALL__" ||
-                            (currentlyPlayingMessageId !== null &&
-                              currentlyPlayingMessageId !== m.id)
+                            (currentlyPlayingMessageId !== null && currentlyPlayingMessageId !== m.id)
                           }
                         />
                       </View>
@@ -982,20 +895,9 @@ export default function ConversationScreen() {
               onRecordingStop={() => {
                 setIsRecording(false);
               }}
-              exerciseTitle={
-                isSubmitting ? (
-                  <AnimatedDots />
-                ) : (
-                  t("home.ai.conversation.tap_to_speak")
-                )
-              }
+              exerciseTitle={isSubmitting ? <AnimatedDots /> : t("home.ai.conversation.tap_to_speak")}
               showPlayback={true}
-              disabled={
-                isSubmitting ||
-                countdown > 0 ||
-                isAudioPlaying ||
-                (isSequencing && !awaitingUser)
-              }
+              disabled={isSubmitting || countdown > 0 || isAudioPlaying || (isSequencing && !awaitingUser)}
               // showWaveform={false}
               maxDuration={10}
               showSaveButton={false}
@@ -1027,9 +929,7 @@ export default function ConversationScreen() {
                     borderRadius: 10,
                   }}
                 >
-                  <ThemedText style={{ color: "#ffffff", fontWeight: "700" }}>
-                    Tiếp tục
-                  </ThemedText>
+                  <ThemedText style={{ color: "#ffffff", fontWeight: "700" }}>Tiếp tục</ThemedText>
                 </TouchableOpacity>
               </View>
             ) : null}

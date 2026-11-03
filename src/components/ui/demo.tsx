@@ -2,12 +2,7 @@ import { Collapsible } from "@components/Collapsible";
 import { Label } from "@react-navigation/elements";
 import React, { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "./Accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./Accordion";
 import { Alert, AlertDescription, AlertTitle } from "./Alert";
 import { AspectRatio } from "./AspectRatio";
 import { Avatar } from "./Avatar";
@@ -22,13 +17,7 @@ import {
   BreadcrumbSeparator,
 } from "./Breadcrumb";
 import { Button } from "./Button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./Card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./Card";
 import { Checkbox } from "./Checkbox";
 import { Input } from "./Input";
 import { EnhancedPagination } from "./Pagination";
@@ -39,14 +28,7 @@ import { Separator } from "./Separator";
 import { Skeleton } from "./Skeleton";
 import { Slider } from "./Slider";
 import { Switch } from "./Switch";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./Table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./Table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./Tabs";
 import { Textarea } from "./Textarea";
 import { Toast, ToastDescription, ToastTitle } from "./Toast";
@@ -90,36 +72,20 @@ export const UIDemo = () => {
       <Card style={{ marginBottom: 16 }}>
         <CardHeader>
           <CardTitle>Bounce Buttons (with Haptic)</CardTitle>
-          <CardDescription>
-            Buttons with bounce animation effects and haptic feedback
-          </CardDescription>
+          <CardDescription>Buttons with bounce animation effects and haptic feedback</CardDescription>
         </CardHeader>
         <CardContent>
           <View style={{ gap: 16, alignItems: "center" }}>
-            <BounceButton
-              withHaptics
-              onPress={() => console.log("Bounce button pressed!")}
-            >
+            <BounceButton withHaptics onPress={() => console.log("Bounce button pressed!")}>
               BẮT ĐẦU NGAY
             </BounceButton>
-            <BounceButton
-              withHaptics
-              onPress={() => console.log("Demo button pressed!")}
-            >
+            <BounceButton withHaptics onPress={() => console.log("Demo button pressed!")}>
               DEMO BUTTON
             </BounceButton>
-            <BounceButton
-              withHaptics
-              loading
-              onPress={() => console.log("Demo button pressed!")}
-            >
+            <BounceButton withHaptics loading onPress={() => console.log("Demo button pressed!")}>
               Loading button
             </BounceButton>
-            <BounceButton
-              withHaptics
-              disabled
-              onPress={() => console.log("Demo button pressed!")}
-            >
+            <BounceButton withHaptics disabled onPress={() => console.log("Demo button pressed!")}>
               Disabled button
             </BounceButton>
           </View>
@@ -157,21 +123,9 @@ export const UIDemo = () => {
         <CardContent>
           <View style={{ gap: 12 }}>
             <Input label="Name" placeholder="Enter your name" />
-            <Input
-              label="Email"
-              placeholder="Enter your email"
-              keyboardType="email-address"
-            />
-            <Input
-              label="Error State"
-              placeholder="This has an error"
-              error="This field is required"
-            />
-            <Textarea
-              label="Message"
-              placeholder="Enter your message"
-              rows={3}
-            />
+            <Input label="Email" placeholder="Enter your email" keyboardType="email-address" />
+            <Input label="Error State" placeholder="This has an error" error="This field is required" />
+            <Textarea label="Message" placeholder="Enter your message" rows={3} />
           </View>
         </CardContent>
       </Card>
@@ -247,15 +201,11 @@ export const UIDemo = () => {
           <View style={{ gap: 12 }}>
             <Alert variant="default">
               <AlertTitle>Information</AlertTitle>
-              <AlertDescription>
-                This is an informational alert message.
-              </AlertDescription>
+              <AlertDescription>This is an informational alert message.</AlertDescription>
             </Alert>
             <Alert variant="destructive">
               <AlertTitle>Error</AlertTitle>
-              <AlertDescription>
-                This is an error alert message.
-              </AlertDescription>
+              <AlertDescription>This is an error alert message.</AlertDescription>
             </Alert>
           </View>
         </CardContent>
@@ -286,13 +236,8 @@ export const UIDemo = () => {
         </CardHeader>
         <CardContent>
           <View style={{ gap: 12 }}>
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
-            >
-              <Checkbox
-                checked={checkboxValue}
-                onCheckedChange={setCheckboxValue}
-              />
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+              <Checkbox checked={checkboxValue} onCheckedChange={setCheckboxValue} />
               <Label>Accept terms and conditions</Label>
             </View>
           </View>
@@ -332,9 +277,7 @@ export const UIDemo = () => {
               <RadioGroupItem value="option2" />
               <Label>Option 2</Label>
             </View>
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
-            >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
               <RadioGroupItem value="option3" />
               <Label>Option 3</Label>
             </View>
@@ -350,13 +293,7 @@ export const UIDemo = () => {
         </CardHeader>
         <CardContent>
           <View style={{ gap: 12 }}>
-            <Slider
-              value={sliderValue}
-              onValueChange={setSliderValue}
-              min={0}
-              max={100}
-              step={1}
-            />
+            <Slider value={sliderValue} onValueChange={setSliderValue} min={0} max={100} step={1} />
             <Text>Value: {sliderValue[0]}</Text>
           </View>
         </CardContent>
@@ -397,11 +334,7 @@ export const UIDemo = () => {
         <CardContent>
           <Accordion
             value={accordionValue}
-            onValueChange={(value) =>
-              setAccordionValue(
-                typeof value === "string" ? value : value[0] || "item1"
-              )
-            }
+            onValueChange={(value) => setAccordionValue(typeof value === "string" ? value : value[0] || "item1")}
           >
             <AccordionItem value="item1">
               <AccordionTrigger>Section 1</AccordionTrigger>
@@ -412,9 +345,7 @@ export const UIDemo = () => {
             <AccordionItem value="item2">
               <AccordionTrigger>Section 2</AccordionTrigger>
               <AccordionContent>
-                <Text>
-                  Content for section 2. This is also collapsible content.
-                </Text>
+                <Text>Content for section 2. This is also collapsible content.</Text>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -462,9 +393,7 @@ export const UIDemo = () => {
           <View style={{ gap: 12 }}>
             <Toast variant="default">
               <ToastTitle>Success!</ToastTitle>
-              <ToastDescription>
-                Operation completed successfully.
-              </ToastDescription>
+              <ToastDescription>Operation completed successfully.</ToastDescription>
             </Toast>
             <Toast variant="destructive">
               <ToastTitle>Error</ToastTitle>
@@ -504,11 +433,7 @@ export const UIDemo = () => {
               <Toggle pressed={toggleValue} onPressedChange={setToggleValue}>
                 <Text>Toggle</Text>
               </Toggle>
-              <Toggle
-                pressed={!toggleValue}
-                onPressedChange={() => setToggleValue(false)}
-                variant="outline"
-              >
+              <Toggle pressed={!toggleValue} onPressedChange={() => setToggleValue(false)} variant="outline">
                 <Text>Outline</Text>
               </Toggle>
             </View>
@@ -547,9 +472,7 @@ export const UIDemo = () => {
             <ToggleGroup
               type="multiple"
               value={toggleGroupValue}
-              onValueChange={(value) =>
-                setToggleGroupValue(Array.isArray(value) ? value : [value])
-              }
+              onValueChange={(value) => setToggleGroupValue(Array.isArray(value) ? value : [value])}
             >
               <ToggleGroupItem value="bold">
                 <Text>Bold</Text>
@@ -574,9 +497,7 @@ export const UIDemo = () => {
         <CardContent>
           <View style={{ gap: 12 }}>
             <Collapsible title="Click to toggle">
-              <Text>
-                This is the collapsible content that can be shown or hidden.
-              </Text>
+              <Text>This is the collapsible content that can be shown or hidden.</Text>
             </Collapsible>
           </View>
         </CardContent>
@@ -617,10 +538,7 @@ export const UIDemo = () => {
         </CardHeader>
         <CardContent>
           <View style={{ gap: 12 }}>
-            <AspectRatio
-              ratio={16 / 9}
-              style={{ backgroundColor: "#f3f4f6", borderRadius: 8 }}
-            >
+            <AspectRatio ratio={16 / 9} style={{ backgroundColor: "#f3f4f6", borderRadius: 8 }}>
               <View
                 style={{
                   flex: 1,

@@ -11,15 +11,7 @@ import { router } from "expo-router";
 import { Gift } from "lucide-react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ActivityIndicator,
-  Pressable,
-  RefreshControl,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, RefreshControl, StatusBar, StyleSheet, Text, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -27,9 +19,7 @@ const PAGE_SIZE = 10;
 
 export default function RewardHistoryScreen() {
   const { t } = useTranslation();
-  const [sourceType, setSourceType] = useState<RewardSourceType | undefined>(
-    undefined
-  );
+  const [sourceType, setSourceType] = useState<RewardSourceType | undefined>(undefined);
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
 
@@ -86,8 +76,7 @@ export default function RewardHistoryScreen() {
 
   // Get rewards list sorted by createdAt (newest first)
   const rewardsList = useMemo(() => {
-    const rewards =
-      rewardData?.pages.flatMap((page) => page.data?.results ?? []) ?? [];
+    const rewards = rewardData?.pages.flatMap((page) => page.data?.results ?? []) ?? [];
     return rewards.sort((a, b) => {
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
@@ -128,35 +117,23 @@ export default function RewardHistoryScreen() {
     setDateTo("");
   }, []);
 
-  const renderRewardCard = useCallback(
-    ({ item }: { item: any }) => <RewardCard item={item} t={t} />,
-    [t]
-  );
+  const renderRewardCard = useCallback(({ item }: { item: any }) => <RewardCard item={item} t={t} />, [t]);
 
   const keyExtractor = useCallback((item: any) => item.id.toString(), []);
 
   const renderHeader = useMemo(
-    () => (
-      <StatisticsCard
-        totalRewards={statistics.totalRewards}
-        totalExp={statistics.totalExp}
-        t={t}
-      />
-    ),
-    [statistics.totalRewards, statistics.totalExp, t]
+    () => <StatisticsCard totalRewards={statistics.totalRewards} totalExp={statistics.totalExp} t={t} />,
+    [statistics.totalRewards, statistics.totalExp, t],
   );
 
   const renderFooter = useMemo(
     () =>
       isFetchingNextPage ? (
         <View className="py-4">
-          <ActivityIndicator
-            size="large"
-            color={REWARD_HISTORY_COLORS.PRIMARY}
-          />
+          <ActivityIndicator size="large" color={REWARD_HISTORY_COLORS.PRIMARY} />
         </View>
       ) : null,
-    [isFetchingNextPage]
+    [isFetchingNextPage],
   );
 
   return (
@@ -164,11 +141,7 @@ export default function RewardHistoryScreen() {
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
-      <BackScreen
-        onPress={() => router.back()}
-        color="black"
-        title={t("reward_history.title")}
-      />
+      <BackScreen onPress={() => router.back()} color="black" title={t("reward_history.title")} />
 
       {/* Content */}
       <View className="flex-1 px-4">
@@ -200,28 +173,20 @@ export default function RewardHistoryScreen() {
           </View>
         ) : isError ? (
           <View className="flex-1 items-center justify-center">
-            <Text className="text-slate-500 font-semibold mb-4">
-              {t("reward_history.load_error")}
-            </Text>
+            <Text className="text-slate-500 font-semibold mb-4">{t("reward_history.load_error")}</Text>
             <Pressable
               onPress={handleRefresh}
               className="bg-green-500 px-6 py-3 rounded-2xl"
               style={{ backgroundColor: REWARD_HISTORY_COLORS.PRIMARY }}
             >
-              <Text className="text-white font-bold">
-                {t("reward_history.retry")}
-              </Text>
+              <Text className="text-white font-bold">{t("reward_history.retry")}</Text>
             </Pressable>
           </View>
         ) : rewardsList.length === 0 ? (
           <View className="flex-1 items-center justify-center">
             <Gift size={64} color="#94a3b8" strokeWidth={1.5} />
-            <Text className="text-xl font-bold text-slate-600 mt-4 mb-2">
-              {t("reward_history.empty_title")}
-            </Text>
-            <Text className="text-sm text-slate-500 text-center px-8">
-              {t("reward_history.empty_description")}
-            </Text>
+            <Text className="text-xl font-bold text-slate-600 mt-4 mb-2">{t("reward_history.empty_title")}</Text>
+            <Text className="text-sm text-slate-500 text-center px-8">{t("reward_history.empty_description")}</Text>
           </View>
         ) : (
           <FlatList

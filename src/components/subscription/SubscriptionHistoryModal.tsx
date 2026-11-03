@@ -2,24 +2,18 @@ import { useInfiniteUserSubscription } from "@hooks/useSubscription";
 import { IUserSubscriptionEntity } from "@models/subscription/subscription.entity";
 import { LinearGradient } from "expo-linear-gradient";
 import { Calendar, Crown, X } from "lucide-react-native";
-import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    ActivityIndicator,
-    Animated,
-    Dimensions,
-    FlatList,
-    Modal,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Animated,
+  Dimensions,
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 interface SubscriptionHistoryModalProps {
@@ -70,20 +64,10 @@ const getStatusText = (status: string, t: any) => {
   }
 };
 
-export default function SubscriptionHistoryModal({
-  visible,
-  onClose,
-}: SubscriptionHistoryModalProps) {
+export default function SubscriptionHistoryModal({ visible, onClose }: SubscriptionHistoryModalProps) {
   const { t } = useTranslation();
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    error,
-    refetch,
-  } = useInfiniteUserSubscription();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error, refetch } =
+    useInfiniteUserSubscription();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -152,19 +136,14 @@ export default function SubscriptionHistoryModal({
 
   const renderSubscriptionItem = useCallback(
     ({ item: subscription }: { item: IUserSubscriptionEntity }) => {
-      const isUltra =
-        subscription.subscriptionPlan.subscription.tagName === "ULTRA";
+      const isUltra = subscription.subscriptionPlan.subscription.tagName === "ULTRA";
       const statusColor = getStatusColor(subscription.status);
       const statusText = getStatusText(subscription.status, t);
 
       return (
         <View style={styles.subscriptionCard}>
           <LinearGradient
-            colors={
-              subscription.status === "ACTIVE"
-                ? ["#ecfdf5", "#d1fae5"]
-                : ["#f9fafb", "#f3f4f6"]
-            }
+            colors={subscription.status === "ACTIVE" ? ["#ecfdf5", "#d1fae5"] : ["#f9fafb", "#f3f4f6"]}
             style={styles.cardGradient}
           >
             <View style={styles.cardContent}>
@@ -177,23 +156,13 @@ export default function SubscriptionHistoryModal({
                     </View>
                   )}
                   <View style={styles.titleContainer}>
-                    <Text style={styles.packageName}>
-                      {
-                        subscription.subscriptionPlan.subscription
-                          .nameTranslation
-                      }
-                    </Text>
+                    <Text style={styles.packageName}>{subscription.subscriptionPlan.subscription.nameTranslation}</Text>
                     <Text style={styles.packageDescription}>
-                      {
-                        subscription.subscriptionPlan.subscription
-                          .descriptionTranslation
-                      }
+                      {subscription.subscriptionPlan.subscription.descriptionTranslation}
                     </Text>
                   </View>
                 </View>
-                <View
-                  style={[styles.statusBadge, { backgroundColor: statusColor }]}
-                >
+                <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
                   <Text style={styles.statusText}>{statusText}</Text>
                 </View>
               </View>
@@ -208,9 +177,7 @@ export default function SubscriptionHistoryModal({
                         defaultValue: "Ngày bắt đầu",
                       })}
                     </Text>
-                    <Text style={styles.detailValue}>
-                      {formatDate(subscription.startDate)}
-                    </Text>
+                    <Text style={styles.detailValue}>{formatDate(subscription.startDate)}</Text>
                   </View>
                 </View>
                 {subscription.expiresAt === null ? (
@@ -238,21 +205,15 @@ export default function SubscriptionHistoryModal({
                           defaultValue: "Ngày hết hạn",
                         })}
                       </Text>
-                      <Text style={styles.detailValue}>
-                        {formatDate(subscription.expiresAt)}
-                      </Text>
+                      <Text style={styles.detailValue}>{formatDate(subscription.expiresAt)}</Text>
                     </View>
                   </View>
                 )}
 
                 <View style={styles.detailRow}>
                   <View style={styles.detailContent}>
-                    <Text style={styles.detailLabel}>
-                      {t("subscription.price", { defaultValue: "Giá" })}
-                    </Text>
-                    <Text style={styles.detailValue}>
-                      {formatPrice(subscription.invoice.totalAmount)} ₫
-                    </Text>
+                    <Text style={styles.detailLabel}>{t("subscription.price", { defaultValue: "Giá" })}</Text>
+                    <Text style={styles.detailValue}>{formatPrice(subscription.invoice.totalAmount)} ₫</Text>
                   </View>
                 </View>
               </View>
@@ -261,7 +222,7 @@ export default function SubscriptionHistoryModal({
         </View>
       );
     },
-    [t]
+    [t],
   );
 
   const renderFooter = useCallback(() => {
@@ -285,13 +246,7 @@ export default function SubscriptionHistoryModal({
       );
     }
     return null;
-  }, [
-    isFetchingNextPage,
-    isLoadingMore,
-    hasNextPage,
-    allSubscriptions.length,
-    t,
-  ]);
+  }, [isFetchingNextPage, isLoadingMore, hasNextPage, allSubscriptions.length, t]);
 
   const renderEmpty = useCallback(() => {
     if (isLoading) {
@@ -310,13 +265,8 @@ export default function SubscriptionHistoryModal({
               defaultValue: "Có lỗi xảy ra khi tải lịch sử",
             })}
           </Text>
-          <TouchableOpacity
-            onPress={() => refetch()}
-            style={styles.retryButton}
-          >
-            <Text style={styles.retryButtonText}>
-              {t("common.retry", { defaultValue: "Thử lại" })}
-            </Text>
+          <TouchableOpacity onPress={() => refetch()} style={styles.retryButton}>
+            <Text style={styles.retryButtonText}>{t("common.retry", { defaultValue: "Thử lại" })}</Text>
           </TouchableOpacity>
         </View>
       );
@@ -333,12 +283,7 @@ export default function SubscriptionHistoryModal({
   }, [isLoading, error, t, refetch]);
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="none"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       <Animated.View style={[styles.overlay, { opacity: fadeAnim }]}>
         <View style={styles.container}>
           {/* Header */}

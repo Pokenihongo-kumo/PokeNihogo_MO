@@ -7,13 +7,7 @@ import { router } from "expo-router";
 import { BookOpen } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Animated,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Animated, RefreshControl, StyleSheet, TouchableOpacity, View } from "react-native";
 
 type UserTestItem = {
   id: number;
@@ -42,7 +36,7 @@ const ReadingCard: React.FC<{
       activeOpacity={0.8}
     >
       <View style={styles.cardHeader}>
-        <View style={[styles.iconContainer, { backgroundColor: "#3b82f6" }]}>        
+        <View style={[styles.iconContainer, { backgroundColor: "#3b82f6" }]}>
           <BookOpen size={24} color="#ffffff" />
         </View>
         <View style={styles.materialInfo}>
@@ -51,14 +45,10 @@ const ReadingCard: React.FC<{
               {item.test?.name}
             </ThemedText>
             <View style={styles.levelBadge}>
-              <ThemedText style={styles.levelText}>
-                N{item.test?.levelN}
-              </ThemedText>
+              <ThemedText style={styles.levelText}>N{item.test?.levelN}</ThemedText>
             </View>
           </View>
-          <ThemedText style={styles.materialDescription}>
-            {item.test?.description}
-          </ThemedText>
+          <ThemedText style={styles.materialDescription}>{item.test?.description}</ThemedText>
         </View>
       </View>
 
@@ -91,8 +81,7 @@ export default function ReadingScreen() {
     pageSize: 10,
   });
 
-  const items: UserTestItem[] =
-    (userTestsData as any)?.data?.data?.results ?? [];
+  const items: UserTestItem[] = (userTestsData as any)?.data?.data?.results ?? [];
   const refreshing = isRefetching;
 
   const handleRefresh = React.useCallback(async () => {
@@ -126,43 +115,28 @@ export default function ReadingScreen() {
   };
 
   return (
-    <HomeLayout
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-      }
-    >
+    <HomeLayout refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
       <ThemedText type="title" style={styles.title}>
         📖 {t("reading.title")}
       </ThemedText>
       <ThemedText style={styles.subtitle}>{t("reading.subtitle")}</ThemedText>
 
-      <Animated.View
-        style={[
-          styles.statsCard,
-          { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
-        ]}
-      >
+      <Animated.View style={[styles.statsCard, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
         <ThemedText type="subtitle" style={styles.statsTitle}>
           📊 {t("reading.progress_title")}
         </ThemedText>
         <View style={styles.statsGrid}>
           <View style={styles.statItem}>
             <ThemedText style={styles.statNumber}>8</ThemedText>
-            <ThemedText style={styles.statLabel}>
-              {t("reading.articles_read")}
-            </ThemedText>
+            <ThemedText style={styles.statLabel}>{t("reading.articles_read")}</ThemedText>
           </View>
           <View style={styles.statItem}>
             <ThemedText style={styles.statNumber}>245</ThemedText>
-            <ThemedText style={styles.statLabel}>
-              {t("reading.words_learned")}
-            </ThemedText>
+            <ThemedText style={styles.statLabel}>{t("reading.words_learned")}</ThemedText>
           </View>
           <View style={styles.statItem}>
             <ThemedText style={styles.statNumber}>92%</ThemedText>
-            <ThemedText style={styles.statLabel}>
-              {t("reading.comprehension")}
-            </ThemedText>
+            <ThemedText style={styles.statLabel}>{t("reading.comprehension")}</ThemedText>
           </View>
         </View>
       </Animated.View>
@@ -172,9 +146,7 @@ export default function ReadingScreen() {
       </ThemedText>
 
       <View style={styles.materialsContainer}>
-        {isLoading && (
-          <ThemedText style={{ textAlign: "center" }}>Loading...</ThemedText>
-        )}
+        {isLoading && <ThemedText style={{ textAlign: "center" }}>Loading...</ThemedText>}
         {!!error && (
           <ThemedText style={{ textAlign: "center", color: "#ef4444" }}>
             {error instanceof Error ? error.message : "Error"}
@@ -190,10 +162,7 @@ export default function ReadingScreen() {
                 transform: [{ translateY: slideAnim }],
               }}
             >
-              <ReadingCard
-                item={item}
-                onPress={() => handleReadingPress(item.test?.id)}
-              />
+              <ReadingCard item={item} onPress={() => handleReadingPress(item.test?.id)} />
             </Animated.View>
           ))}
       </View>
@@ -241,7 +210,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
     padding: 16,
-    borderLeftWidth: 4,},
+    borderLeftWidth: 4,
+  },
   cardHeader: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -324,7 +294,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
     padding: 20,
-    marginBottom: 16,},
+    marginBottom: 16,
+  },
   statsTitle: {
     fontSize: 18,
     fontWeight: "600",
@@ -354,7 +325,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
     padding: 20,
-    marginTop: 16,},
+    marginTop: 16,
+  },
   tipsTitle: {
     fontSize: 18,
     fontWeight: "600",

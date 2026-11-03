@@ -6,15 +6,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Check, ChevronLeft, Heart, RotateCcw, Trophy, X } from "lucide-react-native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-    ActivityIndicator,
-    Animated,
-    Easing,
-    Modal,
-    PanResponder,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { ActivityIndicator, Animated, Easing, Modal, PanResponder, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface FillBlankQuestion {
@@ -191,7 +183,7 @@ const FillBlankGameScreen = () => {
       tension: 40,
       useNativeDriver: true,
     }).start();
-    
+
     // Measure drop zone after animation
     setTimeout(() => {
       measureDropZone();
@@ -212,10 +204,7 @@ const FillBlankGameScreen = () => {
     }
   }, [isGameComplete, isGameOver, modalScaleAnim]);
 
-  const currentQuestion = useMemo(
-    () => questions[currentQuestionIndex] || null,
-    [questions, currentQuestionIndex]
-  );
+  const currentQuestion = useMemo(() => questions[currentQuestionIndex] || null, [questions, currentQuestionIndex]);
 
   // Check answer
   const checkAnswer = useCallback(
@@ -297,7 +286,7 @@ const FillBlankGameScreen = () => {
         }
       }
     },
-    [currentQuestion, currentQuestionIndex, questions.length, lives, inputShakeAnim, successPulseAnim]
+    [currentQuestion, currentQuestionIndex, questions.length, lives, inputShakeAnim, successPulseAnim],
   );
 
   // Handle option select (tap)
@@ -313,7 +302,7 @@ const FillBlankGameScreen = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }
     },
-    [answerState, userInput]
+    [answerState, userInput],
   );
 
   // Start drag on long press
@@ -325,7 +314,7 @@ const FillBlankGameScreen = () => {
       dragAnim.setOffset({ x: 0, y: 0 });
       dragAnim.setValue({ x: 0, y: 0 });
     },
-    [answerState, dragAnim]
+    [answerState, dragAnim],
   );
 
   // Track if over drop zone using ref to avoid dependency issues
@@ -344,20 +333,20 @@ const FillBlankGameScreen = () => {
       },
       onPanResponderMove: (evt, gestureState) => {
         if (!draggingOption || answerState !== "none") return;
-        
+
         dragAnim.setValue({ x: gestureState.dx, y: gestureState.dy });
-        
+
         // Check if over drop zone
         const { pageX, pageY } = evt.nativeEvent;
         const dropZone = dropZoneLayout.current;
-        
+
         if (dropZone.width > 0 && dropZone.height > 0) {
           const isOver =
             pageX >= dropZone.x &&
             pageX <= dropZone.x + dropZone.width &&
             pageY >= dropZone.y &&
             pageY <= dropZone.y + dropZone.height;
-          
+
           isOverDropZoneRef.current = isOver;
           setIsOverDropZone(isOver);
         }
@@ -382,7 +371,7 @@ const FillBlankGameScreen = () => {
           dragAnim.setOffset({ x: 0, y: 0 });
           dragAnim.setValue({ x: 0, y: 0 });
         });
-        
+
         setDraggingOption(null);
         setIsOverDropZone(false);
         isOverDropZoneRef.current = false;
@@ -397,7 +386,7 @@ const FillBlankGameScreen = () => {
           if (dropZoneRef.current) {
             dropZoneRef.current.measure((x, y, width, height, pageX, pageY) => {
               const { pageX: releaseX, pageY: releaseY } = evt.nativeEvent;
-              
+
               const isOver =
                 width > 0 &&
                 height > 0 &&
@@ -474,32 +463,23 @@ const FillBlankGameScreen = () => {
   if (contentData.length === 0) {
     return (
       <SafeAreaView className="flex-1 bg-white">
-        <LinearGradient
-          colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
-          style={{ flex: 1 }}
-        >
+        <LinearGradient colors={["#79B4C4", "#85C3C3", "#9BC7B9"]} style={{ flex: 1 }}>
           <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row rounded-b-3xl items-center justify-between">
             <TouchableOpacity onPress={() => router.back()}>
               <ChevronLeft size={24} color="#6b7280" />
             </TouchableOpacity>
             <View style={{ flex: 1, alignItems: "center" }}>
-              <ThemedText
-                style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}
-              >
+              <ThemedText style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}>
                 {t(
                   "content_list.fill_blank.title",
-                  contentType === "kanji"
-                    ? "Fill in the Blank - Kanji"
-                    : "Fill in the Blank - Vocabulary"
+                  contentType === "kanji" ? "Fill in the Blank - Kanji" : "Fill in the Blank - Vocabulary",
                 )}
               </ThemedText>
             </View>
             <View style={{ width: 24 }} />
           </View>
           <View className="flex-1 items-center justify-center p-6">
-            <ThemedText
-              style={{ fontSize: 18, color: "#6b7280", textAlign: "center" }}
-            >
+            <ThemedText style={{ fontSize: 18, color: "#6b7280", textAlign: "center" }}>
               {t("content_list.fill_blank.no_content", "No content available")}
             </ThemedText>
           </View>
@@ -510,24 +490,17 @@ const FillBlankGameScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
-      <LinearGradient
-        colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
-        style={{ flex: 1 }}
-      >
+      <LinearGradient colors={["#79B4C4", "#85C3C3", "#9BC7B9"]} style={{ flex: 1 }}>
         {/* Header */}
         <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row rounded-b-3xl items-center justify-between">
           <TouchableOpacity onPress={() => router.back()}>
             <ChevronLeft size={24} color="#6b7280" />
           </TouchableOpacity>
           <View style={{ flex: 1, alignItems: "center" }}>
-            <ThemedText
-              style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}
-            >
+            <ThemedText style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}>
               {t(
                 "content_list.fill_blank.title",
-                contentType === "kanji"
-                  ? "Fill in the Blank - Kanji"
-                  : "Fill in the Blank - Vocabulary"
+                contentType === "kanji" ? "Fill in the Blank - Kanji" : "Fill in the Blank - Vocabulary",
               )}
             </ThemedText>
           </View>
@@ -649,8 +622,7 @@ const FillBlankGameScreen = () => {
                         fontWeight: "600",
                       }}
                     >
-                      {t("content_list.fill_blank.hint_text", "Hint")}:{" "}
-                      {currentQuestion.correctAnswer}
+                      {t("content_list.fill_blank.hint_text", "Hint")}: {currentQuestion.correctAnswer}
                     </ThemedText>
                   </View>
                 )}
@@ -703,23 +675,21 @@ const FillBlankGameScreen = () => {
                                   height: 50,
                                   borderRadius: 12,
                                   borderWidth: 3,
-                                  borderColor:
-                                    isOverDropZone
+                                  borderColor: isOverDropZone
+                                    ? "#10b981"
+                                    : answerState === "correct"
                                       ? "#10b981"
-                                      : answerState === "correct"
-                                        ? "#10b981"
-                                        : answerState === "wrong"
-                                          ? "#ef4444"
-                                          : "#3b82f6",
+                                      : answerState === "wrong"
+                                        ? "#ef4444"
+                                        : "#3b82f6",
                                   borderStyle: userInput ? "solid" : "dashed",
-                                  backgroundColor:
-                                    isOverDropZone
+                                  backgroundColor: isOverDropZone
+                                    ? "#d1fae5"
+                                    : answerState === "correct"
                                       ? "#d1fae5"
-                                      : answerState === "correct"
-                                        ? "#d1fae5"
-                                        : answerState === "wrong"
-                                          ? "#fee2e2"
-                                          : "#f3f4f6",
+                                      : answerState === "wrong"
+                                        ? "#fee2e2"
+                                        : "#f3f4f6",
                                   justifyContent: "center",
                                   alignItems: "center",
                                   paddingHorizontal: 12,
@@ -782,7 +752,7 @@ const FillBlankGameScreen = () => {
                 >
                   {currentQuestion.options.map((option, index) => {
                     const isDragging = draggingOption === option;
-                    
+
                     return (
                       <Animated.View
                         key={index}
@@ -917,14 +887,11 @@ const FillBlankGameScreen = () => {
                 padding: 32,
                 alignItems: "center",
                 width: "100%",
-                maxWidth: 400,}}
+                maxWidth: 400,
+              }}
             >
               <LinearGradient
-                colors={
-                  isGameOver
-                    ? ["#ef4444", "#dc2626"]
-                    : ["#fbbf24", "#f59e0b"]
-                }
+                colors={isGameOver ? ["#ef4444", "#dc2626"] : ["#fbbf24", "#f59e0b"]}
                 style={{
                   width: 80,
                   height: 80,
@@ -934,11 +901,7 @@ const FillBlankGameScreen = () => {
                   marginBottom: 20,
                 }}
               >
-                {isGameOver ? (
-                  <X size={40} color="#ffffff" />
-                ) : (
-                  <Trophy size={40} color="#ffffff" />
-                )}
+                {isGameOver ? <X size={40} color="#ffffff" /> : <Trophy size={40} color="#ffffff" />}
               </LinearGradient>
 
               <ThemedText
@@ -1050,4 +1013,3 @@ const FillBlankGameScreen = () => {
 };
 
 export default FillBlankGameScreen;
-

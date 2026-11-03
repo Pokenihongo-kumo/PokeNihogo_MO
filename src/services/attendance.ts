@@ -5,15 +5,7 @@ import { z } from "zod";
 export const AttendanceStatusSchema = z.enum(["PRESENT", "ABSENT"]);
 export type AttendanceStatus = z.infer<typeof AttendanceStatusSchema>;
 
-export const DayOfWeekSchema = z.enum([
-  "SUNDAY",
-  "MONDAY",
-  "TUESDAY",
-  "WEDNESDAY",
-  "THURSDAY",
-  "FRIDAY",
-  "SATURDAY",
-]);
+export const DayOfWeekSchema = z.enum(["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"]);
 
 // passthrough: keep audit fields (createdById, deletedAt, ...) the screens do not read
 export const AttendanceRecordSchema = z

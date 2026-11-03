@@ -72,10 +72,7 @@ export const useHistoryTests = (params?: GetHistoryTestsParams) => {
 /**
  * Hook to get combined history (both exercises and tests)
  */
-export const useCombinedHistory = (params?: {
-  currentPage?: number;
-  pageSize?: number;
-}) => {
+export const useCombinedHistory = (params?: { currentPage?: number; pageSize?: number }) => {
   const exercisesQuery = useHistoryExercises(params);
   const testsQuery = useHistoryTests(params);
 
@@ -106,4 +103,3 @@ export const useRecentExercises = (params?: GetRecentExercisesParams) => {
     },
   });
 };
-

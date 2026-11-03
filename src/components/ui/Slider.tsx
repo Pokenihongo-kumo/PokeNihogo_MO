@@ -40,18 +40,15 @@ const Slider = React.forwardRef<View, SliderProps>(
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     // --- Shared Values ---
     const containerWidthSv = useSharedValue(0);
     const isDragging = useSharedValue(false);
 
     // Khởi tạo progressSv với giá trị ban đầu, gọn hơn useEffect
-    const initialProgress =
-      ((value ?? defaultValue)[0] - min) / (max - min || 1);
-    const progressSv = useSharedValue(
-      Math.max(0, Math.min(1, initialProgress))
-    );
+    const initialProgress = ((value ?? defaultValue)[0] - min) / (max - min || 1);
+    const progressSv = useSharedValue(Math.max(0, Math.min(1, initialProgress)));
 
     // --- Callbacks ---
     // Các hàm này sẽ được gọi từ UI thread thông qua runOnJS
@@ -69,26 +66,18 @@ const Slider = React.forwardRef<View, SliderProps>(
       () => value, // Theo dõi giá trị `value`
       (currentValue, previousValue) => {
         // Chỉ cập nhật nếu giá trị thực sự thay đổi và component không bị kéo
-        if (
-          currentValue !== previousValue &&
-          currentValue !== undefined &&
-          !isDragging.value
-        ) {
+        if (currentValue !== previousValue && currentValue !== undefined && !isDragging.value) {
           const v = currentValue[0] ?? min;
           const clamped = Math.max(min, Math.min(max, v));
           progressSv.value = withTiming((clamped - min) / (max - min || 1));
         }
       },
-      [value, min, max, isDragging]
+      [value, min, max, isDragging],
     );
 
     // --- Worklet: Logic tính toán chính ---
     // Hàm này chạy hoàn toàn trên UI thread để có hiệu năng cao nhất
-    const updateProgress = (
-      x: number,
-      notify: boolean,
-      isEndEvent: boolean
-    ) => {
+    const updateProgress = (x: number, notify: boolean, isEndEvent: boolean) => {
       "worklet";
       const width = containerWidthSv.value;
       if (width === 0) return;
@@ -132,9 +121,7 @@ const Slider = React.forwardRef<View, SliderProps>(
         const currentProgress = progressSv.value;
         const currentValue = min + currentProgress * (max - min);
         const finalValue = Math.round(currentValue / step) * step;
-        runOnJS(notifyChangeComplete)([
-          Math.max(min, Math.min(max, finalValue)),
-        ]);
+        runOnJS(notifyChangeComplete)([Math.max(min, Math.min(max, finalValue))]);
       });
 
     const tap = Gesture.Tap()
@@ -225,7 +212,8 @@ const Slider = React.forwardRef<View, SliderProps>(
                 backgroundColor: "#ffffff",
                 borderRadius: THUMB_RADIUS,
                 borderWidth: 2,
-                borderColor: "#3b82f6",},
+                borderColor: "#3b82f6",
+              },
               thumbStyle,
             ]}
           />
@@ -233,11 +221,10 @@ const Slider = React.forwardRef<View, SliderProps>(
       </GestureDetector>
       // </GestureHandlerRootView>
     );
-  }
+  },
 );
 
 Slider.displayName = "Slider";
 
 export { Slider };
 export type { SliderProps };
-

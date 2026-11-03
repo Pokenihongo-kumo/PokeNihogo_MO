@@ -14,12 +14,7 @@ interface WelcomeModalProps {
   pokemonName: string;
 }
 
-export default function WelcomeModal({
-  visible,
-  onClose,
-  username,
-  pokemonName,
-}: WelcomeModalProps) {
+export default function WelcomeModal({ visible, onClose, username, pokemonName }: WelcomeModalProps) {
   const { t } = useTranslation();
   const { start } = useCopilot();
 
@@ -30,46 +25,31 @@ export default function WelcomeModal({
       start?.();
     }, 300);
   }, [onClose, start]);
-  
+
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={() => {}}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={() => {}}>
       <Pressable style={styles.overlay}>
         <Pressable onPress={(e) => e.stopPropagation()}>
           <ThemedView style={styles.modalContainer}>
-          <LinearGradient
-            colors={["#3b82f6", "#1d4ed8", "#1e40af"]}
-            style={styles.gradientBackground}
-          >
-            <View style={styles.content}>
+            <LinearGradient colors={["#3b82f6", "#1d4ed8", "#1e40af"]} style={styles.gradientBackground}>
+              <View style={styles.content}>
+                {/* Welcome Icon */}
+                <View style={styles.iconContainer}>
+                  <IconSymbol name="party.popper" size={48} color="#ffffff" />
+                </View>
 
-              {/* Welcome Icon */}
-              <View style={styles.iconContainer}>
-                <IconSymbol name="party.popper" size={48} color="#ffffff" />
+                {/* Welcome Message */}
+                <ThemedText style={styles.welcomeTitle}>{t("welcome_modal.title", { username })}</ThemedText>
+
+                <ThemedText style={styles.welcomeMessage}>{t("welcome_modal.message", { pokemonName })}</ThemedText>
+
+                {/* Action Button */}
+                <Pressable style={styles.actionButton} onPress={handleBegin}>
+                  <ThemedText style={styles.actionButtonText}>{t("welcome_modal.lets_begin")}</ThemedText>
+                </Pressable>
               </View>
-
-              {/* Welcome Message */}
-              <ThemedText style={styles.welcomeTitle}>
-                {t("welcome_modal.title", { username })}
-              </ThemedText>
-
-              <ThemedText style={styles.welcomeMessage}>
-                {t("welcome_modal.message", { pokemonName })}
-              </ThemedText>
-
-              {/* Action Button */}
-              <Pressable style={styles.actionButton} onPress={handleBegin}>
-                <ThemedText style={styles.actionButtonText}>
-                  {t("welcome_modal.lets_begin")}
-                </ThemedText>
-              </Pressable>
-            </View>
-          </LinearGradient>
-        </ThemedView>
+            </LinearGradient>
+          </ThemedView>
         </Pressable>
       </Pressable>
     </Modal>
@@ -88,7 +68,8 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 340,
     borderRadius: 20,
-    overflow: "hidden",},
+    overflow: "hidden",
+  },
   gradientBackground: {
     padding: 24,
   },
@@ -135,7 +116,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     paddingVertical: 16,
     paddingHorizontal: 32,
-    borderRadius: 25,},
+    borderRadius: 25,
+  },
   actionButtonText: {
     fontSize: 16,
     fontWeight: "600",

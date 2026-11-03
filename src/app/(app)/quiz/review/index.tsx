@@ -2,10 +2,7 @@ import QuizLayout from "@components/layouts/QuizLayout";
 import { ReviewQuestionCard } from "@components/quiz/review/ReviewQuestionCard";
 import { ReviewStatsSection } from "@components/quiz/review/ReviewStatsSection";
 import { QuizHeader } from "@components/quiz/shared/QuizHeader";
-import {
-  ScrollToTopButton,
-  useScrollToTop,
-} from "@components/ui/ScrollToTopButton";
+import { ScrollToTopButton, useScrollToTop } from "@components/ui/ScrollToTopButton";
 import { useReviewResultUnified } from "@hooks/useReviewResultUnified";
 import { IReviewResultQuestionBank } from "@models/user-exercise-attempt/user-exercise-attempt.response";
 import { router, useLocalSearchParams } from "expo-router";
@@ -28,7 +25,7 @@ export default function QuizReviewScreen() {
     reviewData?: string;
   }>();
   const { t } = useTranslation();
-  
+
   // If reviewData is passed as param, use it; otherwise fetch from API
   const reviewDataFromParams = useMemo(() => {
     if (!reviewDataParam) return null;
@@ -40,39 +37,38 @@ export default function QuizReviewScreen() {
     }
   }, [reviewDataParam]);
 
-  const { data: reviewDataFromApi, isLoading, error } = useReviewResultUnified(
-    sessionId,
-    "quiz",
-    {
-      initialData: reviewDataFromParams || undefined,
-    }
-  );
-  
+  const {
+    data: reviewDataFromApi,
+    isLoading,
+    error,
+  } = useReviewResultUnified(sessionId, "quiz", {
+    initialData: reviewDataFromParams || undefined,
+  });
+
   // Use reviewData from params if available, otherwise use API data
   const reviewData = reviewDataFromApi || reviewDataFromParams;
-  
+
   // Determine if we should show loading/error
   const shouldShowLoading = !reviewDataFromParams && isLoading;
   const shouldShowError = !reviewDataFromParams && error;
-  
+
   const scaleAnims = useRef<Record<string, Animated.Value[]>>({}).current;
   const scrollRef = useRef<ScrollView | null>(null);
   const questionOffsetsRef = useRef<Record<string, number>>({});
   const lastScrollY = useRef(0);
-  
+
   // State for collapse/expand stats section
   const [isStatsCollapsed, setIsStatsCollapsed] = useState(false);
   const [manualControl, setManualControl] = useState(false);
-  
+
   // Scroll to top button logic
-  const { showButton, buttonOpacity, scrollToTop } =
-    useScrollToTop(scrollRef, 200);
-  
+  const { showButton, buttonOpacity, scrollToTop } = useScrollToTop(scrollRef, 200);
+
   // Handle scroll with auto collapse/expand
   const handleScrollWithCollapse = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const currentScrollY = event.nativeEvent.contentOffset.y;
-      
+
       // If user manually controlled, don't auto-collapse/expand for a while
       if (!manualControl) {
         if (currentScrollY > 100 && !isStatsCollapsed) {
@@ -88,12 +84,12 @@ export default function QuizReviewScreen() {
           setManualControl(false);
         }
       }
-      
+
       lastScrollY.current = currentScrollY;
     },
-    [isStatsCollapsed, manualControl]
+    [isStatsCollapsed, manualControl],
   );
-  
+
   // Handle manual toggle from user
   const handleManualToggle = useCallback(() => {
     setIsStatsCollapsed(!isStatsCollapsed);
@@ -104,29 +100,18 @@ export default function QuizReviewScreen() {
   const questions = useMemo((): IReviewResultQuestionBank[] => {
     if (!reviewData?.data?.testSet?.testSetQuestionBanks) return [];
     return reviewData.data.testSet.testSetQuestionBanks
-      .sort(
-        (a: { questionOrder: number }, b: { questionOrder: number }) =>
-          a.questionOrder - b.questionOrder
-      )
-      .map(
-        (item: { questionBank: IReviewResultQuestionBank }) => item.questionBank
-      );
+      .sort((a: { questionOrder: number }, b: { questionOrder: number }) => a.questionOrder - b.questionOrder)
+      .map((item: { questionBank: IReviewResultQuestionBank }) => item.questionBank);
   }, [reviewData]);
 
   // Get user selected answers for each question
-  const getUserSelectedAnswers = (
-    question: IReviewResultQuestionBank
-  ): number[] => {
-    return question.answers
-      .filter((answer) => answer.type === "user_selected_incorrect")
-      .map((answer) => answer.id);
+  const getUserSelectedAnswers = (question: IReviewResultQuestionBank): number[] => {
+    return question.answers.filter((answer) => answer.type === "user_selected_incorrect").map((answer) => answer.id);
   };
 
   // Get correct answers for each question
   const getCorrectAnswers = (question: IReviewResultQuestionBank): number[] => {
-    return question.answers
-      .filter((answer) => answer.type === "correct_answer")
-      .map((answer) => answer.id);
+    return question.answers.filter((answer) => answer.type === "correct_answer").map((answer) => answer.id);
   };
 
   // Statistics data
@@ -137,8 +122,7 @@ export default function QuizReviewScreen() {
       totalQuestions: data.totalQuestions,
       answeredCorrect: data.answeredCorrect,
       answeredInCorrect: data.answeredInCorrect,
-      unansweredQuestions:
-        data.totalQuestions - data.answeredCorrect - data.answeredInCorrect,
+      unansweredQuestions: data.totalQuestions - data.answeredCorrect - data.answeredInCorrect,
       time: data.time,
       status: data.status,
     };
@@ -147,7 +131,7 @@ export default function QuizReviewScreen() {
   if (shouldShowError) {
     Alert.alert(
       t("quiz_review.load_error_title", "Lỗi"),
-      t("quiz_review.load_error_message", "Không thể tải phần xem đáp án.")
+      t("quiz_review.load_error_message", "Không thể tải phần xem đáp án."),
     );
     router.back();
     return null;
@@ -157,9 +141,7 @@ export default function QuizReviewScreen() {
     return (
       <QuizLayout>
         <View style={styles.center}>
-          <Text style={styles.loadingText}>
-            {t("quiz_review.loading", t("common.loading", "Đang tải..."))}
-          </Text>
+          <Text style={styles.loadingText}>{t("quiz_review.loading", t("common.loading", "Đang tải..."))}</Text>
         </View>
       </QuizLayout>
     );
@@ -170,10 +152,7 @@ export default function QuizReviewScreen() {
       showProgress={true}
       progressComponent={
         <View>
-          <QuizHeader
-            title={t("quiz_review.title", "Xem đáp án")}
-            onBackPress={() => router.back()}
-          />
+          <QuizHeader title={t("quiz_review.title", "Xem đáp án")} onBackPress={() => router.back()} />
         </View>
       }
     >
@@ -211,9 +190,7 @@ export default function QuizReviewScreen() {
 
             const questionIdStr = q.id.toString();
             if (!scaleAnims[questionIdStr] && q.answers) {
-              scaleAnims[questionIdStr] = q.answers.map(
-                () => new Animated.Value(1)
-              );
+              scaleAnims[questionIdStr] = q.answers.map(() => new Animated.Value(1));
             }
 
             return (
@@ -233,11 +210,7 @@ export default function QuizReviewScreen() {
         </ScrollView>
 
         {/* Scroll to Top Button */}
-        <ScrollToTopButton
-          show={showButton}
-          opacity={buttonOpacity}
-          onPress={scrollToTop}
-        />
+        <ScrollToTopButton show={showButton} opacity={buttonOpacity} onPress={scrollToTop} />
       </View>
     </QuizLayout>
   );
@@ -250,4 +223,3 @@ const styles = StyleSheet.create({
   questionsScrollView: { flex: 1 },
   scrollContent: { paddingBottom: 24 },
 });
-

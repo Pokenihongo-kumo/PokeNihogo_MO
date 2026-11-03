@@ -93,7 +93,7 @@ const DraggableOverlay = ({
         console.error("Lỗi khi lưu vị trí:", e);
       }
     },
-    [setOverlayPosition]
+    [setOverlayPosition],
   );
 
   // 3. Initialize position from AsyncStorage (runs only once)
@@ -172,14 +172,7 @@ const DraggableOverlay = ({
     };
 
     handleFirstTimeLogin();
-  }, [
-    isFirstTimeLogin,
-    isOverlayPositionLoaded,
-    setOverlayPosition,
-    setOverlayPositionLoaded,
-    pan,
-    savePosition,
-  ]);
+  }, [isFirstTimeLogin, isOverlayPositionLoaded, setOverlayPosition, setOverlayPositionLoaded, pan, savePosition]);
 
   // 4. Sync position from global store when it changes (separate effect)
   useEffect(() => {
@@ -188,10 +181,7 @@ const DraggableOverlay = ({
       const currentPanX = (pan.x as any)._value;
       const currentPanY = (pan.y as any)._value;
 
-      if (
-        Math.abs(currentPanX - overlayPosition.x) > 1 ||
-        Math.abs(currentPanY - overlayPosition.y) > 1
-      ) {
+      if (Math.abs(currentPanX - overlayPosition.x) > 1 || Math.abs(currentPanY - overlayPosition.y) > 1) {
         pan.setValue(overlayPosition);
       }
     }
@@ -221,7 +211,7 @@ const DraggableOverlay = ({
           null,
           { dx: pan.x, dy: pan.y }, // Cập nhật pan.x và pan.y với sự thay đổi (delta)
         ],
-        { useNativeDriver: false } // Phải là false khi dùng Animated.ValueXY cho style 'top'/'left'
+        { useNativeDriver: false }, // Phải là false khi dùng Animated.ValueXY cho style 'top'/'left'
       ),
 
       // Khi thả tay (kết thúc kéo)
@@ -246,14 +236,12 @@ const DraggableOverlay = ({
         savePosition(finalX, finalY);
 
         // Detect tap (not a drag) to open modal
-        const isTap =
-          Math.abs(gestureState.dx) < TAP_THRESHOLD &&
-          Math.abs(gestureState.dy) < TAP_THRESHOLD;
+        const isTap = Math.abs(gestureState.dx) < TAP_THRESHOLD && Math.abs(gestureState.dy) < TAP_THRESHOLD;
         if (isTap) {
           setShowOverlayModal(true);
         }
       },
-    })
+    }),
   ).current;
 
   // 7. Ẩn/Hiện component
@@ -316,13 +304,11 @@ const DraggableOverlay = ({
         </TouchableWithoutFeedback>
 
         <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>
-            {t("settings.overlay_modal_title", "Tùy chọn bạn đồng hành")}
-          </Text>
+          <Text style={styles.modalTitle}>{t("settings.overlay_modal_title", "Tùy chọn bạn đồng hành")}</Text>
           <Text style={styles.modalDescription}>
             {t(
               "settings.overlay_modal_description",
-              "Tắt bạn đồng hành nổi nếu bạn thấy vướng. Bạn có thể bật lại bất cứ lúc nào."
+              "Tắt bạn đồng hành nổi nếu bạn thấy vướng. Bạn có thể bật lại bất cứ lúc nào.",
             )}
           </Text>
 
@@ -333,25 +319,15 @@ const DraggableOverlay = ({
               setPokemonOverlayEnabled(false);
             }}
           >
-            <Text style={styles.modalPrimaryText}>
-              {t("settings.overlay_turn_off", "Tắt bạn đồng hành")}
-            </Text>
+            <Text style={styles.modalPrimaryText}>{t("settings.overlay_turn_off", "Tắt bạn đồng hành")}</Text>
           </TouchableOpacity>
 
           <Text style={styles.modalHint}>
-            {t(
-              "settings.overlay_hint",
-              "Muốn bật lại? Vào mục Cài đặt và bật “Pokémon overlay”."
-            )}
+            {t("settings.overlay_hint", "Muốn bật lại? Vào mục Cài đặt và bật “Pokémon overlay”.")}
           </Text>
 
-          <TouchableOpacity
-            style={styles.modalSecondaryButton}
-            onPress={() => setShowOverlayModal(false)}
-          >
-            <Text style={styles.modalSecondaryText}>
-              {t("common.cancel", "Cancel")}
-            </Text>
+          <TouchableOpacity style={styles.modalSecondaryButton} onPress={() => setShowOverlayModal(false)}>
+            <Text style={styles.modalSecondaryText}>{t("common.cancel", "Cancel")}</Text>
           </TouchableOpacity>
         </View>
       </Modal>

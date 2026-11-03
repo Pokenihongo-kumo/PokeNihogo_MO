@@ -13,41 +13,18 @@ import { useAuthStore } from "@stores/auth/auth.config";
 import { useMatchingStore } from "@stores/matching/matching.config";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import {
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Shield,
-  ShieldAlert,
-  XCircle,
-  Zap,
-} from "lucide-react-native";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { AlertTriangle, CheckCircle, Clock, Shield, ShieldAlert, XCircle, Zap } from "lucide-react-native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ActivityIndicator,
-  Animated,
-  Easing,
-  Image,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Animated, Easing, Image, ImageBackground, StyleSheet, Text, View } from "react-native";
 import { TYPE_MATCHUPS } from "../../../../mock-data/type-matchups";
 
 const BASE_POINT_PER_QUESTION = 100;
 const MIN_POINT_PER_QUESTION = 50;
 
-interface BattleArenaScreenProps { }
+interface BattleArenaScreenProps {}
 
-export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
+export default function BattleArenaScreen({}: BattleArenaScreenProps) {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { t } = useTranslation();
@@ -68,11 +45,10 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
 
   const queryClient = useQueryClient();
 
-  const { data: matchRound, isLoading: isLoadingMatchRound } =
-    useListMatchRound(matchId) as {
-      data: IBattleMatchRound;
-      isLoading: boolean;
-    };
+  const { data: matchRound, isLoading: isLoadingMatchRound } = useListMatchRound(matchId) as {
+    data: IBattleMatchRound;
+    isLoading: boolean;
+  };
 
   // States
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -97,27 +73,20 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
   } | null>(null);
   const [roundStarted, setRoundStarted] = useState(false);
   const [roundData, setRoundData] = useState<any>(null);
-  const [questionTimeRemaining, setQuestionTimeRemaining] = useState<
-    number | null
-  >(null);
-  const [questionStartTime, setQuestionStartTime] = useState<number | null>(
-    null
-  );
+  const [questionTimeRemaining, setQuestionTimeRemaining] = useState<number | null>(null);
+  const [questionStartTime, setQuestionStartTime] = useState<number | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState<number | null>(null);
   const [isLastQuestion, setIsLastQuestion] = useState(false);
 
   const shakeAnimation = useRef(new Animated.Value(0)).current;
-  const [currentQuestionPoints, setCurrentQuestionPoints] = useState(
-    BASE_POINT_PER_QUESTION
-  );
+  const [currentQuestionPoints, setCurrentQuestionPoints] = useState(BASE_POINT_PER_QUESTION);
   const pointProgress = useRef(new Animated.Value(1)).current;
   const pointProgressWidth = pointProgress.interpolate({
     inputRange: [0, 1],
     outputRange: ["0%", "100%"],
   });
-  const upcomingDebuffTimeoutRef =
-    useRef<ReturnType<typeof setTimeout> | null>(null);
+  const upcomingDebuffTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const getDebuffDisplay = useCallback(
     (debuff?: { typeDebuff?: string | null; valueDebuff?: number | null }) => {
@@ -129,8 +98,8 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
             description:
               typeof debuff.valueDebuff === "number"
                 ? t("battle.arena.debuff.add_question_description", {
-                  value: debuff.valueDebuff,
-                })
+                    value: debuff.valueDebuff,
+                  })
                 : null,
           };
         case MATCH_DEBUFF_TYPE.DECREASE_POINT:
@@ -139,16 +108,14 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
             description:
               typeof debuff.valueDebuff === "number"
                 ? t("battle.arena.debuff.decrease_point_description", {
-                  value: debuff.valueDebuff,
-                })
+                    value: debuff.valueDebuff,
+                  })
                 : null,
           };
         case MATCH_DEBUFF_TYPE.DISCOMFORT_VISION:
           return {
             title: t("battle.arena.debuff.discomfort_vision"),
-            description: t(
-              "battle.arena.debuff.discomfort_vision_description"
-            ),
+            description: t("battle.arena.debuff.discomfort_vision_description"),
           };
         default:
           return {
@@ -157,11 +124,11 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
           };
       }
     },
-    [t]
+    [t],
   );
   const currentDebuffDisplay = useMemo(
     () => getDebuffDisplay(currentQuestion?.debuff),
-    [currentQuestion?.debuff, getDebuffDisplay]
+    [currentQuestion?.debuff, getDebuffDisplay],
   );
 
   // --- LOGIC XỬ LÝ ROUND STARTED (Dùng chung) ---
@@ -241,15 +208,12 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
       } else if (qData.endTimeQuestion) {
         const endTime = new Date(qData.endTimeQuestion).getTime();
         const now = Date.now() + useMatchingStore.getState().serverTimeOffset;
-        setQuestionTimeRemaining(
-          Math.max(0, Math.floor((endTime - now) / 1000))
-        );
+        setQuestionTimeRemaining(Math.max(0, Math.floor((endTime - now) / 1000)));
       }
 
       setQuestionStartTime(Date.now());
       setCurrentQuestionIndex((prev) => prev + 1);
-      if (payload?.isLastQuestion !== undefined)
-        setIsLastQuestion(payload.isLastQuestion);
+      if (payload?.isLastQuestion !== undefined) setIsLastQuestion(payload.isLastQuestion);
       if (payload?.totalQuestions) setTotalQuestions(payload.totalQuestions);
     }
 
@@ -322,10 +286,7 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
       console.log("[ARENA] Socket: question-answered", payload);
       if (payload?.answerResult?.isCorrect) setPlayerScore((prev) => prev + 1);
 
-      const nextQ =
-        payload?.nextQuestion?.nextQuestion ||
-        payload?.nextQuestion ||
-        payload?.question;
+      const nextQ = payload?.nextQuestion?.nextQuestion || payload?.nextQuestion || payload?.question;
       if (nextQ) {
         const qBank = nextQ.questionBank || nextQ;
         const ans = qBank.answers || nextQ.answers || [];
@@ -333,9 +294,9 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
         const parseAnswerText = (a: any) =>
           a.answerJp
             ? a.answerJp
-              .split("+")
-              .find((p: string) => p.startsWith("vi:"))
-              ?.replace("vi:", "") || a.answerJp
+                .split("+")
+                .find((p: string) => p.startsWith("vi:"))
+                ?.replace("vi:", "") || a.answerJp
             : a.answer || a.text || a;
         const opts = ans.map(parseAnswerText);
 
@@ -433,10 +394,7 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
   }, [accessToken, matchId]);
 
   useEffect(() => {
-    if (
-      !upcomingDebuff?.roundQuestionId ||
-      !currentQuestion?.roundQuestionId
-    ) {
+    if (!upcomingDebuff?.roundQuestionId || !currentQuestion?.roundQuestionId) {
       return;
     }
 
@@ -460,17 +418,8 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
 
   // Timer
   useEffect(() => {
-    if (
-      !currentQuestion?.endTimeQuestion ||
-      questionTimeRemaining === null ||
-      questionTimeRemaining <= 0
-    ) {
-      if (
-        questionTimeRemaining === 0 &&
-        currentQuestion &&
-        !isAnswerSubmitted &&
-        selectedAnswer !== null
-      ) {
+    if (!currentQuestion?.endTimeQuestion || questionTimeRemaining === null || questionTimeRemaining <= 0) {
+      if (questionTimeRemaining === 0 && currentQuestion && !isAnswerSubmitted && selectedAnswer !== null) {
         handleSubmitAnswer();
       }
       return;
@@ -481,13 +430,7 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
       setQuestionTimeRemaining(Math.max(0, Math.floor((end - now) / 1000)));
     }, 1000);
     return () => clearTimeout(timer);
-  }, [
-    questionTimeRemaining,
-    currentQuestion,
-    isAnswerSubmitted,
-    selectedAnswer,
-    serverTimeOffset,
-  ]);
+  }, [questionTimeRemaining, currentQuestion, isAnswerSubmitted, selectedAnswer, serverTimeOffset]);
 
   // Helpers: Pokemon Image Logic
   const playerPokemon = useMemo(() => {
@@ -498,26 +441,18 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
     }
     if (!matchRound) return null;
     const player = matchRound.match.participants.find((p) =>
-      currentUserId !== undefined
-        ? p.user.id === currentUserId
-        : p.user.name === "Bạn"
+      currentUserId !== undefined ? p.user.id === currentUserId : p.user.name === "Bạn",
     );
     const round = matchRound.rounds.find(
       (r) =>
         r.roundNumber === roundNumber ||
-        matchRound.rounds.indexOf(r) ===
-        (roundNumber === "ONE" ? 0 : roundNumber === "TWO" ? 1 : 2)
+        matchRound.rounds.indexOf(r) === (roundNumber === "ONE" ? 0 : roundNumber === "TWO" ? 1 : 2),
     );
     if (!round) return null;
-    const participant = round.participants.find(
-      (rp) => rp.matchParticipantId === player?.id
-    );
+    const participant = round.participants.find((rp) => rp.matchParticipantId === player?.id);
     // Fallback direct object or find in owned
-    if (participant?.selectedUserPokemon?.pokemon)
-      return { pokemon: participant.selectedUserPokemon.pokemon } as any;
-    const pId =
-      participant?.selectedUserPokemon?.pokemon?.id ||
-      participant?.selectedUserPokemonId;
+    if (participant?.selectedUserPokemon?.pokemon) return { pokemon: participant.selectedUserPokemon.pokemon } as any;
+    const pId = participant?.selectedUserPokemon?.pokemon?.id || participant?.selectedUserPokemonId;
     return ownedPokemons?.find((p) => p?.pokemon?.id === pId) || null;
   }, [roundData, matchRound, currentUserId, roundNumber, ownedPokemons]);
 
@@ -527,22 +462,16 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
     }
     if (!matchRound) return null;
     const opponent = matchRound.match.participants.find((p) =>
-      currentUserId !== undefined
-        ? p.user.id !== currentUserId
-        : p.user.name !== "Bạn"
+      currentUserId !== undefined ? p.user.id !== currentUserId : p.user.name !== "Bạn",
     );
     const round = matchRound.rounds.find(
       (r) =>
         r.roundNumber === roundNumber ||
-        matchRound.rounds.indexOf(r) ===
-        (roundNumber === "ONE" ? 0 : roundNumber === "TWO" ? 1 : 2)
+        matchRound.rounds.indexOf(r) === (roundNumber === "ONE" ? 0 : roundNumber === "TWO" ? 1 : 2),
     );
     if (!round) return null;
-    const participant = round.participants.find(
-      (rp) => rp.matchParticipantId === opponent?.id
-    );
-    if (participant?.selectedUserPokemon?.pokemon)
-      return { pokemon: participant.selectedUserPokemon.pokemon } as any;
+    const participant = round.participants.find((rp) => rp.matchParticipantId === opponent?.id);
+    if (participant?.selectedUserPokemon?.pokemon) return { pokemon: participant.selectedUserPokemon.pokemon } as any;
     return null;
   }, [roundData, matchRound, currentUserId, roundNumber]);
 
@@ -554,31 +483,17 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
   };
 
   useEffect(() => {
-    if (
-      !questionStartTime ||
-      !currentQuestion ||
-      isAnswerSubmitted ||
-      isWaitingForOpponent
-    )
-      return;
+    if (!questionStartTime || !currentQuestion || isAnswerSubmitted || isWaitingForOpponent) return;
     let rafId: number;
     let lastUpdate = 0;
     const tick = (t: number) => {
-      if (
-        !questionStartTime ||
-        !currentQuestion ||
-        isAnswerSubmitted ||
-        isWaitingForOpponent
-      )
-        return;
+      if (!questionStartTime || !currentQuestion || isAnswerSubmitted || isWaitingForOpponent) return;
       if (!lastUpdate || t - lastUpdate >= 100) {
         lastUpdate = t;
         const elapsed = Date.now() - questionStartTime;
         const pts = calculatePointsFromMs(elapsed);
         setCurrentQuestionPoints(pts);
-        const ratio =
-          (pts - MIN_POINT_PER_QUESTION) /
-          (BASE_POINT_PER_QUESTION - MIN_POINT_PER_QUESTION);
+        const ratio = (pts - MIN_POINT_PER_QUESTION) / (BASE_POINT_PER_QUESTION - MIN_POINT_PER_QUESTION);
         pointProgress.setValue(Math.max(0, Math.min(1, ratio)));
       }
       rafId = requestAnimationFrame(tick);
@@ -587,31 +502,15 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
     return () => {
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [
-    questionStartTime,
-    currentQuestion,
-    isAnswerSubmitted,
-    isWaitingForOpponent,
-    pointProgress,
-  ]);
+  }, [questionStartTime, currentQuestion, isAnswerSubmitted, isWaitingForOpponent, pointProgress]);
 
   useEffect(() => {
-    if (
-      !playerPokemon ||
-      !opponentPokemon ||
-      !playerPokemon.pokemon ||
-      !opponentPokemon.pokemon
-    )
-      return;
+    if (!playerPokemon || !opponentPokemon || !playerPokemon.pokemon || !opponentPokemon.pokemon) return;
     const playerType = playerPokemon.pokemon.types?.[0]?.type_name;
     const opponentType = opponentPokemon.pokemon.types?.[0]?.type_name;
     if (!playerType || !opponentType) return;
-    const playerStrong =
-      TYPE_MATCHUPS[playerType as keyof typeof TYPE_MATCHUPS]?.strongAgainst ||
-      [];
-    const opponentStrong =
-      TYPE_MATCHUPS[opponentType as keyof typeof TYPE_MATCHUPS]
-        ?.strongAgainst || [];
+    const playerStrong = TYPE_MATCHUPS[playerType as keyof typeof TYPE_MATCHUPS]?.strongAgainst || [];
+    const opponentStrong = TYPE_MATCHUPS[opponentType as keyof typeof TYPE_MATCHUPS]?.strongAgainst || [];
     if (playerStrong.includes(opponentType as never)) {
       setTypeAdvantage("player");
       setShowFog(true);
@@ -648,7 +547,7 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
               useNativeDriver: true,
             }),
           ]),
-          { iterations: 20 }
+          { iterations: 20 },
         );
         shakeLoop.start();
         setTimeout(() => shakeLoop.stop(), 2000);
@@ -656,14 +555,7 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
     } else {
       setTypeAdvantage(null);
     }
-  }, [
-    playerPokemon,
-    opponentPokemon,
-    shakeAnimation,
-    isAnswerSubmitted,
-    roundStarted,
-    isWaitingForOpponent,
-  ]);
+  }, [playerPokemon, opponentPokemon, shakeAnimation, isAnswerSubmitted, roundStarted, isWaitingForOpponent]);
 
   const handleSelectAnswer = (idx: number) => {
     if (isAnswerSubmitted || !currentQuestion || isWaitingForOpponent) return;
@@ -672,11 +564,8 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
       const options = currentQuestion.options || [];
       const wrong = options
         .map((_: any, i: number) => i)
-        .filter(
-          (i: number) => i !== currentQuestion.correctAnswer && i !== idx
-        );
-      if (wrong.length > 0)
-        finalAnswer = wrong[Math.floor(Math.random() * wrong.length)];
+        .filter((i: number) => i !== currentQuestion.correctAnswer && i !== idx);
+      if (wrong.length > 0) finalAnswer = wrong[Math.floor(Math.random() * wrong.length)];
     }
     setSelectedAnswer(finalAnswer);
   };
@@ -708,9 +597,7 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
         >
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="#22d3ee" />
-            <Text className="text-white text-center text-lg font-bold">
-              {t("battle.arena.loading_match_info")}
-            </Text>
+            <Text className="text-white text-center text-lg font-bold">{t("battle.arena.loading_match_info")}</Text>
           </View>
         </ImageBackground>
       </ThemedView>
@@ -725,11 +612,7 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
         imageStyle={styles.bgImage}
       >
         <TWLinearGradient
-          colors={[
-            "rgba(17,24,39,0.85)",
-            "rgba(17,24,39,0.6)",
-            "rgba(17,24,39,0.85)",
-          ]}
+          colors={["rgba(17,24,39,0.85)", "rgba(17,24,39,0.6)", "rgba(17,24,39,0.85)"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.overlay}
@@ -739,26 +622,19 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
           {/* Header */}
           <View className="flex-row justify-between mb-4">
             <View className="flex-row gap-3 items-center">
-              <Text className="text-yellow-400 font-bold text-xl">
-                {t("battle.arena.title")}
-              </Text>
+              <Text className="text-yellow-400 font-bold text-xl">{t("battle.arena.title")}</Text>
               <View className="px-3 py-1 bg-cyan-500/20 border border-cyan-500/40 rounded-full">
-                <Text className="text-white font-bold text-xs">
-                  {t("battle.arena.round", { round: currentRound })}
-                </Text>
+                <Text className="text-white font-bold text-xs">{t("battle.arena.round", { round: currentRound })}</Text>
               </View>
             </View>
             <View className="flex-row gap-2 items-center">
-              {isWaitingForOpponent && (
-                <ActivityIndicator size="small" color="gray" />
-              )}
+              {isWaitingForOpponent && <ActivityIndicator size="small" color="gray" />}
               <Clock
                 size={16}
                 color={
                   isWaitingForOpponent
                     ? "#fbbf24"
-                    : questionTimeRemaining !== null &&
-                      questionTimeRemaining < 10
+                    : questionTimeRemaining !== null && questionTimeRemaining < 10
                       ? "#ef4444"
                       : "#64748b"
                 }
@@ -767,8 +643,7 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
                 style={{
                   color: isWaitingForOpponent
                     ? "#fbbf24"
-                    : questionTimeRemaining !== null &&
-                      questionTimeRemaining < 10
+                    : questionTimeRemaining !== null && questionTimeRemaining < 10
                       ? "#ef4444"
                       : "#94a3b8",
                 }}
@@ -792,14 +667,10 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
                   resizeMode="contain"
                 />
               )}
-              <Text className="text-gray-200 font-bold mt-2">
-                {t("battle.arena.opponent_label")}
-              </Text>
+              <Text className="text-gray-200 font-bold mt-2">{t("battle.arena.opponent_label")}</Text>
             </View>
             <View className="px-4 py-2 bg-black/70 rounded-full mx-4">
-              <Text className="text-white font-bold">
-                {t("battle.arena.vs")}
-              </Text>
+              <Text className="text-white font-bold">{t("battle.arena.vs")}</Text>
             </View>
             <View className="items-center flex-1">
               {playerPokemon?.pokemon?.imageUrl && (
@@ -809,9 +680,7 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
                   resizeMode="contain"
                 />
               )}
-              <Text className="text-gray-200 font-bold mt-2">
-                {t("battle.arena.you_label")}
-              </Text>
+              <Text className="text-gray-200 font-bold mt-2">{t("battle.arena.you_label")}</Text>
             </View>
           </View>
 
@@ -824,16 +693,12 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
                 {typeAdvantage === "player" ? (
                   <>
                     <Zap size={16} color="#86efac" />
-                    <Text className="text-green-300 font-bold text-xs">
-                      {t("battle.arena.type_advantage_player")}
-                    </Text>
+                    <Text className="text-green-300 font-bold text-xs">{t("battle.arena.type_advantage_player")}</Text>
                   </>
                 ) : (
                   <>
                     <Shield size={16} color="#fca5a5" />
-                    <Text className="text-red-300 font-bold text-xs">
-                      {t("battle.arena.type_advantage_opponent")}
-                    </Text>
+                    <Text className="text-red-300 font-bold text-xs">{t("battle.arena.type_advantage_opponent")}</Text>
                   </>
                 )}
               </View>
@@ -848,13 +713,9 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
                   <Text className="text-red-200 font-bold text-xs tracking-wide uppercase">
                     {t("battle.arena.debuff.affected_by")}
                   </Text>
-                  <Text className="text-white font-semibold">
-                    {currentDebuffDisplay.title}
-                  </Text>
+                  <Text className="text-white font-semibold">{currentDebuffDisplay.title}</Text>
                   {currentDebuffDisplay.description ? (
-                    <Text className="text-red-100 text-xs mt-1">
-                      {currentDebuffDisplay.description}
-                    </Text>
+                    <Text className="text-red-100 text-xs mt-1">{currentDebuffDisplay.description}</Text>
                   ) : null}
                 </View>
               </View>
@@ -862,46 +723,30 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
           )}
 
           {/* Content */}
-          {(!roundStarted && !currentQuestion) ||
-            (roundStarted && !currentQuestion && !isWaitingForOpponent) ? (
+          {(!roundStarted && !currentQuestion) || (roundStarted && !currentQuestion && !isWaitingForOpponent) ? (
             <View className="flex-1 justify-center items-center bg-black/40 rounded-2xl p-6">
               <ActivityIndicator size="large" color="#22d3ee" />
-              <Text className="text-gray-400 mt-4 font-bold">
-                {t("battle.arena.waiting_round_start")}
-              </Text>
+              <Text className="text-gray-400 mt-4 font-bold">{t("battle.arena.waiting_round_start")}</Text>
             </View>
           ) : isWaitingForOpponent ? (
             <View className="flex-1 justify-center items-center bg-black/40 rounded-2xl p-6">
               <ActivityIndicator size="large" color="#fbbf24" />
-              <Text className="text-yellow-400 mt-4 font-bold">
-                {t("battle.arena.waiting_opponent_complete")}
-              </Text>
+              <Text className="text-yellow-400 mt-4 font-bold">{t("battle.arena.waiting_opponent_complete")}</Text>
             </View>
           ) : (
-            <DiscomfortVision
-              debuff={currentQuestion?.debuff}
-              style={{ borderRadius: 24, overflow: "hidden" }}
-            >
+            <DiscomfortVision debuff={currentQuestion?.debuff} style={{ borderRadius: 24, overflow: "hidden" }}>
               <TWLinearGradient
                 colors={["rgba(255,255,255,0.1)", "rgba(255,255,255,0.05)"]}
                 style={{ borderRadius: 24, padding: 2 }}
               >
                 <View className="bg-black/40 rounded-2xl p-6">
-                  <Text className="text-yellow-400 font-bold text-sm mb-2">
-                    {t("battle.arena.question_label")}
-                  </Text>
-                  <Text className="text-white text-lg font-bold mb-4 leading-7">
-                    {currentQuestion?.question}
-                  </Text>
+                  <Text className="text-yellow-400 font-bold text-sm mb-2">{t("battle.arena.question_label")}</Text>
+                  <Text className="text-white text-lg font-bold mb-4 leading-7">{currentQuestion?.question}</Text>
 
                   <View className="mb-6">
                     <View className="flex-row justify-between mb-2">
-                      <Text className="text-gray-400 font-bold">
-                        {t("battle.arena.points_this_turn")}
-                      </Text>
-                      <Text className="text-yellow-400 font-bold">
-                        {currentQuestionPoints}
-                      </Text>
+                      <Text className="text-gray-400 font-bold">{t("battle.arena.points_this_turn")}</Text>
+                      <Text className="text-yellow-400 font-bold">{currentQuestionPoints}</Text>
                     </View>
                     <View className="h-2.5 bg-gray-700/50 rounded-full overflow-hidden">
                       <Animated.View
@@ -917,20 +762,14 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
                   <View className="gap-3">
                     {currentQuestion?.options?.map((opt: any, idx: number) => {
                       const isSelected = selectedAnswer === idx;
-                      const isCorrect =
-                        showResult && idx === currentQuestion.correctAnswer;
-                      const isWrong =
-                        showResult &&
-                        isSelected &&
-                        idx !== currentQuestion.correctAnswer;
+                      const isCorrect = showResult && idx === currentQuestion.correctAnswer;
+                      const isWrong = showResult && isSelected && idx !== currentQuestion.correctAnswer;
                       const showFeedback = showResult && (isCorrect || isWrong);
                       return (
                         <Animated.View
                           key={idx}
                           style={
-                            typeAdvantage === "opponent" &&
-                              !isAnswerSubmitted &&
-                              roundStarted
+                            typeAdvantage === "opponent" && !isAnswerSubmitted && roundStarted
                               ? { transform: [{ translateX: shakeAnimation }] }
                               : {}
                           }
@@ -958,14 +797,8 @@ export default function BattleArenaScreen({ }: BattleArenaScreenProps) {
                   </View>
 
                   {!isAnswerSubmitted && selectedAnswer !== null && (
-                    <HapticPressable
-                      onPress={handleSubmitAnswer}
-                      className="mt-6 rounded-2xl overflow-hidden"
-                    >
-                      <TWLinearGradient
-                        colors={["#22c55e", "#16a34a"]}
-                        style={{ paddingVertical: 16 }}
-                      >
+                    <HapticPressable onPress={handleSubmitAnswer} className="mt-6 rounded-2xl overflow-hidden">
+                      <TWLinearGradient colors={["#22c55e", "#16a34a"]} style={{ paddingVertical: 16 }}>
                         <Text className="text-white font-bold text-center text-base">
                           {t("battle.arena.confirm_button")}
                         </Text>

@@ -13,12 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function SettingsScreen() {
   const { t } = useTranslation();
   const { deleteAccessToken } = useAuthStore();
-  const {
-    isPokemonOverlayEnabled,
-    isOverlayPreferenceLoaded,
-    setPokemonOverlayEnabled,
-    initializeOverlayPreference,
-  } = useGlobalStore();
+  const { isPokemonOverlayEnabled, isOverlayPreferenceLoaded, setPokemonOverlayEnabled, initializeOverlayPreference } =
+    useGlobalStore();
 
   useEffect(() => {
     initializeOverlayPreference();
@@ -27,11 +23,7 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-slate-50">
       <StatusBar barStyle="dark-content" />
-      <BackScreen
-        onPress={() => router.back()}
-        color="black"
-        title={t("settings.title")}
-      />
+      <BackScreen onPress={() => router.back()} color="black" title={t("settings.title")} />
 
       <View className="flex-1 px-4">
         {/* Language Settings */}
@@ -46,10 +38,7 @@ export default function SettingsScreen() {
               {t("settings.overlay_title", "Pokémon overlay")}
             </Text>
             <Text className="text-sm text-slate-500 mt-1">
-              {t(
-                "settings.overlay_subtitle",
-                "Show the draggable buddy on the home screen"
-              )}
+              {t("settings.overlay_subtitle", "Show the draggable buddy on the home screen")}
             </Text>
           </View>
           <Switch
@@ -65,26 +54,22 @@ export default function SettingsScreen() {
         <BounceButton
           variant="secondary"
           onPress={() => {
-            Alert.alert(
-              t("settings.logout_title"),
-              t("settings.logout_message"),
-              [
-                { text: t("settings.cancel"), style: "cancel" },
-                {
-                  text: t("settings.logout"),
-                  onPress: async () => {
-                    try {
-                      await deleteAccessToken();
-                    } catch (error) {
-                      console.error('Logout error:', error);
-                    } finally {
-                      // Always navigate to welcome screen even if logout fails
-                      router.replace(ROUTES.AUTH.WELCOME);
-                    }
-                  },
+            Alert.alert(t("settings.logout_title"), t("settings.logout_message"), [
+              { text: t("settings.cancel"), style: "cancel" },
+              {
+                text: t("settings.logout"),
+                onPress: async () => {
+                  try {
+                    await deleteAccessToken();
+                  } catch (error) {
+                    console.error("Logout error:", error);
+                  } finally {
+                    // Always navigate to welcome screen even if logout fails
+                    router.replace(ROUTES.AUTH.WELCOME);
+                  }
                 },
-              ]
-            );
+              },
+            ]);
           }}
         >
           {t("settings.logout")}

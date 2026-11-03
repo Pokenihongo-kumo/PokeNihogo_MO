@@ -60,15 +60,13 @@ export default function ChooseStarterScreen() {
     const fetchStarters = async () => {
       try {
         setIsLoading(true);
-        const response = await pokemonService.getAll(
-          {
-            currentPage: 1,
-            pageSize: 4,
-            sortBy: 'id',
-            sortOrder: 'asc',
-          }
-        );
-        
+        const response = await pokemonService.getAll({
+          currentPage: 1,
+          pageSize: 4,
+          sortBy: "id",
+          sortOrder: "asc",
+        });
+
         // Check if component is still mounted before updating state
         if (mountedRef.current) {
           const pokemonData = response.data.data.results;
@@ -76,13 +74,12 @@ export default function ChooseStarterScreen() {
         }
       } catch (error) {
         console.error("Error fetching starters:", error);
-        
+
         // Only show alert if component is still mounted
         if (mountedRef.current) {
           Alert.alert(
             t("common.error") || "Error",
-            t("auth.choose_starter.fetch_error") ||
-              "Failed to load starter Pokemon. Please try again."
+            t("auth.choose_starter.fetch_error") || "Failed to load starter Pokemon. Please try again.",
           );
         }
       } finally {
@@ -115,7 +112,7 @@ export default function ChooseStarterScreen() {
    */
   const pokemonDataForNavigation = useMemo(() => {
     if (!selectedPokemon) return null;
-    
+
     return JSON.stringify({
       id: selectedPokemon.id,
       name: selectedPokemon.nameTranslations.en,
@@ -172,8 +169,7 @@ export default function ChooseStarterScreen() {
       console.error("Error selecting starter:", error);
       Alert.alert(
         t("common.error") || "Error",
-        t("auth.choose_starter.select_error") ||
-          "Failed to select starter. Please try again."
+        t("auth.choose_starter.select_error") || "Failed to select starter. Please try again.",
       );
       setIsProcessing(false);
     }
@@ -191,20 +187,23 @@ export default function ChooseStarterScreen() {
   // ============================================================================
   // MEMOIZED RENDER ITEM
   // ============================================================================
-  const renderPokemonItem = useCallback(({ item }: { item: IPokemon }) => (
-    <View style={styles.pokemonItemContainer}>
-      <StarterCard
-        starter={{
-          id: item.id.toString(),
-          name: item.nameTranslations.en,
-          type: item.types.map((t) => t.display_name.en),
-          image: item.imageUrl,
-        }}
-        selected={selected === item.id}
-        onSelect={() => handleSelect(item.id)}
-      />
-    </View>
-  ), [selected, handleSelect]);
+  const renderPokemonItem = useCallback(
+    ({ item }: { item: IPokemon }) => (
+      <View style={styles.pokemonItemContainer}>
+        <StarterCard
+          starter={{
+            id: item.id.toString(),
+            name: item.nameTranslations.en,
+            type: item.types.map((t) => t.display_name.en),
+            image: item.imageUrl,
+          }}
+          selected={selected === item.id}
+          onSelect={() => handleSelect(item.id)}
+        />
+      </View>
+    ),
+    [selected, handleSelect],
+  );
 
   const keyExtractor = useCallback((item: IPokemon) => item.id.toString(), []);
 
@@ -244,14 +243,8 @@ export default function ChooseStarterScreen() {
 
       {/* Confirm Button Section */}
       <View style={styles.buttonContainer}>
-        <BounceButton
-          variant="solid"
-          disabled={!selected || isProcessing}
-          onPress={onConfirm}
-        >
-          {isProcessing
-            ? t("common.processing") || "Processing..."
-            : t("auth.choose_starter.confirm")}
+        <BounceButton variant="solid" disabled={!selected || isProcessing} onPress={onConfirm}>
+          {isProcessing ? t("common.processing") || "Processing..." : t("auth.choose_starter.confirm")}
         </BounceButton>
       </View>
     </StarterScreenLayout>

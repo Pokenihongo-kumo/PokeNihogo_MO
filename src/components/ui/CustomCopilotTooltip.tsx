@@ -9,14 +9,7 @@ import { useTranslation } from "react-i18next";
  */
 export default function CustomCopilotTooltip() {
   const { t } = useTranslation();
-  const {
-    isFirstStep,
-    isLastStep,
-    goToNext,
-    goToPrev,
-    stop,
-    currentStep,
-  } = useCopilot();
+  const { isFirstStep, isLastStep, goToNext, goToPrev, stop, currentStep } = useCopilot();
 
   return (
     <View style={styles.tooltip}>
@@ -24,44 +17,24 @@ export default function CustomCopilotTooltip() {
       <View style={styles.buttonContainer}>
         {!isFirstStep && (
           <>
-            <TouchableOpacity
-              style={[styles.button, styles.buttonSecondary]}
-              onPress={goToPrev}
-            >
-              <Text style={styles.buttonTextSecondary}>
-                {t("tour.previous", "Trước")}
-              </Text>
+            <TouchableOpacity style={[styles.button, styles.buttonSecondary]} onPress={goToPrev}>
+              <Text style={styles.buttonTextSecondary}>{t("tour.previous", "Trước")}</Text>
             </TouchableOpacity>
             <View style={styles.buttonSpacer} />
           </>
         )}
         {isLastStep ? (
-          <TouchableOpacity
-            style={[styles.button, styles.buttonPrimary]}
-            onPress={stop}
-          >
-            <Text style={styles.buttonTextPrimary}>
-              {t("tour.finish", "Kết thúc")}
-            </Text>
+          <TouchableOpacity style={[styles.button, styles.buttonPrimary]} onPress={stop}>
+            <Text style={styles.buttonTextPrimary}>{t("tour.finish", "Kết thúc")}</Text>
           </TouchableOpacity>
         ) : (
           <>
-            <TouchableOpacity
-              style={[styles.button, styles.buttonPrimary]}
-              onPress={goToNext}
-            >
-              <Text style={styles.buttonTextPrimary}>
-                {t("tour.next", "Tiếp theo")}
-              </Text>
+            <TouchableOpacity style={[styles.button, styles.buttonPrimary]} onPress={goToNext}>
+              <Text style={styles.buttonTextPrimary}>{t("tour.next", "Tiếp theo")}</Text>
             </TouchableOpacity>
             <View style={styles.buttonSpacer} />
-            <TouchableOpacity
-              style={[styles.button, styles.buttonSecondary]}
-              onPress={stop}
-            >
-              <Text style={styles.buttonTextSecondary}>
-                {t("tour.skip", "Bỏ qua")}
-              </Text>
+            <TouchableOpacity style={[styles.button, styles.buttonSecondary]} onPress={stop}>
+              <Text style={styles.buttonTextSecondary}>{t("tour.skip", "Bỏ qua")}</Text>
             </TouchableOpacity>
           </>
         )}
@@ -75,7 +48,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 12,
     padding: 16,
-    minWidth: 280,},
+    minWidth: 280,
+  },
   tooltipText: {
     fontSize: 15,
     color: "#111827",
@@ -114,4 +88,3 @@ const styles = StyleSheet.create({
     width: 8,
   },
 });
-

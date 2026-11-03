@@ -8,11 +8,7 @@ interface PokemonDisplayProps {
   style?: any;
 }
 
-export default function PokemonDisplay({
-  imageUri,
-  imageSize = 80,
-  style,
-}: PokemonDisplayProps) {
+export default function PokemonDisplay({ imageUri, imageSize = 80, style }: PokemonDisplayProps) {
   return (
     <View style={[styles.container, style]}>
       <PokemonImage imageUri={imageUri} size={imageSize} style={styles.image} />
@@ -27,7 +23,8 @@ const styles = StyleSheet.create({
     position: "relative",
     // backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 20,
-    padding: 16,},
+    padding: 16,
+  },
   image: {
     // Removed marginBottom for overlay display
   },

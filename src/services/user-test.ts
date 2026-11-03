@@ -68,9 +68,7 @@ const userTestService = {
     return axiosPrivate.get(`/user-test-attempt/test/${userTestAttemptId}/review`);
   },
   getLessonTestReview: async (userTestAttemptId: string | number) => {
-    return axiosPrivate.get(
-      `/user-test-attempt/lesson/test/${userTestAttemptId}/review`
-    );
+    return axiosPrivate.get(`/user-test-attempt/lesson/test/${userTestAttemptId}/review`);
   },
   abandonTest: async (userTestAttemptId: string | number) => {
     return axiosPrivate.put(`/user-test-attempt/${userTestAttemptId}/abandon`);
@@ -81,4 +79,3 @@ const userTestService = {
 };
 
 export default userTestService;
-

@@ -37,8 +37,7 @@ export const UpdateFlashcardDeckRequestSchema = z.object({
 });
 
 // Update Flashcard Deck Card Metadata Schema
-export const UpdateFlashcardDeckCardMetadataSchema =
-  FlashcardDeckCardMetadataSchema.optional();
+export const UpdateFlashcardDeckCardMetadataSchema = FlashcardDeckCardMetadataSchema.optional();
 
 // Update Flashcard Deck Card Request Schema
 export const UpdateFlashcardDeckCardRequestSchema = z.object({
@@ -64,25 +63,10 @@ export const MarkFlashcardReadRequestSchema = z.object({
 });
 
 // Export types
-export type ICreateFlashcardDeckRequest = z.infer<
-  typeof CreateFlashcardDeckRequestSchema
->;
-export type IAddWordToFlashcardDeckRequest = z.infer<
-  typeof AddWordToFlashcardDeckRequestSchema
->;
-export type ICreateFlashcardDeckCardRequest = z.infer<
-  typeof CreateFlashcardDeckCardRequestSchema
->;
-export type IUpdateFlashcardDeckRequest = z.infer<
-  typeof UpdateFlashcardDeckRequestSchema
->;
-export type IUpdateFlashcardDeckCardRequest = z.infer<
-  typeof UpdateFlashcardDeckCardRequestSchema
->;
-export type IDeleteFlashcardDeckCardsRequest = z.infer<
-  typeof DeleteFlashcardDeckCardsRequestSchema
->;
-export type IMarkFlashcardReadRequest = z.infer<
-  typeof MarkFlashcardReadRequestSchema
->;
-
+export type ICreateFlashcardDeckRequest = z.infer<typeof CreateFlashcardDeckRequestSchema>;
+export type IAddWordToFlashcardDeckRequest = z.infer<typeof AddWordToFlashcardDeckRequestSchema>;
+export type ICreateFlashcardDeckCardRequest = z.infer<typeof CreateFlashcardDeckCardRequestSchema>;
+export type IUpdateFlashcardDeckRequest = z.infer<typeof UpdateFlashcardDeckRequestSchema>;
+export type IUpdateFlashcardDeckCardRequest = z.infer<typeof UpdateFlashcardDeckCardRequestSchema>;
+export type IDeleteFlashcardDeckCardsRequest = z.infer<typeof DeleteFlashcardDeckCardsRequestSchema>;
+export type IMarkFlashcardReadRequest = z.infer<typeof MarkFlashcardReadRequestSchema>;

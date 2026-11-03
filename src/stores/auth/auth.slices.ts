@@ -10,23 +10,23 @@ export const createAuthSlice = (set: any): ZUSTAND.IAuthState => ({
   // isLoading: false, // Set to false to avoid loading state
 
   initialize: async () => {
-    const token = await getValueForSecureStorage('accessToken');
+    const token = await getValueForSecureStorage("accessToken");
     if (token) {
       set({ accessToken: token });
     }
     set({ isLoading: false });
   },
   setAccessToken: async (newToken: string) => {
-    await saveSecureStorage('accessToken', newToken);
+    await saveSecureStorage("accessToken", newToken);
 
     set({ accessToken: newToken });
   },
   deleteAccessToken: async () => {
     try {
-      await deleteSecureStorage('accessToken');
-      await deleteSecureStorage('refreshToken');
+      await deleteSecureStorage("accessToken");
+      await deleteSecureStorage("refreshToken");
     } catch (error) {
-      console.error('Error deleting access token from secure storage:', error);
+      console.error("Error deleting access token from secure storage:", error);
     }
 
     set({ accessToken: "" });
@@ -35,7 +35,7 @@ export const createAuthSlice = (set: any): ZUSTAND.IAuthState => ({
     try {
       useUserStore.getState().resetUserState();
     } catch (error) {
-      console.error('Error resetting user state:', error);
+      console.error("Error resetting user state:", error);
     }
 
     // Clear user-related React Query cache when logging out to prevent data leakage between accounts
@@ -43,7 +43,7 @@ export const createAuthSlice = (set: any): ZUSTAND.IAuthState => ({
     try {
       clearUserCache();
     } catch (error) {
-      console.error('Error clearing user cache:', error);
+      console.error("Error clearing user cache:", error);
       // Continue with logout even if cache clearing fails
     }
 
@@ -51,8 +51,8 @@ export const createAuthSlice = (set: any): ZUSTAND.IAuthState => ({
     try {
       await AsyncStorage.removeItem("@WelcomeModal:hasBeenShown");
     } catch (error) {
-      console.error('Error removing welcome modal flag:', error);
+      console.error("Error removing welcome modal flag:", error);
     }
   },
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
-})
+});

@@ -18,13 +18,7 @@ import { router } from "expo-router";
 import * as Speech from "expo-speech";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ActivityIndicator,
-  Animated,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Animated, ScrollView, TouchableOpacity, View } from "react-native";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -85,19 +79,14 @@ export default function PlacementTestScreen() {
 
   // Store selectors
   const setLevel = useUserStore((s) => (s as any).setLevel);
-  const setHasCompletedPlacementTest = useUserStore(
-    (s) => (s as any).setHasCompletedPlacementTest
-  );
+  const setHasCompletedPlacementTest = useUserStore((s) => (s as any).setHasCompletedPlacementTest);
 
   // ============================================================================
   // COMPUTED VALUES
   // ============================================================================
   const currentIndex = React.useMemo(
-    () =>
-      questions && current
-        ? questions.findIndex((q: any) => q.id === (current as any).id)
-        : 0,
-    [questions, current]
+    () => (questions && current ? questions.findIndex((q: any) => q.id === (current as any).id) : 0),
+    [questions, current],
   );
 
   // ============================================================================
@@ -159,7 +148,7 @@ export default function PlacementTestScreen() {
             duration: 600,
             useNativeDriver: true,
           }),
-        ])
+        ]),
       );
       loop.start();
       return () => loop.stop();
@@ -328,9 +317,7 @@ export default function PlacementTestScreen() {
           }}
         >
           <ActivityIndicator size="large" color="#3b82f6" />
-          <ThemedText style={{ marginTop: 16 }}>
-            {t("auth.placement_test.loading")}
-          </ThemedText>
+          <ThemedText style={{ marginTop: 16 }}>{t("auth.placement_test.loading")}</ThemedText>
         </View>
       </StarterScreenLayout>
     );
@@ -347,9 +334,7 @@ export default function PlacementTestScreen() {
             padding: 20,
           }}
         >
-          <ThemedText style={{ textAlign: "center" }}>
-            {error || t("auth.placement_test.no_questions")}
-          </ThemedText>
+          <ThemedText style={{ textAlign: "center" }}>{error || t("auth.placement_test.no_questions")}</ThemedText>
         </View>
       </StarterScreenLayout>
     );
@@ -542,15 +527,10 @@ export default function PlacementTestScreen() {
                   <Ionicons name="document-text" size={28} color="#3b82f6" />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <ThemedText
-                    style={{ fontSize: 14, color: "#6b7280", marginBottom: 4 }}
-                  >
+                  <ThemedText style={{ fontSize: 14, color: "#6b7280", marginBottom: 4 }}>
                     {t("auth.placement_test.total_questions")}
                   </ThemedText>
-                  <ThemedText
-                    type="defaultSemiBold"
-                    style={{ fontSize: 24, color: "#111827", flexShrink: 1 }}
-                  >
+                  <ThemedText type="defaultSemiBold" style={{ fontSize: 24, color: "#111827", flexShrink: 1 }}>
                     {testResult.totalQuestions}
                   </ThemedText>
                 </View>
@@ -582,9 +562,7 @@ export default function PlacementTestScreen() {
                   <Ionicons name="checkmark-circle" size={28} color="#10b981" />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <ThemedText
-                    style={{ fontSize: 14, color: "#6b7280", marginBottom: 4 }}
-                  >
+                  <ThemedText style={{ fontSize: 14, color: "#6b7280", marginBottom: 4 }}>
                     {t("auth.placement_test.correct_answers")}
                   </ThemedText>
                   <ThemedText
@@ -626,9 +604,7 @@ export default function PlacementTestScreen() {
                   <Ionicons name="stats-chart" size={28} color="#3b82f6" />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <ThemedText
-                    style={{ fontSize: 14, color: "#6b7280", marginBottom: 4 }}
-                  >
+                  <ThemedText style={{ fontSize: 14, color: "#6b7280", marginBottom: 4 }}>
                     {t("auth.placement_test.percentage")}
                   </ThemedText>
                   <ThemedText
@@ -695,10 +671,7 @@ export default function PlacementTestScreen() {
             <ThemedText type="defaultSemiBold" style={{ fontSize: 18 }}>
               {t("auth.placement_test.progress_title")}
             </ThemedText>
-            <ThemedText
-              type="default"
-              style={{ fontSize: 14, color: "#6b7280" }}
-            >
+            <ThemedText type="default" style={{ fontSize: 14, color: "#6b7280" }}>
               {currentIndex + 1}/{questions.length}
             </ThemedText>
           </View>
@@ -729,18 +702,13 @@ export default function PlacementTestScreen() {
             mascotImageStyle={{ width: 84, height: 84 }}
             action={
               current.type === "audio" ? (
-                <AudioPlayer
-                  audioUrl={current.audioUrl || ""}
-                  style={{ alignItems: "center" }}
-                />
+                <AudioPlayer audioUrl={current.audioUrl || ""} style={{ alignItems: "center" }} />
               ) : (
                 <TouchableOpacity
                   onPress={handleSpeak}
                   accessibilityRole="button"
                   accessibilityLabel={
-                    isSpeaking
-                      ? t("auth.placement_test.stop_speaking")
-                      : t("auth.placement_test.speak_question")
+                    isSpeaking ? t("auth.placement_test.stop_speaking") : t("auth.placement_test.speak_question")
                   }
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   style={{
@@ -751,19 +719,11 @@ export default function PlacementTestScreen() {
                     justifyContent: "center",
                     borderWidth: 1,
                     borderColor: isSpeaking ? "#3b82f6" : "#e5e7eb",
-                    backgroundColor: isSpeaking
-                      ? "rgba(59,130,246,0.1)"
-                      : "#ffffff",
+                    backgroundColor: isSpeaking ? "rgba(59,130,246,0.1)" : "#ffffff",
                   }}
                 >
-                  <Animated.View
-                    style={{ transform: [{ scale: speechScaleAnim }] }}
-                  >
-                    <Ionicons
-                      name={isSpeaking ? "volume-high" : "volume-high"}
-                      size={18}
-                      color="#3b82f6"
-                    />
+                  <Animated.View style={{ transform: [{ scale: speechScaleAnim }] }}>
+                    <Ionicons name={isSpeaking ? "volume-high" : "volume-high"} size={18} color="#3b82f6" />
                   </Animated.View>
                 </TouchableOpacity>
               )
@@ -802,10 +762,7 @@ export default function PlacementTestScreen() {
                   minHeight: 56,
                 }}
               >
-                <ThemedText
-                  type="defaultSemiBold"
-                  style={{ textAlign: "center" }}
-                >
+                <ThemedText type="defaultSemiBold" style={{ textAlign: "center" }}>
                   {`${String.fromCharCode(65 + idx)}. ${opt}`}
                 </ThemedText>
               </TouchableOpacity>
@@ -816,11 +773,7 @@ export default function PlacementTestScreen() {
 
       {/* Action Button Section */}
       <View style={{ paddingHorizontal: 20, paddingBottom: 12 }}>
-        <BounceButton
-          variant="solid"
-          disabled={selectedIndex == null}
-          onPress={onNext}
-        >
+        <BounceButton variant="solid" disabled={selectedIndex == null} onPress={onNext}>
           {isLast ? t("common.finish") : t("common.next")}
         </BounceButton>
       </View>

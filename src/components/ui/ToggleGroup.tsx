@@ -41,9 +41,7 @@ const ToggleGroup = ({
   style,
   ...props
 }: ToggleGroupProps) => {
-  const [internalValue, setInternalValue] = useState<string | string[]>(
-    defaultValue || (type === "single" ? "" : [])
-  );
+  const [internalValue, setInternalValue] = useState<string | string[]>(defaultValue || (type === "single" ? "" : []));
   const currentValue = value ?? internalValue;
 
   const handleValueChange = (itemValue: string) => {
@@ -108,103 +106,87 @@ const ToggleGroupItem = React.forwardRef<
     currentValue?: string | string[];
     onValueChange?: (value: string) => void;
   }
->(
-  (
-    {
-      value,
-      children,
-      disabled = false,
-      style,
-      currentValue,
-      onValueChange,
-      ...props
-    },
-    ref
-  ) => {
-    const context = useContext(ToggleGroupContext);
-    const isSelected = Array.isArray(currentValue)
-      ? currentValue.includes(value)
-      : currentValue === value;
+>(({ value, children, disabled = false, style, currentValue, onValueChange, ...props }, ref) => {
+  const context = useContext(ToggleGroupContext);
+  const isSelected = Array.isArray(currentValue) ? currentValue.includes(value) : currentValue === value;
 
-    const handlePress = () => {
-      if (!disabled) {
-        onValueChange?.(value);
-      }
-    };
+  const handlePress = () => {
+    if (!disabled) {
+      onValueChange?.(value);
+    }
+  };
 
-    const getVariantStyles = (): ViewProps["style"] => {
-      const variant = context.variant || "default";
-      switch (variant) {
-        case "default":
-          return {
-            backgroundColor: isSelected ? "#f3f4f6" : "transparent",
-          };
-        case "outline":
-          return {
-            backgroundColor: isSelected ? "#f3f4f6" : "transparent",
-            borderWidth: 1,
-            borderColor: "#d1d5db",
-          };
-        default:
-          return {
-            backgroundColor: isSelected ? "#f3f4f6" : "transparent",
-          };
-      }
-    };
+  const getVariantStyles = (): ViewProps["style"] => {
+    const variant = context.variant || "default";
+    switch (variant) {
+      case "default":
+        return {
+          backgroundColor: isSelected ? "#f3f4f6" : "transparent",
+        };
+      case "outline":
+        return {
+          backgroundColor: isSelected ? "#f3f4f6" : "transparent",
+          borderWidth: 1,
+          borderColor: "#d1d5db",
+        };
+      default:
+        return {
+          backgroundColor: isSelected ? "#f3f4f6" : "transparent",
+        };
+    }
+  };
 
-    const getSizeStyles = (): ViewProps["style"] => {
-      const size = context.size || "default";
-      switch (size) {
-        case "sm":
-          return {
-            height: 36,
-            paddingHorizontal: 10,
-            minWidth: 36,
-          };
-        case "lg":
-          return {
-            height: 44,
-            paddingHorizontal: 20,
-            minWidth: 44,
-          };
-        default:
-          return {
-            height: 40,
-            paddingHorizontal: 12,
-            minWidth: 40,
-          };
-      }
-    };
+  const getSizeStyles = (): ViewProps["style"] => {
+    const size = context.size || "default";
+    switch (size) {
+      case "sm":
+        return {
+          height: 36,
+          paddingHorizontal: 10,
+          minWidth: 36,
+        };
+      case "lg":
+        return {
+          height: 44,
+          paddingHorizontal: 20,
+          minWidth: 44,
+        };
+      default:
+        return {
+          height: 40,
+          paddingHorizontal: 12,
+          minWidth: 40,
+        };
+    }
+  };
 
-    return (
-      <TouchableOpacity
-        ref={ref}
-        style={[
-          {
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: 6,
-            gap: 8,
-            opacity: disabled ? 0.5 : 1,
-          },
-          getVariantStyles(),
-          getSizeStyles(),
-          style,
-        ]}
-        onPress={handlePress}
-        disabled={disabled}
-        activeOpacity={0.8}
-        {...props}
-      >
-        {children}
-      </TouchableOpacity>
-    );
-  }
-);
+  return (
+    <TouchableOpacity
+      ref={ref}
+      style={[
+        {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: 6,
+          gap: 8,
+          opacity: disabled ? 0.5 : 1,
+        },
+        getVariantStyles(),
+        getSizeStyles(),
+        style,
+      ]}
+      onPress={handlePress}
+      disabled={disabled}
+      activeOpacity={0.8}
+      {...props}
+    >
+      {children}
+    </TouchableOpacity>
+  );
+});
 
 ToggleGroupItem.displayName = "ToggleGroupItem";
 
 export { ToggleGroup, ToggleGroupItem };
 export type { ToggleGroupItemProps, ToggleGroupProps };
-

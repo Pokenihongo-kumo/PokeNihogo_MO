@@ -1,22 +1,13 @@
-import MinimalGameAlert, {
-  AlertWrapper,
-} from "@components/atoms/MinimalAlert";
+import MinimalGameAlert, { AlertWrapper } from "@components/atoms/MinimalAlert";
 import GlobalMatchingNotification from "@components/GlobalMatchingNotification";
 import { GlobalSocketManager } from "@components/GlobalSocketManager";
 import LanguageProvider from "@components/LanguageProvider";
 import CopilotProviderWrapper from "@components/ui/CopilotProviderWrapper";
 import { GlobalNotificationToast } from "@components/ui/GlobalNotificationToast";
 import { useColorScheme } from "@hooks/useColorScheme";
-import {
-  MinimalAlertProvider,
-  useMinimalAlert,
-} from "@hooks/useMinimalAlert";
+import { MinimalAlertProvider, useMinimalAlert } from "@hooks/useMinimalAlert";
 import { ReactQueryProvider } from "@libs/@tanstack/react-query";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useAuthStore } from "@stores/auth/auth.config";
 import { Audio } from "expo-av"; // Đã thêm import Audio
 import { useFonts } from "expo-font";
@@ -70,9 +61,7 @@ export default function RootLayout() {
       <MinimalAlertProvider>
         <LanguageProvider>
           <ReactQueryProvider>
-            <ThemeProvider
-              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
+            <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
               <CopilotProviderWrapper>
                 <Stack screenOptions={{ headerShown: false }}>
                   <Stack.Screen name="index" />

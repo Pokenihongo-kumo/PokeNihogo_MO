@@ -295,7 +295,7 @@ export {
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious
+  PaginationPrevious,
 };
 export type {
   EnhancedPaginationProps,
@@ -305,6 +305,5 @@ export type {
   PaginationLinkProps,
   PaginationNextProps,
   PaginationPreviousProps,
-  PaginationProps
+  PaginationProps,
 };
-

@@ -11,9 +11,7 @@ interface CopilotProviderWrapperProps {
  * Wrapper component for CopilotProvider that provides i18n tooltip
  * This ensures tour buttons (Skip, Next, Finish) are translated
  */
-export default function CopilotProviderWrapper({
-  children,
-}: CopilotProviderWrapperProps) {
+export default function CopilotProviderWrapper({ children }: CopilotProviderWrapperProps) {
   // Get current language from i18n to force re-render when language changes
   const currentLanguage = i18n.language || "en";
 
@@ -27,4 +25,3 @@ export default function CopilotProviderWrapper({
     </CopilotProvider>
   );
 }
-

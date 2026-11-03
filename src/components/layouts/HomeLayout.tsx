@@ -42,36 +42,52 @@ export interface HomeLayoutRef {
   scrollTo: (y: number) => void;
 }
 
-const HomeLayout = forwardRef<HomeLayoutRef, HomeLayoutProps>(
-  function HomeLayout({ children, refreshControl }, ref) {
-    const { t } = useTranslation();
-    const scrollViewRef = useRef<ScrollView>(null);
-    const { user } = useAuthHook();
-    const queryClient = useQueryClient();
-    const { accessToken } = useAuthStore();
-    const { starterId } = useUserStore();
-    const {
-      isPokemonOverlayEnabled,
-      isOverlayPreferenceLoaded,
-      initializeOverlayPreference,
-    } = useGlobalStore();
-    
-    const [isShopVisible, setIsShopVisible] = useState(false);
-    const [mainPokemonImageUrl, setMainPokemonImageUrl] = useState<string | null>(null);
-    useWalletUser();
+const HomeLayout = forwardRef<HomeLayoutRef, HomeLayoutProps>(function HomeLayout({ children, refreshControl }, ref) {
+  const { t } = useTranslation();
+  const scrollViewRef = useRef<ScrollView>(null);
+  const { user } = useAuthHook();
+  const queryClient = useQueryClient();
+  const { accessToken } = useAuthStore();
+  const { starterId } = useUserStore();
+  const { isPokemonOverlayEnabled, isOverlayPreferenceLoaded, initializeOverlayPreference } = useGlobalStore();
 
-    // Fetch main pokemon on mount and when screen is focused
-    useEffect(() => {
+  const [isShopVisible, setIsShopVisible] = useState(false);
+  const [mainPokemonImageUrl, setMainPokemonImageUrl] = useState<string | null>(null);
+  useWalletUser();
+
+  // Fetch main pokemon on mount and when screen is focused
+  useEffect(() => {
+    const fetchMainPokemon = async () => {
+      try {
+        const response = await userPokemonService.getOwnedPokemons();
+        const ownedPokemons = response.data?.data?.results || [];
+
+        // Find main pokemon, if not found use first pokemon (starter pokemon)
+        const mainPokemon = ownedPokemons.find((pokemon: any) => pokemon.isMain === true) || ownedPokemons[0];
+
+        setMainPokemonImageUrl(mainPokemon?.pokemon?.imageUrl || null);
+      } catch (error) {
+        console.error("Error fetching main pokemon:", error);
+        setMainPokemonImageUrl(null);
+      }
+    };
+
+    if (accessToken) {
+      fetchMainPokemon();
+    }
+  }, [accessToken]);
+
+  // Refetch main pokemon when screen is focused
+  useFocusEffect(
+    useCallback(() => {
       const fetchMainPokemon = async () => {
         try {
           const response = await userPokemonService.getOwnedPokemons();
           const ownedPokemons = response.data?.data?.results || [];
-          
+
           // Find main pokemon, if not found use first pokemon (starter pokemon)
-          const mainPokemon = ownedPokemons.find(
-            (pokemon: any) => pokemon.isMain === true
-          ) || ownedPokemons[0];
-          
+          const mainPokemon = ownedPokemons.find((pokemon: any) => pokemon.isMain === true) || ownedPokemons[0];
+
           setMainPokemonImageUrl(mainPokemon?.pokemon?.imageUrl || null);
         } catch (error) {
           console.error("Error fetching main pokemon:", error);
@@ -82,133 +98,107 @@ const HomeLayout = forwardRef<HomeLayoutRef, HomeLayoutProps>(
       if (accessToken) {
         fetchMainPokemon();
       }
-    }, [accessToken]);
+    }, [accessToken]),
+  );
 
-    // Refetch main pokemon when screen is focused
-    useFocusEffect(
-      useCallback(() => {
-        const fetchMainPokemon = async () => {
-          try {
-            const response = await userPokemonService.getOwnedPokemons();
-            const ownedPokemons = response.data?.data?.results || [];
-            
-            // Find main pokemon, if not found use first pokemon (starter pokemon)
-            const mainPokemon = ownedPokemons.find(
-              (pokemon: any) => pokemon.isMain === true
-            ) || ownedPokemons[0];
-            
-            setMainPokemonImageUrl(mainPokemon?.pokemon?.imageUrl || null);
-          } catch (error) {
-            console.error("Error fetching main pokemon:", error);
-            setMainPokemonImageUrl(null);
-          }
-        };
+  // Use main pokemon if available, otherwise fallback to STARTERS array
+  const pokemonImageUri = mainPokemonImageUrl;
 
-        if (accessToken) {
-          fetchMainPokemon();
-        }
-      }, [accessToken])
-    );
+  // Show overlay continuously when there's a pokemon image (not just during first time login)
+  const shouldShowPokemonOverlay = isOverlayPreferenceLoaded && isPokemonOverlayEnabled && !!pokemonImageUri;
 
-    // Use main pokemon if available, otherwise fallback to STARTERS array
-    const pokemonImageUri = mainPokemonImageUrl;
-    
-    // Show overlay continuously when there's a pokemon image (not just during first time login)
-    const shouldShowPokemonOverlay =
-      isOverlayPreferenceLoaded && isPokemonOverlayEnabled && !!pokemonImageUri;
+  // Load overlay visibility preference once
+  useEffect(() => {
+    initializeOverlayPreference();
+  }, [initializeOverlayPreference]);
 
-    // Load overlay visibility preference once
-    useEffect(() => {
-      initializeOverlayPreference();
-    }, [initializeOverlayPreference]);
+  // Refetch user profile khi component mount và khi screen được focus
+  // để đảm bảo dữ liệu người dùng luôn được cập nhật mới nhất
+  useEffect(() => {
+    if (accessToken) {
+      // Refetch user profile khi mount
+      queryClient.invalidateQueries({
+        queryKey: ["user-profile"],
+      });
+    }
+  }, [accessToken, queryClient]);
 
-    // Refetch user profile khi component mount và khi screen được focus
-    // để đảm bảo dữ liệu người dùng luôn được cập nhật mới nhất
-    useEffect(() => {
+  // Refetch user profile mỗi khi screen được focus
+  useFocusEffect(
+    useCallback(() => {
       if (accessToken) {
-        // Refetch user profile khi mount
-        queryClient.invalidateQueries({ 
-          queryKey: ['user-profile'] 
+        queryClient.invalidateQueries({
+          queryKey: ["user-profile"],
         });
       }
-    }, [accessToken, queryClient]);
+    }, [accessToken, queryClient]),
+  );
 
-    // Refetch user profile mỗi khi screen được focus
-    useFocusEffect(
-      useCallback(() => {
-        if (accessToken) {
-          queryClient.invalidateQueries({ 
-            queryKey: ['user-profile'] 
-          });
-        }
-      }, [accessToken, queryClient])
-    );
+  // Note: Main pokemon logic moved to tab layout level to prevent re-mounting
 
-    // Note: Main pokemon logic moved to tab layout level to prevent re-mounting
+  useImperativeHandle(ref, () => ({
+    scrollTo: (y: number) => {
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({
+          y,
+          animated: true,
+        });
+      }
+    },
+  }));
 
-    useImperativeHandle(ref, () => ({
-      scrollTo: (y: number) => {
-        if (scrollViewRef.current) {
-          scrollViewRef.current.scrollTo({
-            y,
-            animated: true,
-          });
-        }
-      },
-    }));
+  const handleStorePress = () => {
+    setIsShopVisible(true);
+  };
 
-    const handleStorePress = () => {
-      setIsShopVisible(true);
-    };
+  const handleShopClose = () => {
+    setIsShopVisible(false);
+  };
 
-    const handleShopClose = () => {
-      setIsShopVisible(false);
-    };
+  // Walkthroughable container for attaching steps to real elements
+  const WTView = walkthroughable(View);
 
-    // Walkthroughable container for attaching steps to real elements
-    const WTView = walkthroughable(View);
+  return (
+    <HomeTourGuide>
+      <ImageBackground
+        source={{
+          uri: "https://res.cloudinary.com/duzumnf05/image/upload/v1762878756/background/images/file_nv77kp.png",
+        }}
+        style={styles.container}
+        imageStyle={styles.backgroundImage}
+        resizeMode="cover"
+      >
+        {/* Overlay để làm mờ ảnh nền */}
+        <View style={styles.overlay} />
+        <SafeAreaView style={styles.safeArea}>
+          {/* Fixed Header */}
+          <CopilotStep text={t("tour.header_description")} order={1} name="header">
+            <WTView style={styles.fixedHeader}>
+              <UserProfileHeaderAtomic user={user.data} />
+            </WTView>
+          </CopilotStep>
 
-    return (
-      <HomeTourGuide>
-        <ImageBackground
-          source={{
-            uri: "https://res.cloudinary.com/duzumnf05/image/upload/v1762878756/background/images/file_nv77kp.png",
-          }}
-          style={styles.container}
-          imageStyle={styles.backgroundImage}
-          resizeMode="cover"
-        >
-          {/* Overlay để làm mờ ảnh nền */}
-          <View style={styles.overlay} />
-          <SafeAreaView style={styles.safeArea}>
-            {/* Fixed Header */}
-            <CopilotStep text={t("tour.header_description")} order={1} name="header">
-              <WTView style={styles.fixedHeader}>
-                <UserProfileHeaderAtomic user={user.data} />
-              </WTView>
-            </CopilotStep>
+          {/* Scrollable Content */}
+          <ScrollView
+            ref={scrollViewRef}
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            refreshControl={refreshControl}
+          >
+            {/* Main Content Area */}
+            <View style={styles.contentSection}>{children}</View>
+          </ScrollView>
+        </SafeAreaView>
 
-            {/* Scrollable Content */}
-            <ScrollView
-              ref={scrollViewRef}
-              style={styles.scrollView}
-              contentContainerStyle={styles.scrollContent}
-              showsVerticalScrollIndicator={false}
-              refreshControl={refreshControl}
-            >
-              {/* Main Content Area */}
-              <View style={styles.contentSection}>{children}</View>
-            </ScrollView>
-          </SafeAreaView>
-
-          {/* Store Icon - positioned at bottom right */}
-          <View className="absolute top-52 right-4">
-            <CopilotStep text={t("tour.store_description")} order={3} name="store">
-              <WTView>
-                <StoreIcon onPress={handleStorePress} size="small" />
-              </WTView>
-            </CopilotStep>
-            {/* <CopilotStep text={t("tour.quest_description")} order={4} name="quest">
+        {/* Store Icon - positioned at bottom right */}
+        <View className="absolute top-52 right-4">
+          <CopilotStep text={t("tour.store_description")} order={3} name="store">
+            <WTView>
+              <StoreIcon onPress={handleStorePress} size="small" />
+            </WTView>
+          </CopilotStep>
+          {/* <CopilotStep text={t("tour.quest_description")} order={4} name="quest">
               <WTView style={{ marginTop: 12, alignSelf: "flex-end" }}>
                 <QuestIcon
                   onPress={() => setShowDailyQuests(true)}
@@ -216,37 +206,30 @@ const HomeLayout = forwardRef<HomeLayoutRef, HomeLayoutProps>(
                 />
               </WTView>
             </CopilotStep> */}
-            <CopilotStep text={t("tour.gacha_description")} order={4} name="gacha">
-              <WTView style={{ marginTop: 12, alignSelf: "flex-end" }}>
-                <GachaIcon
-                  onPress={() => router.push(ROUTES.APP.GACHA)}
-                  size="small"
-                />
-              </WTView>
-            </CopilotStep>
-          </View>
+          <CopilotStep text={t("tour.gacha_description")} order={4} name="gacha">
+            <WTView style={{ marginTop: 12, alignSelf: "flex-end" }}>
+              <GachaIcon onPress={() => router.push(ROUTES.APP.GACHA)} size="small" />
+            </WTView>
+          </CopilotStep>
+        </View>
 
-          {/* Shop Modal */}
-          <RewardShopModal
-            isVisible={isShopVisible}
-            onClose={handleShopClose}
-          />
+        {/* Shop Modal */}
+        <RewardShopModal isVisible={isShopVisible} onClose={handleShopClose} />
 
-          {/* Daily Quest Modal */}
-          {/* <DailyQuestModal
+        {/* Daily Quest Modal */}
+        {/* <DailyQuestModal
             visible={showDailyQuests}
             onClose={() => setShowDailyQuests(false)}
             requests={dailyQuestsMock}
           /> */}
-        </ImageBackground>
-        {/* Draggable overlay now lives inside HomeLayout so it stays scoped to the home screen */}
-        {shouldShowPokemonOverlay && (
-          <DraggableOverlay imageUri={pokemonImageUri || ""} imageSize={100} showBackground={false} />
-        )}
-      </HomeTourGuide>
-    );
-  }
-);
+      </ImageBackground>
+      {/* Draggable overlay now lives inside HomeLayout so it stays scoped to the home screen */}
+      {shouldShowPokemonOverlay && (
+        <DraggableOverlay imageUri={pokemonImageUri || ""} imageSize={100} showBackground={false} />
+      )}
+    </HomeTourGuide>
+  );
+});
 
 export default HomeLayout;
 
@@ -309,7 +292,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     padding: 16,
     borderRadius: 12,
-    alignItems: "center",},
+    alignItems: "center",
+  },
   statNumber: {
     fontSize: 24,
     fontWeight: "bold",
@@ -332,7 +316,8 @@ const styles = StyleSheet.create({
   actionCard: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     padding: 16,
-    borderRadius: 12,},
+    borderRadius: 12,
+  },
   actionTitle: {
     fontSize: 16,
     fontWeight: "600",
@@ -347,7 +332,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     margin: 16,
     padding: 16,
-    borderRadius: 12,},
+    borderRadius: 12,
+  },
   cardTitle: {
     fontSize: 18,
     fontWeight: "600",
@@ -365,12 +351,14 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(59, 130, 246, 0.1)",
     padding: 12,
     borderRadius: 8,
-    alignItems: "center",},
+    alignItems: "center",
+  },
   recentActivityCard: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     margin: 16,
     padding: 16,
-    borderRadius: 12,},
+    borderRadius: 12,
+  },
   activityItem: {
     paddingVertical: 8,
     borderBottomWidth: 1,

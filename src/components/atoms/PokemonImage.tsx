@@ -8,11 +8,7 @@ interface PokemonImageProps {
   style?: any;
 }
 
-export default function PokemonImage({
-  imageUri,
-  size = 80,
-  style,
-}: PokemonImageProps) {
+export default function PokemonImage({ imageUri, size = 80, style }: PokemonImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -28,12 +24,7 @@ export default function PokemonImage({
   return (
     <View style={[styles.wrapper, { width: size, height: size }, style]}>
       {(isLoading || shouldKeepLoading || hasError) && (
-        <ActivityIndicator
-          testID="pokemon-image-loading"
-          size="small"
-          color="#888"
-          style={styles.loader}
-        />
+        <ActivityIndicator testID="pokemon-image-loading" size="small" color="#888" style={styles.loader} />
       )}
       {!shouldKeepLoading && !hasError && (
         <Image

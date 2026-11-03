@@ -18,7 +18,7 @@ describe("toApiResult", () => {
   it("unwraps the envelope and keeps statusCode and message", () => {
     const result = toApiResult(
       httpResponse(201, { statusCode: 201, message: "Điểm danh thành công", data: { id: 1, name: "A" } }),
-      ItemSchema
+      ItemSchema,
     );
 
     expect(result).toEqual({ statusCode: 201, message: "Điểm danh thành công", data: { id: 1, name: "A" } });
@@ -28,7 +28,7 @@ describe("toApiResult", () => {
     const pagination = { current: 1, pageSize: 10, totalPage: 1, totalItem: 1 };
     const result = toApiResult(
       httpResponse(200, { statusCode: 200, message: "OK", data: { results: [{ id: 1, name: "A" }], pagination } }),
-      pageSchema(ItemSchema)
+      pageSchema(ItemSchema),
     );
 
     expect(result.data.results).toEqual([{ id: 1, name: "A" }]);

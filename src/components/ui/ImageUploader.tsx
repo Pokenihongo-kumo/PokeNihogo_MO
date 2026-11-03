@@ -5,13 +5,7 @@ import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ActivityIndicator,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export interface ImageUploaderProps {
   value?: string;
@@ -39,7 +33,7 @@ export default function ImageUploader({
         showAlert(message, type);
       }
     },
-    [showAlert]
+    [showAlert],
   );
   const uploadImageMutation = useUploadImage();
 
@@ -52,11 +46,8 @@ export default function ImageUploader({
       if (!permissionResult.granted) {
         showUploaderAlert(
           t("flashcard_detail.image_permission_denied_title", "Không có quyền"),
-          t(
-            "flashcard_detail.image_permission_denied_desc",
-            "Ứng dụng cần quyền truy cập thư viện ảnh để tải hình."
-          ),
-          "error"
+          t("flashcard_detail.image_permission_denied_desc", "Ứng dụng cần quyền truy cập thư viện ảnh để tải hình."),
+          "error",
         );
         return;
       }
@@ -70,15 +61,9 @@ export default function ImageUploader({
       if (pickerResult.canceled || !pickerResult.assets?.length) return;
 
       const asset = pickerResult.assets[0];
-      const fileName =
-        asset.fileName ||
-        asset.uri?.split("/").pop() ||
-        `image-${Date.now()}.jpg`;
+      const fileName = asset.fileName || asset.uri?.split("/").pop() || `image-${Date.now()}.jpg`;
       const fileType =
-        asset.mimeType ||
-        (fileName?.includes(".")
-          ? `image/${fileName.split(".").pop()}`
-          : "image/jpeg");
+        asset.mimeType || (fileName?.includes(".") ? `image/${fileName.split(".").pop()}` : "image/jpeg");
 
       // Upload image to get URL from server
       uploadImageMutation.mutate(
@@ -98,14 +83,14 @@ export default function ImageUploader({
               showUploaderAlert(
                 t("flashcard_detail.upload_success_title", "Tải ảnh thành công"),
                 t("flashcard_detail.upload_success_desc", "Ảnh đã được tải lên và hiển thị."),
-                "success"
+                "success",
               );
             } else {
               console.warn("Upload response missing URL:", response);
               showUploaderAlert(
                 t("flashcard_detail.upload_error_title", "Không thể tải ảnh"),
                 t("flashcard_detail.upload_error_desc", "Phản hồi từ server thiếu URL."),
-                "error"
+                "error",
               );
             }
           },
@@ -113,19 +98,18 @@ export default function ImageUploader({
             console.warn("Image upload error:", error);
             showUploaderAlert(
               t("flashcard_detail.upload_error_title", "Không thể tải ảnh"),
-              error?.message ||
-                t("flashcard_detail.upload_error_desc", "Vui lòng thử lại sau."),
-              "error"
+              error?.message || t("flashcard_detail.upload_error_desc", "Vui lòng thử lại sau."),
+              "error",
             );
           },
-        }
+        },
       );
     } catch (error) {
       console.warn("Image upload error", error);
       showUploaderAlert(
         t("flashcard_detail.upload_error_title", "Không thể tải ảnh"),
         t("flashcard_detail.upload_error_desc", "Vui lòng thử lại sau."),
-        "error"
+        "error",
       );
     }
   }, [uploadImageMutation, folderName, onChange, showUploaderAlert, t, disabled]);
@@ -136,12 +120,8 @@ export default function ImageUploader({
 
   return (
     <View>
-      {label && (
-        <Text style={{ fontSize: 14, fontWeight: "600", color: "#1f2937", marginBottom: 8 }}>
-          {label}
-        </Text>
-      )}
-      
+      {label && <Text style={{ fontSize: 14, fontWeight: "600", color: "#1f2937", marginBottom: 8 }}>{label}</Text>}
+
       <View className="border border-slate-200 rounded-2xl bg-white mb-3">
         <TextInput
           value={value}
@@ -195,4 +175,3 @@ export default function ImageUploader({
     </View>
   );
 }
-

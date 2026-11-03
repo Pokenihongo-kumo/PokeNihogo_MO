@@ -3,31 +3,10 @@ import { useLesson } from "@hooks/useLessons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import {
-  ChevronLeft,
-  Heart,
-  RotateCcw,
-  Sparkles,
-  Trophy,
-  X,
-} from "lucide-react-native";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { ChevronLeft, Heart, RotateCcw, Sparkles, Trophy, X } from "lucide-react-native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ActivityIndicator,
-  Animated,
-  Easing,
-  Modal,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Animated, Easing, Modal, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface WordChainWord {
@@ -55,9 +34,7 @@ const WordChainGameScreen = () => {
   const [lives, setLives] = useState(3);
   const [isGameComplete, setIsGameComplete] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
-  const [answerState, setAnswerState] = useState<"none" | "correct" | "wrong">(
-    "none"
-  );
+  const [answerState, setAnswerState] = useState<"none" | "correct" | "wrong">("none");
   const [timeRemaining, setTimeRemaining] = useState<number>(30);
 
   // Animation refs
@@ -98,16 +75,11 @@ const WordChainGameScreen = () => {
 
         if (contentType === "kanji") {
           word = item.character || "";
-          meaning =
-            item.meaning?.split("##")[0] ||
-            item.meaning ||
-            t("lessons.no_meaning");
+          meaning = item.meaning?.split("##")[0] || item.meaning || t("lessons.no_meaning");
         } else {
           word = item.wordJp || "";
           const meanings = (item.meanings || [])
-            .map((m: any) =>
-              typeof m === "string" ? m : m.meaning || m.text || ""
-            )
+            .map((m: any) => (typeof m === "string" ? m : m.meaning || m.text || ""))
             .filter(Boolean);
           meaning = meanings.length > 0 ? meanings[0] : t("lessons.no_meaning");
         }
@@ -133,8 +105,7 @@ const WordChainGameScreen = () => {
       setWords(wordList);
       // Start with a random word
       if (wordList.length > 0) {
-        const randomWord =
-          wordList[Math.floor(Math.random() * wordList.length)];
+        const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
         setCurrentWord(randomWord);
         setChain([randomWord.word]);
       }
@@ -234,7 +205,7 @@ const WordChainGameScreen = () => {
 
       return inputFirstChar === requiredChar;
     },
-    [currentWord]
+    [currentWord],
   );
 
   // Check if word is in the word list
@@ -242,7 +213,7 @@ const WordChainGameScreen = () => {
     (inputWord: string): boolean => {
       return words.some((w) => w.word === inputWord);
     },
-    [words]
+    [words],
   );
 
   // Check if word was already used
@@ -250,7 +221,7 @@ const WordChainGameScreen = () => {
     (inputWord: string): boolean => {
       return chain.includes(inputWord);
     },
-    [chain]
+    [chain],
   );
 
   // Submit answer
@@ -465,27 +436,20 @@ const WordChainGameScreen = () => {
   if (contentData.length === 0) {
     return (
       <SafeAreaView className="flex-1 bg-white">
-        <LinearGradient
-          colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
-          style={{ flex: 1 }}
-        >
+        <LinearGradient colors={["#79B4C4", "#85C3C3", "#9BC7B9"]} style={{ flex: 1 }}>
           <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row rounded-b-3xl items-center justify-between">
             <TouchableOpacity onPress={() => router.back()}>
               <ChevronLeft size={24} color="#6b7280" />
             </TouchableOpacity>
             <View style={{ flex: 1, alignItems: "center" }}>
-              <ThemedText
-                style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}
-              >
+              <ThemedText style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}>
                 {t("content_list.word_chain.title", "Word Chain (Shiritori)")}
               </ThemedText>
             </View>
             <View style={{ width: 24 }} />
           </View>
           <View className="flex-1 items-center justify-center p-6">
-            <ThemedText
-              style={{ fontSize: 18, color: "#6b7280", textAlign: "center" }}
-            >
+            <ThemedText style={{ fontSize: 18, color: "#6b7280", textAlign: "center" }}>
               {t("content_list.word_chain.no_content", "No content available")}
             </ThemedText>
           </View>
@@ -496,19 +460,14 @@ const WordChainGameScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
-      <LinearGradient
-        colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
-        style={{ flex: 1 }}
-      >
+      <LinearGradient colors={["#79B4C4", "#85C3C3", "#9BC7B9"]} style={{ flex: 1 }}>
         {/* Header */}
         <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row rounded-b-3xl items-center justify-between">
           <TouchableOpacity onPress={() => router.back()}>
             <ChevronLeft size={24} color="#6b7280" />
           </TouchableOpacity>
           <View style={{ flex: 1, alignItems: "center" }}>
-            <ThemedText
-              style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}
-            >
+            <ThemedText style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}>
               {t("content_list.word_chain.title", "Word Chain (Shiritori)")}
             </ThemedText>
           </View>
@@ -648,11 +607,7 @@ const WordChainGameScreen = () => {
                       color: "#4f46e5",
                     }}
                   >
-                    {t(
-                      "content_list.word_chain.next_starts_with",
-                      "Next word must start with"
-                    )}
-                    :{" "}
+                    {t("content_list.word_chain.next_starts_with", "Next word must start with")}:{" "}
                     <ThemedText
                       style={{
                         fontSize: 24,
@@ -687,10 +642,7 @@ const WordChainGameScreen = () => {
                   >
                     <View className="flex-row flex-wrap gap-2">
                       {chain.map((word, index) => (
-                        <View
-                          key={index}
-                          className="bg-indigo-100 rounded-xl px-3 py-2"
-                        >
+                        <View key={index} className="bg-indigo-100 rounded-xl px-3 py-2">
                           <ThemedText
                             style={{
                               fontSize: 16,
@@ -699,12 +651,7 @@ const WordChainGameScreen = () => {
                             }}
                           >
                             {word}
-                            {index < chain.length - 1 && (
-                              <ThemedText style={{ color: "#818cf8" }}>
-                                {" "}
-                                →{" "}
-                              </ThemedText>
-                            )}
+                            {index < chain.length - 1 && <ThemedText style={{ color: "#818cf8" }}> → </ThemedText>}
                           </ThemedText>
                         </View>
                       ))}
@@ -723,10 +670,7 @@ const WordChainGameScreen = () => {
                     marginBottom: 12,
                   }}
                 >
-                  {t(
-                    "content_list.word_chain.enter_word",
-                    "Enter a word starting with"
-                  )}{" "}
+                  {t("content_list.word_chain.enter_word", "Enter a word starting with")}{" "}
                   <ThemedText
                     style={{
                       fontSize: 20,
@@ -745,20 +689,13 @@ const WordChainGameScreen = () => {
                   <TextInput
                     value={userInput}
                     onChangeText={setUserInput}
-                    placeholder={t(
-                      "content_list.word_chain.input_placeholder",
-                      "Type a word..."
-                    )}
+                    placeholder={t("content_list.word_chain.input_placeholder", "Type a word...")}
                     style={{
                       backgroundColor: "#ffffff",
                       borderRadius: 12,
                       borderWidth: 3,
                       borderColor:
-                        answerState === "correct"
-                          ? "#10b981"
-                          : answerState === "wrong"
-                            ? "#ef4444"
-                            : "#3b82f6",
+                        answerState === "correct" ? "#10b981" : answerState === "wrong" ? "#ef4444" : "#3b82f6",
                       padding: 16,
                       fontSize: 20,
                       fontWeight: "600",
@@ -823,12 +760,11 @@ const WordChainGameScreen = () => {
                 padding: 32,
                 alignItems: "center",
                 width: "100%",
-                maxWidth: 400,}}
+                maxWidth: 400,
+              }}
             >
               <LinearGradient
-                colors={
-                  isGameOver ? ["#ef4444", "#dc2626"] : ["#fbbf24", "#f59e0b"]
-                }
+                colors={isGameOver ? ["#ef4444", "#dc2626"] : ["#fbbf24", "#f59e0b"]}
                 style={{
                   width: 80,
                   height: 80,
@@ -838,11 +774,7 @@ const WordChainGameScreen = () => {
                   marginBottom: 20,
                 }}
               >
-                {isGameOver ? (
-                  <X size={40} color="#ffffff" />
-                ) : (
-                  <Trophy size={40} color="#ffffff" />
-                )}
+                {isGameOver ? <X size={40} color="#ffffff" /> : <Trophy size={40} color="#ffffff" />}
               </LinearGradient>
 
               <ThemedText

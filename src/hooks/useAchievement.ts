@@ -9,24 +9,24 @@ import useLanguage from "./useLanguage";
  * @returns The user achievements data.
  */
 export const useAchievement = (params?: {
-    sort?: string | string[];
-    currentPage?: number;
-    achPageSize?: number;
-    achCurrentPage?: number;
-    achievementGroupId?: number;
+  sort?: string | string[];
+  currentPage?: number;
+  achPageSize?: number;
+  achCurrentPage?: number;
+  achievementGroupId?: number;
 }): {
-    data: UserAchievementsData | undefined;
-    isLoading: boolean;
-    error: Error | null;
+  data: UserAchievementsData | undefined;
+  isLoading: boolean;
+  error: Error | null;
 } => {
-    const language = useLanguage();
-    const { data, isLoading, error } = useQuery<UserAchievementsData, Error>({
-        queryKey: ['user-achievements', params, language],
-        queryFn: () => achievementService.getUserAchievements(params),
-        staleTime: 60 * 1000,
-    });
+  const language = useLanguage();
+  const { data, isLoading, error } = useQuery<UserAchievementsData, Error>({
+    queryKey: ["user-achievements", params, language],
+    queryFn: () => achievementService.getUserAchievements(params),
+    staleTime: 60 * 1000,
+  });
 
-    return { data, isLoading, error: error || null };
+  return { data, isLoading, error: error || null };
 };
 //---------------------End---------------------//
 
@@ -35,36 +35,36 @@ export const useAchievement = (params?: {
  * @returns The mutation hook to receive the achievement reward.
  */
 export const useReceiveAchievementReward = (): {
-    mutate: (achievementId: number, options?: { onSuccess?: () => void; onError?: (error: any) => void }) => void;
-    isPending: boolean;
-    error: Error | null;
+  mutate: (achievementId: number, options?: { onSuccess?: () => void; onError?: (error: any) => void }) => void;
+  isPending: boolean;
+  error: Error | null;
 } => {
-    const queryClient = useQueryClient();
-    const { mutate, isPending, error } = useMutation({
-        mutationFn: (achievementId: number) => achievementService.receiveAchievementReward(achievementId),
+  const queryClient = useQueryClient();
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: (achievementId: number) => achievementService.receiveAchievementReward(achievementId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-achievements"] });
+    },
+    onError: (error: any) => {
+      console.error("Error receiving reward:", error.response?.data?.message || error.message);
+    },
+  });
+
+  return {
+    mutate: (achievementId: number, options?: { onSuccess?: () => void; onError?: (error: any) => void }) => {
+      mutate(achievementId, {
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['user-achievements'] });
+          queryClient.invalidateQueries({ queryKey: ["user-achievements"] });
+          options?.onSuccess?.();
         },
         onError: (error: any) => {
-            console.error('Error receiving reward:', error.response?.data?.message || error.message);
+          console.error("Error receiving reward:", error.response?.data?.message || error.message);
+          options?.onError?.(error);
         },
-    });
-
-    return {
-        mutate: (achievementId: number, options?: { onSuccess?: () => void; onError?: (error: any) => void }) => {
-            mutate(achievementId, {
-                onSuccess: () => {
-                    queryClient.invalidateQueries({ queryKey: ['user-achievements'] });
-                    options?.onSuccess?.();
-                },
-                onError: (error: any) => {
-                    console.error('Error receiving reward:', error.response?.data?.message || error.message);
-                    options?.onError?.(error);
-                },
-            });
-        },
-        isPending,
-        error: error || null
-    };
+      });
+    },
+    isPending,
+    error: error || null,
+  };
 };
 //---------------------End---------------------//

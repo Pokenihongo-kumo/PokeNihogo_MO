@@ -7,21 +7,19 @@ const userPokemonService = {
     const queryParams = new URLSearchParams();
     const filters: string[] = [];
 
-    if (params.currentPage) queryParams.append('currentPage', params.currentPage.toString());
-    if (params.pageSize) queryParams.append('pageSize', params.pageSize.toString());
-    if (typeof params.hasPokemon === 'boolean') queryParams.append('hasPokemon', params.hasPokemon.toString());
+    if (params.currentPage) queryParams.append("currentPage", params.currentPage.toString());
+    if (params.pageSize) queryParams.append("pageSize", params.pageSize.toString());
+    if (typeof params.hasPokemon === "boolean") queryParams.append("hasPokemon", params.hasPokemon.toString());
 
-    if (params.types && params.types !== 'all') {
+    if (params.types && params.types !== "all") {
       filters.push(`types=${params.types}`);
     }
 
-    if (params.types && params.types !== 'all') {
-      const typesValue = Array.isArray(params.types)
-        ? params.types.map(String).join('|')
-        : String(params.types);
+    if (params.types && params.types !== "all") {
+      const typesValue = Array.isArray(params.types) ? params.types.map(String).join("|") : String(params.types);
       if (typesValue.length > 0) filters.push(`types=${typesValue}`);
     }
-    if (params.rarity && params.rarity !== 'all') {
+    if (params.rarity && params.rarity !== "all") {
       filters.push(`rarity=${params.rarity}`);
     }
     if (params.search) {
@@ -32,8 +30,8 @@ const userPokemonService = {
     }
 
     if (filters.length > 0) {
-      const qsValue = filters.join(',');
-      queryParams.append('qs', qsValue);
+      const qsValue = filters.join(",");
+      queryParams.append("qs", qsValue);
     }
 
     const queryString = queryParams.toString();

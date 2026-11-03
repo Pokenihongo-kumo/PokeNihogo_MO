@@ -13,100 +13,87 @@ interface LessonCardProps {
   onPress?: (lesson: LessonProgress) => void;
 }
 
-const LessonCard: React.FC<LessonCardProps> = React.memo(
-  ({ lesson, onPress }) => {
-    const { t } = useTranslation();
+const LessonCard: React.FC<LessonCardProps> = React.memo(({ lesson, onPress }) => {
+  const { t } = useTranslation();
 
-    const handlePress = useCallback(() => {
-      if (onPress) {
-        onPress(lesson);
-      } else {
-        // Navigate to lesson detail
-        router.push({
-          pathname: ROUTES.LESSON.DETAIL,
-          params: { 
-            id: lesson.lessonId.toString(),
-            status: lesson.status || "NOT_STARTED",
-          },
-        });
-      }
-    }, [onPress, lesson]);
+  const handlePress = useCallback(() => {
+    if (onPress) {
+      onPress(lesson);
+    } else {
+      // Navigate to lesson detail
+      router.push({
+        pathname: ROUTES.LESSON.DETAIL,
+        params: {
+          id: lesson.lessonId.toString(),
+          status: lesson.status || "NOT_STARTED",
+        },
+      });
+    }
+  }, [onPress, lesson]);
 
-    // Simplified type configuration
-    const typeConfig = {
-      color: "#10b981",
-    };
+  // Simplified type configuration
+  const typeConfig = {
+    color: "#10b981",
+  };
 
-    return (
-      <TouchableOpacity
-        style={[styles.lessonCard, { borderLeftColor: typeConfig.color }]}
-        onPress={handlePress}
-        activeOpacity={0.8}
-      >
-        <View style={styles.lessonHeader}>
-          <View
-            style={[
-              styles.iconContainer,
-              { backgroundColor: typeConfig.color },
-            ]}
-          >
-            <Type size={24} color="#ffffff" />
-          </View>
-          <View style={styles.lessonInfo}>
-            <ThemedText type="subtitle" style={styles.lessonTitle}>
-              {lesson.lesson.titleJp}
-            </ThemedText>
-            <ThemedText style={styles.lessonDescription}>
-              {t("lesson_card.lesson_description", { level: lesson.lesson.levelJlpt })}
-            </ThemedText>
-          </View>
+  return (
+    <TouchableOpacity
+      style={[styles.lessonCard, { borderLeftColor: typeConfig.color }]}
+      onPress={handlePress}
+      activeOpacity={0.8}
+    >
+      <View style={styles.lessonHeader}>
+        <View style={[styles.iconContainer, { backgroundColor: typeConfig.color }]}>
+          <Type size={24} color="#ffffff" />
         </View>
-
-        {/* Progress */}
-        {lesson.progressPercentage > 0 && (
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <View
-                style={[
-                  styles.progressFill,
-                  {
-                    width: `${lesson.progressPercentage}%`,
-                    backgroundColor: typeConfig.color,
-                  },
-                ]}
-              />
-            </View>
-            <ThemedText style={styles.progressText}>
-              {lesson.progressPercentage}% {t("common.complete")}
-            </ThemedText>
-          </View>
-        )}
-
-        {/* Status and Level */}
-        <View style={styles.statusContainer}>
-          <View style={styles.statusInfo}>
-            {lesson.status === "COMPLETED" ? (
-              <ThemedText style={styles.statusCompleted}>
-                ✅ {t("lessons.lesson_status.completed")}
-              </ThemedText>
-            ) : lesson.progressPercentage > 0 ? (
-              <ThemedText style={styles.statusInProgress}>
-                🔄 {t("lessons.lesson_status.in_progress")}
-              </ThemedText>
-            ) : (
-              <ThemedText style={styles.statusNotStarted}>
-                ⭕ {t("lessons.lesson_status.not_started")}
-              </ThemedText>
-            )}
-          </View>
-          <View style={styles.levelBadge}>
-            <ThemedText style={styles.levelText}>N{lesson.lesson.levelJlpt}</ThemedText>
-          </View>
+        <View style={styles.lessonInfo}>
+          <ThemedText type="subtitle" style={styles.lessonTitle}>
+            {lesson.lesson.titleJp}
+          </ThemedText>
+          <ThemedText style={styles.lessonDescription}>
+            {t("lesson_card.lesson_description", { level: lesson.lesson.levelJlpt })}
+          </ThemedText>
         </View>
-      </TouchableOpacity>
-    );
-  }
-);
+      </View>
+
+      {/* Progress */}
+      {lesson.progressPercentage > 0 && (
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBar}>
+            <View
+              style={[
+                styles.progressFill,
+                {
+                  width: `${lesson.progressPercentage}%`,
+                  backgroundColor: typeConfig.color,
+                },
+              ]}
+            />
+          </View>
+          <ThemedText style={styles.progressText}>
+            {lesson.progressPercentage}% {t("common.complete")}
+          </ThemedText>
+        </View>
+      )}
+
+      {/* Status and Level */}
+      <View style={styles.statusContainer}>
+        <View style={styles.statusInfo}>
+          {lesson.status === "COMPLETED" ? (
+            <ThemedText style={styles.statusCompleted}>✅ {t("lessons.lesson_status.completed")}</ThemedText>
+          ) : lesson.progressPercentage > 0 ? (
+            <ThemedText style={styles.statusInProgress}>🔄 {t("lessons.lesson_status.in_progress")}</ThemedText>
+          ) : (
+            <ThemedText style={styles.statusNotStarted}>⭕ {t("lessons.lesson_status.not_started")}</ThemedText>
+          )}
+        </View>
+        <View style={styles.levelBadge}>
+          <ThemedText style={styles.levelText}>N{lesson.lesson.levelJlpt}</ThemedText>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+});
 
 LessonCard.displayName = "LessonCard";
 
@@ -116,7 +103,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderLeftWidth: 4,
-    marginBottom: 12,},
+    marginBottom: 12,
+  },
   lessonHeader: {
     flexDirection: "row",
     alignItems: "flex-start",

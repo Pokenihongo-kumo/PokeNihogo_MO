@@ -54,9 +54,7 @@ export const usePokemonData = (params: any, starterId: string) => {
     }
 
     // Fallback to mock data using starterId from store
-    const fallbackStarter =
-      starters.find((starter: Starter) => starter.id === starterId) ||
-      starters[0];
+    const fallbackStarter = starters.find((starter: Starter) => starter.id === starterId) || starters[0];
     return fallbackStarter;
   }, [params.selectedPokemon, starterId]);
 };
@@ -65,12 +63,12 @@ export default usePokemonData;
 
 /**
  * List of pokemons
- * @param params 
- * @returns 
+ * @param params
+ * @returns
  */
 export const useListPokemons = (params: IQueryRequest) => {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['pokemons', params],
+    queryKey: ["pokemons", params],
     queryFn: () => pokemonService.getAll(params),
   });
   return { data: data?.data, isLoading, isError };
@@ -79,12 +77,12 @@ export const useListPokemons = (params: IQueryRequest) => {
 
 /**
  * Get pokemon by id
- * @param id 
- * @returns 
+ * @param id
+ * @returns
  */
 export const usePokemonById = (id: string) => {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['pokemon', id],
+    queryKey: ["pokemon", id],
     queryFn: () => pokemonService.getById(id),
     enabled: !!id && id !== "",
   });

@@ -4,22 +4,16 @@ import { ReviewQuestionCard } from "@components/test/review/ReviewQuestionCard";
 import { ReviewStatsSection } from "@components/test/review/ReviewStatsSection";
 import { useReviewResultUnified } from "@hooks/useReviewResultUnified";
 import {
-    calculateReviewStats,
-    getCorrectAnswers,
-    getQuestionsForGrid,
-    getSortedQuestions,
-    getUserSelectedAnswers,
-    parseExplanation,
+  calculateReviewStats,
+  getCorrectAnswers,
+  getQuestionsForGrid,
+  getSortedQuestions,
+  getUserSelectedAnswers,
+  parseExplanation,
 } from "@utils/review.utils";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useMemo, useRef } from "react";
-import {
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function TestReviewScreen() {
   const {
@@ -47,14 +41,14 @@ export default function TestReviewScreen() {
     }
   }, [reviewDataParam]);
 
-  const { data: reviewDataFromApi, isLoading, error } = useReviewResultUnified(
-    resolvedSessionId,
-    "test",
-    {
-      initialData: reviewDataFromParams || undefined,
-      testType,
-    }
-  );
+  const {
+    data: reviewDataFromApi,
+    isLoading,
+    error,
+  } = useReviewResultUnified(resolvedSessionId, "test", {
+    initialData: reviewDataFromParams || undefined,
+    testType,
+  });
   // Use reviewData from params if available, otherwise use API data
   const reviewData = reviewDataFromApi || reviewDataFromParams;
 
@@ -66,19 +60,13 @@ export default function TestReviewScreen() {
   const questionOffsetsRef = useRef<Record<string, number>>({});
 
   // Get sorted questions by questionOrder
-  const questions = useMemo(
-    () => getSortedQuestions(reviewData),
-    [reviewData]
-  );
+  const questions = useMemo(() => getSortedQuestions(reviewData), [reviewData]);
 
   // Statistics data
   const stats = useMemo(() => calculateReviewStats(reviewData), [reviewData]);
 
   // Questions for grid navigation
-  const questionsForGrid = useMemo(
-    () => getQuestionsForGrid(questions),
-    [questions]
-  );
+  const questionsForGrid = useMemo(() => getQuestionsForGrid(questions), [questions]);
 
   const handleQuestionPress = (questionId: string, offset: number) => {
     if (scrollRef.current) {
@@ -106,10 +94,7 @@ export default function TestReviewScreen() {
   }
 
   return (
-    <QuizLayout
-      showProgress={true}
-      progressComponent={<ReviewHeader onBackPress={() => router.back()} />}
-    >
+    <QuizLayout showProgress={true} progressComponent={<ReviewHeader onBackPress={() => router.back()} />}>
       <View style={styles.container}>
         {/* Statistics Section - Fixed at top */}
         <ReviewStatsSection
@@ -138,8 +123,7 @@ export default function TestReviewScreen() {
                 key={q.id}
                 style={styles.block}
                 onLayout={(e) => {
-                  questionOffsetsRef.current[q.id.toString()] =
-                    e.nativeEvent.layout.y;
+                  questionOffsetsRef.current[q.id.toString()] = e.nativeEvent.layout.y;
                 }}
               >
                 <ReviewQuestionCard
@@ -166,4 +150,3 @@ const styles = StyleSheet.create({
   scrollContent: { paddingBottom: 24 },
   block: { marginBottom: 10 },
 });
-

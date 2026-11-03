@@ -12,13 +12,8 @@ export const lessonService = {
   },
 
   // Get specific lesson by ID
-  getLessonById: async (
-    lessonId: string,
-    lang: string
-  ): Promise<GetLessonByIdResponse> => {
-    const response = await axiosPrivate.get(
-      `/lesson-contents/${lessonId}?lang=${lang}`
-    );
+  getLessonById: async (lessonId: string, lang: string): Promise<GetLessonByIdResponse> => {
+    const response = await axiosPrivate.get(`/lesson-contents/${lessonId}?lang=${lang}`);
     return response.data;
   },
 
@@ -26,16 +21,13 @@ export const lessonService = {
   updateLessonProgress: async (
     lessonId: string,
     progress: number,
-    isCompleted: boolean = false
+    isCompleted: boolean = false,
   ): Promise<UpdateLessonProgressResponse> => {
     // Real API implementation
-    const response = await axiosPrivate.put(
-      `/api/v1/lessons/${lessonId}/progress`,
-      {
-        progress,
-        isCompleted,
-      }
-    );
+    const response = await axiosPrivate.put(`/api/v1/lessons/${lessonId}/progress`, {
+      progress,
+      isCompleted,
+    });
 
     return response.data;
   },

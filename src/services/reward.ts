@@ -33,12 +33,9 @@ const rewardService = {
       queryParams.append("dateTo", params.dateTo);
     }
     const queryString = queryParams.toString();
-    const response = await axiosPrivate.get(
-      `/user-reward-history/my${queryString ? `?${queryString}` : ""}`
-    );
+    const response = await axiosPrivate.get(`/user-reward-history/my${queryString ? `?${queryString}` : ""}`);
     return response.data;
   },
 };
 
 export default rewardService;
-

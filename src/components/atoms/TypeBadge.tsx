@@ -8,11 +8,7 @@ interface TypeBadgeProps {
   style?: any;
 }
 
-export default function TypeBadge({
-  type,
-  selected = false,
-  style,
-}: TypeBadgeProps) {
+export default function TypeBadge({ type, selected = false, style }: TypeBadgeProps) {
   const typeIcon = getTypeIcon(type.toLowerCase());
   const typeColor = getTypeColor(type.toLowerCase());
 

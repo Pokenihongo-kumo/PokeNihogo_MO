@@ -29,41 +29,27 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const resolvedTitle =
-    title || t("empty_state.default_title", "Không có dữ liệu");
+  const resolvedTitle = title || t("empty_state.default_title", "Không có dữ liệu");
   const resolvedDescription =
-    description ||
-    t("empty_state.default_description", "Hiện tại chưa có dữ liệu để hiển thị");
-  const footerMessage = t(
-    "empty_state.footer_message",
-    "🎮 Hãy tiếp tục hành trình học tập của bạn!"
-  );
+    description || t("empty_state.default_description", "Hiện tại chưa có dữ liệu để hiển thị");
+  const footerMessage = t("empty_state.footer_message", "🎮 Hãy tiếp tục hành trình học tập của bạn!");
 
   return (
     <View style={[styles.container, pokemonTheme && styles.pokemonContainer, style]}>
       <View style={[styles.iconContainer, pokemonTheme && styles.pokemonIconContainer]}>
-        <MaterialIcons
-          name={icon as any}
-          size={iconSize}
-          color={iconColor}
-        />
+        <MaterialIcons name={icon as any} size={iconSize} color={iconColor} />
         {pokemonTheme && (
           <View style={styles.sparkleContainer}>
             <MaterialIcons name="auto-awesome" size={16} color="#fbbf24" />
           </View>
         )}
       </View>
-      
-      <ThemedText 
-        type="subtitle" 
-        style={[styles.title, pokemonTheme && styles.pokemonTitle, titleStyle]}
-      >
+
+      <ThemedText type="subtitle" style={[styles.title, pokemonTheme && styles.pokemonTitle, titleStyle]}>
         {resolvedTitle}
       </ThemedText>
-      
-      <ThemedText 
-        style={[styles.description, pokemonTheme && styles.pokemonDescription, descriptionStyle]}
-      >
+
+      <ThemedText style={[styles.description, pokemonTheme && styles.pokemonDescription, descriptionStyle]}>
         {resolvedDescription}
       </ThemedText>
 
@@ -84,12 +70,14 @@ const styles = StyleSheet.create({
     padding: 40,
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
-    marginVertical: 16,},
+    marginVertical: 16,
+  },
   pokemonContainer: {
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: "#fbbf24",},
+    borderColor: "#fbbf24",
+  },
   iconContainer: {
     marginBottom: 16,
     position: "relative",
@@ -107,7 +95,8 @@ const styles = StyleSheet.create({
     right: -8,
     backgroundColor: "#ffffff",
     borderRadius: 12,
-    padding: 4,},
+    padding: 4,
+  },
   title: {
     fontSize: 18,
     fontWeight: "600",

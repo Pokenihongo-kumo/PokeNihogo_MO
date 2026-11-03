@@ -1,8 +1,5 @@
 import { ThemedText } from "@components/ThemedText";
-import {
-  LessonCategory as LessonCategoryType,
-  LessonProgress,
-} from "@models/lesson/lesson.common";
+import { LessonCategory as LessonCategoryType, LessonProgress } from "@models/lesson/lesson.common";
 import { ArrowRight, BookOpen } from "lucide-react-native";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,89 +13,77 @@ interface LessonCategoryProps {
   onCategoryPress?: (category: LessonCategoryType) => void;
 }
 
-const LessonCategory: React.FC<LessonCategoryProps> = React.memo(
-  ({ category, onLessonPress, onCategoryPress }) => {
-    useTranslation();
-    // Removed expand/collapse state and setup
-    // Memoized calculations for better performance
-    const { completedLessons, totalLessons, progressPercentage } =
-      useMemo(() => {
-        const completed = category.lessons.filter(
-          (lesson) => lesson.status === "COMPLETED"
-        ).length;
-        const total = category.lessons.length;
-        const progress = total > 0 ? (completed / total) * 100 : 0;
+const LessonCategory: React.FC<LessonCategoryProps> = React.memo(({ category, onLessonPress, onCategoryPress }) => {
+  useTranslation();
+  // Removed expand/collapse state and setup
+  // Memoized calculations for better performance
+  const { completedLessons, totalLessons, progressPercentage } = useMemo(() => {
+    const completed = category.lessons.filter((lesson) => lesson.status === "COMPLETED").length;
+    const total = category.lessons.length;
+    const progress = total > 0 ? (completed / total) * 100 : 0;
 
-        return {
-          completedLessons: completed,
-          totalLessons: total,
-          progressPercentage: progress,
-        };
-      }, [category.lessons]);
+    return {
+      completedLessons: completed,
+      totalLessons: total,
+      progressPercentage: progress,
+    };
+  }, [category.lessons]);
 
-    const handleToggle = useCallback(() => {
-      if (onCategoryPress) {
-        onCategoryPress(category);
-      }
-    }, [onCategoryPress, category]);
+  const handleToggle = useCallback(() => {
+    if (onCategoryPress) {
+      onCategoryPress(category);
+    }
+  }, [onCategoryPress, category]);
 
-    // Using a single lucide icon for category
+  // Using a single lucide icon for category
 
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity
-          onPress={handleToggle}
-          style={[styles.categoryCard, { borderLeftColor: category.color }]}
-          activeOpacity={0.8}
-        >
-          <View style={styles.categoryHeader}>
-            <View
-              style={[
-                styles.iconContainer,
-                { backgroundColor: category.color },
-              ]}
-            >
-              <BookOpen size={24} color="#ffffff" />
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        onPress={handleToggle}
+        style={[styles.categoryCard, { borderLeftColor: category.color }]}
+        activeOpacity={0.8}
+      >
+        <View style={styles.categoryHeader}>
+          <View style={[styles.iconContainer, { backgroundColor: category.color }]}>
+            <BookOpen size={24} color="#ffffff" />
+          </View>
+          <View style={styles.categoryInfo}>
+            <View style={styles.categoryDetails}>
+              <ThemedText type="subtitle" style={styles.categoryName}>
+                {category.name}
+              </ThemedText>
+              <ThemedText style={styles.categoryDescription}>{category.description}</ThemedText>
             </View>
-            <View style={styles.categoryInfo}>
-              <View style={styles.categoryDetails}>
-                <ThemedText type="subtitle" style={styles.categoryName}>
-                  {category.name}
-                </ThemedText>
-                <ThemedText style={styles.categoryDescription}>
-                  {category.description}
+            <View style={styles.statsContainer}>
+              <View style={styles.progressContainer}>
+                <View style={styles.progressBar}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      {
+                        width: `${progressPercentage}%`,
+                        backgroundColor: category.color,
+                      },
+                    ]}
+                  />
+                </View>
+                <ThemedText style={styles.progressText}>
+                  {completedLessons}/{totalLessons}
                 </ThemedText>
               </View>
-              <View style={styles.statsContainer}>
-                <View style={styles.progressContainer}>
-                  <View style={styles.progressBar}>
-                    <View
-                      style={[
-                        styles.progressFill,
-                        {
-                          width: `${progressPercentage}%`,
-                          backgroundColor: category.color,
-                        },
-                      ]}
-                    />
-                  </View>
-                  <ThemedText style={styles.progressText}>
-                    {completedLessons}/{totalLessons}
-                  </ThemedText>
-                </View>
-                <View style={styles.navigationIcon}>
-                  <ArrowRight size={20} color="#6b7280" />
-                </View>
+              <View style={styles.navigationIcon}>
+                <ArrowRight size={20} color="#6b7280" />
               </View>
             </View>
           </View>
-        </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
 
-        {/* Removed expandable lessons list */}
-      </View>
-    );
-  }
-);
+      {/* Removed expandable lessons list */}
+    </View>
+  );
+});
 
 LessonCategory.displayName = "LessonCategory";
 
@@ -110,7 +95,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
     padding: 16,
-    borderLeftWidth: 4,},
+    borderLeftWidth: 4,
+  },
   categoryHeader: {
     flexDirection: "row",
     alignItems: "flex-start",

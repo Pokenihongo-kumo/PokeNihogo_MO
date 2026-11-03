@@ -1,12 +1,5 @@
 import type { AlertType } from "@components/atoms/MinimalAlert";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 
 interface AlertConfig {
   visible: boolean;
@@ -33,16 +26,13 @@ export const MinimalAlertProvider = ({ children }: { children: ReactNode }) => {
     setAlertConfig((prev) => ({ ...prev, visible: false }));
   }, []);
 
-  const showAlert = useCallback(
-    (message: string, type: AlertType = "info") => {
-      setAlertConfig({
-        visible: true,
-        message,
-        type,
-      });
-    },
-    []
-  );
+  const showAlert = useCallback((message: string, type: AlertType = "info") => {
+    setAlertConfig({
+      visible: true,
+      message,
+      type,
+    });
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -50,23 +40,17 @@ export const MinimalAlertProvider = ({ children }: { children: ReactNode }) => {
       showAlert,
       hideAlert,
     }),
-    [alertConfig, showAlert, hideAlert]
+    [alertConfig, showAlert, hideAlert],
   );
 
-  return (
-    <MinimalAlertContext.Provider value={value}>
-      {children}
-    </MinimalAlertContext.Provider>
-  );
+  return <MinimalAlertContext.Provider value={value}>{children}</MinimalAlertContext.Provider>;
 };
 
 export const useMinimalAlert = () => {
   const context = useContext(MinimalAlertContext);
 
   if (!context) {
-    throw new Error(
-      "useMinimalAlert must be used within a MinimalAlertProvider"
-    );
+    throw new Error("useMinimalAlert must be used within a MinimalAlertProvider");
   }
 
   return {
@@ -75,4 +59,3 @@ export const useMinimalAlert = () => {
     showAlert: context.showAlert,
   };
 };
-

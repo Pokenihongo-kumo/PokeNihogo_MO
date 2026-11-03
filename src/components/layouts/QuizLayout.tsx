@@ -9,29 +9,16 @@ interface QuizLayoutProps {
   progressComponent?: React.ReactNode;
 }
 
-export default function QuizLayout({
-  children,
-  showProgress = false,
-  progressComponent,
-}: QuizLayoutProps) {
+export default function QuizLayout({ children, showProgress = false, progressComponent }: QuizLayoutProps) {
   return (
-    <LinearGradient
-      colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
-      style={styles.container}
-    >
+    <LinearGradient colors={["#79B4C4", "#85C3C3", "#9BC7B9"]} style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
         {/* Progress Header (optional) */}
-        {showProgress && progressComponent && (
-          <View style={styles.progressContainer}>
-            {progressComponent}
-          </View>
-        )}
+        {showProgress && progressComponent && <View style={styles.progressContainer}>{progressComponent}</View>}
 
         {/* Main Content */}
-        <View style={styles.content}>
-          {children}
-        </View>
+        <View style={styles.content}>{children}</View>
       </SafeAreaView>
     </LinearGradient>
   );

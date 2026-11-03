@@ -38,7 +38,8 @@ export default function MascotBubble({
               paddingVertical: 18,
               paddingHorizontal: 20,
               borderWidth: 1,
-              borderColor: "#e5e7eb",position: "relative",
+              borderColor: "#e5e7eb",
+              position: "relative",
             },
             bubbleStyle,
           ]}
@@ -70,14 +71,7 @@ export default function MascotBubble({
               {title}
             </Text>
           ) : null}
-          <Text
-            style={[
-              { fontSize: 18, lineHeight: 26, color: "#111827" },
-              contentTextStyle,
-            ]}
-          >
-            {children}
-          </Text>
+          <Text style={[{ fontSize: 18, lineHeight: 26, color: "#111827" }, contentTextStyle]}>{children}</Text>
         </View>
 
         {/* Thought bubble tail */}

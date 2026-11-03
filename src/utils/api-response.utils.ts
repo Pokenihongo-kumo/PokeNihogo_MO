@@ -39,7 +39,7 @@ export const pageSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
  */
 export const toApiResult = <T extends z.ZodTypeAny>(
   response: AxiosResponse<unknown>,
-  dataSchema: T
+  dataSchema: T,
 ): ApiResult<z.output<T>> => {
   const body = EnvelopeSchema.parse(response.data);
   return {

@@ -10,12 +10,7 @@ interface PokemonInfoProps {
   style?: any;
 }
 
-export default function PokemonInfo({
-  name,
-  type,
-  selected = false,
-  style,
-}: PokemonInfoProps) {
+export default function PokemonInfo({ name, type, selected = false, style }: PokemonInfoProps) {
   return (
     <View style={[styles.container, style]}>
       <PokemonName name={name} />

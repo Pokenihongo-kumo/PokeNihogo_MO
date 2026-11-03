@@ -1,15 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
-import {
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  ViewProps
-} from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import { StyleSheet, TouchableOpacity, View, ViewProps } from "react-native";
+import Animated, { useAnimatedStyle, withSpring, withTiming } from "react-native-reanimated";
 
 // --- Định nghĩa Context ---
 // Context sẽ giúp truyền state từ RadioGroup xuống các Item con
@@ -28,14 +19,7 @@ interface RadioGroupProps extends ViewProps {
   children: React.ReactNode;
 }
 
-const RadioGroup = ({
-  value,
-  defaultValue,
-  onValueChange,
-  children,
-  style,
-  ...props
-}: RadioGroupProps) => {
+const RadioGroup = ({ value, defaultValue, onValueChange, children, style, ...props }: RadioGroupProps) => {
   const [internalValue, setInternalValue] = useState(defaultValue || "");
 
   // Ưu tiên `value` prop nếu được cung cấp (controlled), nếu không thì dùng state nội bộ (uncontrolled)
@@ -51,14 +35,8 @@ const RadioGroup = ({
   };
 
   return (
-    <RadioGroupContext.Provider
-      value={{ value: currentValue, onValueChange: handleValueChange }}
-    >
-      <View
-        style={[{ gap: 12 }, style]}
-        {...props}
-        accessibilityRole="radiogroup"
-      >
+    <RadioGroupContext.Provider value={{ value: currentValue, onValueChange: handleValueChange }}>
+      <View style={[{ gap: 12 }, style]} {...props} accessibilityRole="radiogroup">
         {children}
       </View>
     </RadioGroupContext.Provider>
@@ -102,18 +80,14 @@ const RadioGroupItem = React.forwardRef<View, RadioGroupItemProps>(
         {...props}
       >
         <View
-          style={[
-            styles.radioOuterCircle,
-            isSelected && styles.radioOuterCircleSelected,
-            disabled && styles.disabled,
-          ]}
+          style={[styles.radioOuterCircle, isSelected && styles.radioOuterCircleSelected, disabled && styles.disabled]}
         >
           <RadioGroupIndicator isSelected={isSelected} />
         </View>
         {children}
       </TouchableOpacity>
     );
-  }
+  },
 );
 
 // --- Component Indicator với Animation ---
@@ -173,4 +147,3 @@ const styles = StyleSheet.create({
 
 export { RadioGroup, RadioGroupItem };
 export type { RadioGroupItemProps, RadioGroupProps };
-

@@ -37,22 +37,16 @@ const ListeningCard: React.FC<{
   const { t } = useTranslation();
   const isLocked = item.status === "NOT_STARTED";
   // LockOverlay chỉ hiển thị khi bài có status INACTIVE và price = 1 (không áp dụng cho price = 0)
-  const shouldShowLockOverlay =
-    item.status === "NOT_STARTED" && item.test?.price === 1;
-  const isUnlimited =
-    item.limit === 0 && (item.test?.limit === 0 || item.test?.limit == null);
+  const shouldShowLockOverlay = item.status === "NOT_STARTED" && item.test?.price === 1;
+  const isUnlimited = item.limit === 0 && (item.test?.limit === 0 || item.test?.limit == null);
   const isExhausted = !isUnlimited && item.limit === 0 && item.test?.limit > 0;
   const isDisabled = isExhausted; // Chỉ disable khi exhausted, không disable khi locked
   // Chỉ áp dụng locked style khi có LockOverlay (price = 1), không áp dụng cho price = 0
   const shouldApplyLockedStyle = shouldShowLockOverlay;
-  
+
   return (
     <TouchableOpacity
-      style={[
-        styles.card,
-        { borderLeftColor: LISTENING_ACCENT },
-        shouldApplyLockedStyle && styles.lockedCard,
-      ]}
+      style={[styles.card, { borderLeftColor: LISTENING_ACCENT }, shouldApplyLockedStyle && styles.lockedCard]}
       onPress={isLocked ? onLockedPress : isExhausted ? undefined : onPress}
       activeOpacity={isExhausted ? 1 : 0.8}
       disabled={isDisabled}
@@ -69,16 +63,11 @@ const ListeningCard: React.FC<{
         </View>
         <View style={styles.exerciseInfo}>
           <View style={styles.materialHeaderRow}>
-            <ThemedText
-              type="subtitle"
-              style={[styles.exerciseTitle, shouldApplyLockedStyle && styles.lockedText]}
-            >
+            <ThemedText type="subtitle" style={[styles.exerciseTitle, shouldApplyLockedStyle && styles.lockedText]}>
               {item.test?.name}
             </ThemedText>
             <View style={styles.levelBadge}>
-              <ThemedText style={styles.levelText}>
-                N{item.test?.levelN}
-              </ThemedText>
+              <ThemedText style={styles.levelText}>N{item.test?.levelN}</ThemedText>
             </View>
           </View>
         </View>
@@ -86,7 +75,7 @@ const ListeningCard: React.FC<{
 
       <View style={styles.cardFooter}>
         <View style={styles.metaInfo}>
-          {(isUnlimited ? (
+          {isUnlimited ? (
             <ThemedText style={styles.durationText}>∞</ThemedText>
           ) : isExhausted ? (
             <ThemedText style={[styles.durationText, styles.exhaustedText]}>
@@ -96,7 +85,7 @@ const ListeningCard: React.FC<{
             <ThemedText style={styles.durationText}>
               {item.limit} / {item.test?.limit}
             </ThemedText>
-          ))}
+          )}
         </View>
       </View>
 
@@ -128,8 +117,7 @@ export const ListeningContent: React.FC = () => {
     pageSize: 10,
   });
 
-  const items: UserTestItem[] =
-    (userTestsData as any)?.data?.data?.results ?? [];
+  const items: UserTestItem[] = (userTestsData as any)?.data?.data?.results ?? [];
 
   React.useEffect(() => {
     const ready = !isLoading;
@@ -196,16 +184,10 @@ export const ListeningContent: React.FC = () => {
       </ThemedText>
 
       <View style={styles.exercisesContainer}>
-        {isLoading && (
-          <ThemedText style={{ textAlign: "center" }}>
-            {t("common.loading", "Loading...")}
-          </ThemedText>
-        )}
+        {isLoading && <ThemedText style={{ textAlign: "center" }}>{t("common.loading", "Loading...")}</ThemedText>}
         {!!error && (
           <ThemedText style={{ textAlign: "center", color: "#ef4444" }}>
-            {error instanceof Error
-              ? error.message
-              : t("common.error", "Error")}
+            {error instanceof Error ? error.message : t("common.error", "Error")}
           </ThemedText>
         )}
         {!isLoading &&
@@ -232,18 +214,10 @@ export const ListeningContent: React.FC = () => {
           🎯 {t("listening.tips_title")}
         </ThemedText>
         <View style={styles.tipsList}>
-          <ThemedText style={styles.tipItem}>
-            • {t("listening.tip_1")}
-          </ThemedText>
-          <ThemedText style={styles.tipItem}>
-            • {t("listening.tip_2")}
-          </ThemedText>
-          <ThemedText style={styles.tipItem}>
-            • {t("listening.tip_3")}
-          </ThemedText>
-          <ThemedText style={styles.tipItem}>
-            • {t("listening.tip_4")}
-          </ThemedText>
+          <ThemedText style={styles.tipItem}>• {t("listening.tip_1")}</ThemedText>
+          <ThemedText style={styles.tipItem}>• {t("listening.tip_2")}</ThemedText>
+          <ThemedText style={styles.tipItem}>• {t("listening.tip_3")}</ThemedText>
+          <ThemedText style={styles.tipItem}>• {t("listening.tip_4")}</ThemedText>
         </View>
       </ThemedView>
     </View>

@@ -2,14 +2,7 @@ import { ThemedText } from "@components/ThemedText";
 import { ThemedView } from "@components/ThemedView";
 import { ROUTES } from "@routes/routes";
 import { router } from "expo-router";
-import {
-  BookMarked,
-  BookOpen,
-  Headphones,
-  Mic2,
-  Sword,
-  User,
-} from "lucide-react-native";
+import { BookMarked, BookOpen, Headphones, Mic2, Sword, User } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -23,18 +16,9 @@ interface NavigationButtonProps {
   color?: string;
 }
 
-const NavigationButton: React.FC<NavigationButtonProps> = ({
-  title,
-  icon: Icon,
-  onPress,
-  color = "#3b82f6",
-}) => {
+const NavigationButton: React.FC<NavigationButtonProps> = ({ title, icon: Icon, onPress, color = "#3b82f6" }) => {
   return (
-    <TouchableOpacity
-      style={[styles.navButton, { borderColor: color }]}
-      onPress={onPress}
-      activeOpacity={0.8}
-    >
+    <TouchableOpacity style={[styles.navButton, { borderColor: color }]} onPress={onPress} activeOpacity={0.8}>
       <View style={[styles.iconContainer, { backgroundColor: color }]}>
         <Icon size={24} color="#ffffff" strokeWidth={2.5} />
       </View>
@@ -77,43 +61,18 @@ const MainNavigation: React.FC = () => {
       </ThemedText>
 
       <View style={styles.grid}>
-        <NavigationButton
-          title={t("navigation.learn")}
-          icon={BookOpen}
-          onPress={handleLearn}
-          color="#10b981"
-        />
+        <NavigationButton title={t("navigation.learn")} icon={BookOpen} onPress={handleLearn} color="#10b981" />
 
-        <NavigationButton
-          title={t("navigation.reading")}
-          icon={BookMarked}
-          onPress={handleReading}
-          color="#f59e0b"
-        />
+        <NavigationButton title={t("navigation.reading")} icon={BookMarked} onPress={handleReading} color="#f59e0b" />
         <NavigationButton
           title={t("navigation.listening")}
           icon={Headphones}
           onPress={handleListening}
           color="#8b5cf6"
         />
-        <NavigationButton
-          title={t("navigation.battle")}
-          icon={Sword}
-          onPress={handleBattle}
-          color="#ef4444"
-        />
-        <NavigationButton
-          title={t("navigation.user_info")}
-          icon={User}
-          onPress={handleUserInfo}
-          color="#06b6d4"
-        />
-        <NavigationButton
-          title={t("navigation.speaking")}
-          icon={Mic2}
-          onPress={handleSpeaking}
-          color="#fb7185"
-        />
+        <NavigationButton title={t("navigation.battle")} icon={Sword} onPress={handleBattle} color="#ef4444" />
+        <NavigationButton title={t("navigation.user_info")} icon={User} onPress={handleUserInfo} color="#06b6d4" />
+        <NavigationButton title={t("navigation.speaking")} icon={Mic2} onPress={handleSpeaking} color="#fb7185" />
       </View>
     </ThemedView>
   );

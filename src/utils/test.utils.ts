@@ -53,7 +53,7 @@ export const transformTestSets = (data: any): TestSet[] => {
   return setsRaw.map((s: any, setIndex: number) => {
     // Support both old format (testSetQuestionBanks) and new format (questions)
     const questionList = s.testSetQuestionBanks || s.questions || [];
-    
+
     const questions: TestQuestion[] = questionList
       .sort((a: any, b: any) => (a.questionOrder || 0) - (b.questionOrder || 0))
       .map((qb: any) => {

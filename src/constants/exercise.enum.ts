@@ -8,4 +8,3 @@ export enum ExerciseAttemptStatus {
   SKIPPED = "SKIPPED",
   PENDING = "PENDING",
 }
-

@@ -45,7 +45,7 @@ export const TypingText: React.FC<TypingTextProps> = ({
       Animated.sequence([
         Animated.timing(cursorOpacity, { toValue: 0, duration: 500, easing: Easing.linear, useNativeDriver: true }),
         Animated.timing(cursorOpacity, { toValue: 1, duration: 500, easing: Easing.linear, useNativeDriver: true }),
-      ])
+      ]),
     );
     loopAnim.start();
     return () => {
@@ -94,7 +94,19 @@ export const TypingText: React.FC<TypingTextProps> = ({
     return () => {
       if (typingTimer) clearTimeout(typingTimer);
     };
-  }, [started, displayText, isDeleting, messageIndex, messageList, typingSpeedMs, deletingSpeedMs, pauseBetweenMessagesMs, loop, onComplete, pauseBeforeStartMs]);
+  }, [
+    started,
+    displayText,
+    isDeleting,
+    messageIndex,
+    messageList,
+    typingSpeedMs,
+    deletingSpeedMs,
+    pauseBetweenMessagesMs,
+    loop,
+    onComplete,
+    pauseBeforeStartMs,
+  ]);
 
   // Reset display text when switching message index during forward typing
   React.useEffect(() => {
@@ -120,4 +132,3 @@ export const TypingText: React.FC<TypingTextProps> = ({
 };
 
 export default TypingText;
-

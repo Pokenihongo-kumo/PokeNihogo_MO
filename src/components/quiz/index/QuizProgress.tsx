@@ -30,8 +30,7 @@ export const QuizProgress: React.FC<QuizProgressProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
-  const progress =
-    totalQuestions > 0 ? (currentQuestion / totalQuestions) * 100 : 0;
+  const progress = totalQuestions > 0 ? (currentQuestion / totalQuestions) * 100 : 0;
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -64,15 +63,9 @@ export const QuizProgress: React.FC<QuizProgressProps> = ({
           )}
         </View>
         {questionIds && questionIds.length > 0 && (
-          <TouchableOpacity
-            onPress={() => setIsExpanded((v) => !v)}
-            activeOpacity={0.85}
-            style={styles.expandButton}
-          >
+          <TouchableOpacity onPress={() => setIsExpanded((v) => !v)} activeOpacity={0.85} style={styles.expandButton}>
             <Text style={styles.expandText}>
-              {isExpanded
-                ? t("quiz_progress.collapse", "Thu gọn")
-                : t("quiz_progress.expand", "Mở rộng")}
+              {isExpanded ? t("quiz_progress.collapse", "Thu gọn") : t("quiz_progress.expand", "Mở rộng")}
             </Text>
             <Text style={styles.expandChevron}>{isExpanded ? "▴" : "▾"}</Text>
           </TouchableOpacity>
@@ -91,11 +84,7 @@ export const QuizProgress: React.FC<QuizProgressProps> = ({
                   key={id}
                   onPress={() => onPressQuestion?.(idx, id)}
                   activeOpacity={0.85}
-                  style={[
-                    styles.numCell,
-                    answered && styles.numCellAnswered,
-                    unanswered && styles.numCellUnanswered,
-                  ]}
+                  style={[styles.numCell, answered && styles.numCellAnswered, unanswered && styles.numCellUnanswered]}
                 >
                   <Text
                     style={[

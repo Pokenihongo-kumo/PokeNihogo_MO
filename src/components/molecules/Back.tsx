@@ -12,14 +12,7 @@ type BackScreenProps = {
   className?: string;
 };
 
-const BackScreen: React.FC<BackScreenProps> = ({
-  color = "white",
-  onPress,
-  noWrapper,
-  title,
-  children,
-  className,
-}) => {
+const BackScreen: React.FC<BackScreenProps> = ({ color = "white", onPress, noWrapper, title, children, className }) => {
   const Button = (
     <View className={`flex-row w-full items-center py-3 ${className}`}>
       <View className="w-12 items-start">
@@ -37,9 +30,7 @@ const BackScreen: React.FC<BackScreenProps> = ({
         <Text className={`text-2xl text-center font-semibold text-${color}`}>{title}</Text>
       </View>
 
-      <View className="w-12">
-        {children}
-      </View>
+      <View className="w-12">{children}</View>
     </View>
   );
 

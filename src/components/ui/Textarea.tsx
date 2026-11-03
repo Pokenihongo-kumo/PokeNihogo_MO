@@ -1,29 +1,16 @@
-import React from 'react'
-import {
-    Text,
-    TextInput,
-    TextInputProps,
-    View,
-    ViewProps
-} from 'react-native'
+import React from "react";
+import { Text, TextInput, TextInputProps, View, ViewProps } from "react-native";
 
 interface TextareaProps extends TextInputProps {
-  label?: string
-  error?: string
-  containerStyle?: ViewProps['style']
-  rows?: number
+  label?: string;
+  error?: string;
+  containerStyle?: ViewProps["style"];
+  rows?: number;
 }
 
 const Textarea = React.forwardRef<TextInput, TextareaProps>(
-  ({ 
-    label, 
-    error, 
-    containerStyle, 
-    style, 
-    rows = 4,
-    ...props 
-  }, ref) => {
-    const minHeight = rows * 20
+  ({ label, error, containerStyle, style, rows = 4, ...props }, ref) => {
+    const minHeight = rows * 20;
 
     return (
       <View style={[{ marginBottom: 16 }, containerStyle]}>
@@ -31,8 +18,8 @@ const Textarea = React.forwardRef<TextInput, TextareaProps>(
           <Text
             style={{
               fontSize: 14,
-              fontWeight: '500',
-              color: '#374151',
+              fontWeight: "500",
+              color: "#374151",
               marginBottom: 8,
             }}
           >
@@ -47,14 +34,14 @@ const Textarea = React.forwardRef<TextInput, TextareaProps>(
             {
               minHeight,
               borderWidth: 1,
-              borderColor: error ? '#ef4444' : '#d1d5db',
+              borderColor: error ? "#ef4444" : "#d1d5db",
               borderRadius: 6,
               paddingHorizontal: 12,
               paddingVertical: 8,
               fontSize: 16,
-              color: '#111827',
-              backgroundColor: '#ffffff',
-              textAlignVertical: 'top',
+              color: "#111827",
+              backgroundColor: "#ffffff",
+              textAlignVertical: "top",
             },
             style,
           ]}
@@ -65,7 +52,7 @@ const Textarea = React.forwardRef<TextInput, TextareaProps>(
           <Text
             style={{
               fontSize: 12,
-              color: '#ef4444',
+              color: "#ef4444",
               marginTop: 4,
             }}
           >
@@ -73,12 +60,11 @@ const Textarea = React.forwardRef<TextInput, TextareaProps>(
           </Text>
         )}
       </View>
-    )
-  }
-)
+    );
+  },
+);
 
-Textarea.displayName = 'Textarea'
+Textarea.displayName = "Textarea";
 
-export { Textarea }
-export type { TextareaProps }
-
+export { Textarea };
+export type { TextareaProps };

@@ -41,7 +41,7 @@ export const FlashcardVocabularySchema = z.object({
         z.object({
           meaning: z.string().optional(),
           text: z.string().optional(),
-        })
+        }),
       ),
     ])
     .nullable()
@@ -78,4 +78,3 @@ export type IFlashcardDeckCard = z.infer<typeof FlashcardDeckCardSchema>;
 // Re-export PaginationSchema for convenience
 export { PaginationSchema };
 export type IPagination = z.infer<typeof PaginationSchema>;
-

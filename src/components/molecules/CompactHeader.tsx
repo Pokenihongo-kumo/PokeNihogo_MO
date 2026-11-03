@@ -20,11 +20,7 @@ export default function CompactHeader({ user, onPress, style }: CompactHeaderPro
   };
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      onPress={onPress}
-      style={[styles.container, style]}
-    >
+    <TouchableOpacity activeOpacity={0.7} onPress={onPress} style={[styles.container, style]}>
       <LinearGradient
         colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
         start={{ x: 0, y: 0 }}
@@ -60,7 +56,8 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     borderRadius: 16,
-    overflow: "hidden",},
+    overflow: "hidden",
+  },
   gradient: {
     flexDirection: "row",
     alignItems: "center",

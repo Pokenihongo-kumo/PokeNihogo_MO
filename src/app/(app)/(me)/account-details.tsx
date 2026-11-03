@@ -8,10 +8,7 @@ import { useAuth } from "@hooks/useAuth";
 import { useMinimalAlert } from "@hooks/useMinimalAlert";
 import { useUpdateProfile } from "@hooks/useUpdateProfile";
 import { IUserEntity } from "@models/user/user.entity";
-import {
-  IUpdateProfileFormDataRequest,
-  UpdateProfileFormDataRequest,
-} from "@models/user/user.request";
+import { IUpdateProfileFormDataRequest, UpdateProfileFormDataRequest } from "@models/user/user.request";
 import { formatDateToMMYYYY } from "@utils/date";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -19,14 +16,7 @@ import { Calendar, Shield, Star } from "lucide-react-native";
 import React, { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StatusBar,
-  Text,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, StatusBar, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z } from "zod";
 import { makeZodI18nMap } from "zod-i18n-map";
@@ -53,9 +43,7 @@ export default function AccountDetailsScreen() {
   const insets = useSafeAreaInsets();
   const { user, isLoading } = useAuth();
   const userProfile = user?.data as IUserEntity | undefined;
-  const joinDate = userProfile?.createdAt
-    ? formatDateToMMYYYY(userProfile.createdAt)
-    : undefined;
+  const joinDate = userProfile?.createdAt ? formatDateToMMYYYY(userProfile.createdAt) : undefined;
 
   z.setErrorMap(makeZodI18nMap({ t }));
 
@@ -65,7 +53,7 @@ export default function AccountDetailsScreen() {
       phoneNumber: userProfile?.phoneNumber ?? "",
       avatar: userProfile?.avatar ?? "",
     }),
-    [userProfile?.name, userProfile?.phoneNumber, userProfile?.avatar]
+    [userProfile?.name, userProfile?.phoneNumber, userProfile?.avatar],
   );
 
   const hasInitializedRef = React.useRef(false);
@@ -120,17 +108,10 @@ export default function AccountDetailsScreen() {
         style={{ paddingTop: insets.top + 12 }}
         className="rounded-b-2xl"
       >
-        <BackScreen
-          onPress={() => router.back()}
-          color="white"
-          title={t("account_details.title")}
-        />
+        <BackScreen onPress={() => router.back()} color="white" title={t("account_details.title")} />
       </LinearGradient>
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        className="flex-1"
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} className="flex-1">
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingTop: 100 }}
@@ -145,37 +126,24 @@ export default function AccountDetailsScreen() {
             >
               <View className="flex-row items-center">
                 <View className="w-20 h-20 rounded-3xl bg-white/80 items-center justify-center shadow-md">
-                  <UserAvatar
-                    name={userProfile?.name ?? ""}
-                    avatar={userProfile?.avatar ?? undefined}
-                    size="large"
-                  />
+                  <UserAvatar name={userProfile?.name ?? ""} avatar={userProfile?.avatar ?? undefined} size="large" />
                 </View>
 
                 <View className="ml-12 flex-1">
-                  <Text
-                    className="text-2xl font-extrabold text-slate-900"
-                    numberOfLines={1}
-                  >
+                  <Text className="text-2xl font-extrabold text-slate-900" numberOfLines={1}>
                     {userProfile?.name}
                   </Text>
-                  <Text className="text-sm font-semibold text-slate-500 mt-1">
-                    {userProfile?.email}
-                  </Text>
+                  <Text className="text-sm font-semibold text-slate-500 mt-1">{userProfile?.email}</Text>
 
                   <View className="flex-row flex-wrap gap-2 mt-3">
                     {!!userProfile?.level?.levelNumber && (
                       <View className="px-3 py-1 rounded-2xl bg-emerald-100/90">
-                        <Text className="text-xs font-bold text-emerald-700">
-                          Lv {userProfile.level.levelNumber}
-                        </Text>
+                        <Text className="text-xs font-bold text-emerald-700">Lv {userProfile.level.levelNumber}</Text>
                       </View>
                     )}
                     {!!userProfile?.levelJLPT && (
                       <View className="px-3 py-1 rounded-2xl bg-slate-100">
-                        <Text className="text-xs font-bold text-slate-700">
-                          N{userProfile?.levelJLPT}
-                        </Text>
+                        <Text className="text-xs font-bold text-slate-700">N{userProfile?.levelJLPT}</Text>
                       </View>
                     )}
                     {!!joinDate && (
@@ -195,12 +163,8 @@ export default function AccountDetailsScreen() {
             <View className="bg-white rounded-3xl p-5 shadow-md border border-slate-100">
               <View className="flex-row justify-between items-center mb-4">
                 <View>
-                  <Text className="text-lg font-extrabold text-slate-800">
-                    {t("account_details.stats_title")}
-                  </Text>
-                  <Text className="text-sm font-semibold text-slate-500">
-                    {t("account_details.stats_subtitle")}
-                  </Text>
+                  <Text className="text-lg font-extrabold text-slate-800">{t("account_details.stats_title")}</Text>
+                  <Text className="text-sm font-semibold text-slate-500">{t("account_details.stats_subtitle")}</Text>
                 </View>
               </View>
               <View className="flex-row gap-3">
@@ -218,9 +182,7 @@ export default function AccountDetailsScreen() {
                   {
                     icon: Shield,
                     label: t("account_details.rank"),
-                    value:
-                      userProfile?.rankName ||
-                      t("account_details.not_available"),
+                    value: userProfile?.rankName || t("account_details.not_available"),
                     colors: ["#dbeafe", "#bfdbfe"] as [string, string],
                     iconColor: "#3b82f6",
                   },
@@ -232,21 +194,11 @@ export default function AccountDetailsScreen() {
                     iconColor: "#059669",
                   },
                 ].map((item) => (
-                  <LinearGradient
-                    key={item.label}
-                    colors={item.colors}
-                    className="flex-1 rounded-2xl p-4"
-                  >
+                  <LinearGradient key={item.label} colors={item.colors} className="flex-1 rounded-2xl p-4">
                     <View className="w-10 h-10 rounded-2xl bg-white/70 items-center justify-center mb-3">
-                      <item.icon
-                        size={20}
-                        color={item.iconColor}
-                        strokeWidth={2.3}
-                      />
+                      <item.icon size={20} color={item.iconColor} strokeWidth={2.3} />
                     </View>
-                    <Text className="text-2xl font-extrabold text-slate-900">
-                      {item.value}
-                    </Text>
+                    <Text className="text-2xl font-extrabold text-slate-900">{item.value}</Text>
                     <Text className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wide">
                       {item.label}
                     </Text>
@@ -320,12 +272,8 @@ export default function AccountDetailsScreen() {
             </View> */}
 
             <View className="bg-white rounded-3xl p-5 shadow-md mb-4 border border-slate-100">
-              <Text className="text-lg font-extrabold text-slate-800 mb-1">
-                {t("account_details.form_title")}
-              </Text>
-              <Text className="text-sm font-semibold text-slate-500 mb-4">
-                {t("account_details.form_subtitle")}
-              </Text>
+              <Text className="text-lg font-extrabold text-slate-800 mb-1">{t("account_details.form_title")}</Text>
+              <Text className="text-sm font-semibold text-slate-500 mb-4">{t("account_details.form_subtitle")}</Text>
 
               <Controller
                 control={control}
@@ -376,9 +324,7 @@ export default function AccountDetailsScreen() {
                       disabled={isPending || isLoading}
                     />
                     {!!errors.avatar?.message && (
-                      <Text className="text-xs text-red-500 font-semibold mt-2">
-                        {errors.avatar.message as string}
-                      </Text>
+                      <Text className="text-xs text-red-500 font-semibold mt-2">{errors.avatar.message as string}</Text>
                     )}
                   </View>
                 )}
@@ -391,9 +337,7 @@ export default function AccountDetailsScreen() {
                 disabled={!isDirty || !isValid || isPending || isLoading}
                 onPress={handleSubmit(onSubmit)}
               >
-                <Text className="text-white font-bold text-lg">
-                  {t("account_details.save")}
-                </Text>
+                <Text className="text-white font-bold text-lg">{t("account_details.save")}</Text>
               </BounceButton>
             </View>
           </View>

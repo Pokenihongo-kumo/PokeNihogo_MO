@@ -1,8 +1,4 @@
-import {
-    FlashcardDeckCardSchema,
-    FlashcardDeckSchema,
-    PaginationSchema,
-} from "@models/flashcard/flashcard.common";
+import { FlashcardDeckCardSchema, FlashcardDeckSchema, PaginationSchema } from "@models/flashcard/flashcard.common";
 import { z } from "zod";
 
 // Flashcard Deck Response Data Schema (single item)
@@ -63,28 +59,11 @@ export const AddWordToFlashcardDeckResponseSchema = z.object({
 });
 
 // Export types
-export type IFlashcardDeckResponseData = z.infer<
-  typeof FlashcardDeckResponseDataSchema
->;
-export type IFlashcardDeckListResponseData = z.infer<
-  typeof FlashcardDeckListResponseDataSchema
->;
-export type IFlashcardDeckListResponse = z.infer<
-  typeof FlashcardDeckListResponseSchema
->;
-export type IFlashcardDeckDetailResponse = z.infer<
-  typeof FlashcardDeckDetailResponseSchema
->;
-export type IFlashcardDeckCardListResponse = z.infer<
-  typeof FlashcardDeckCardListResponseSchema
->;
-export type IFlashcardDeckCardResponse = z.infer<
-  typeof FlashcardDeckCardResponseSchema
->;
-export type ICreateFlashcardDeckResponse = z.infer<
-  typeof CreateFlashcardDeckResponseSchema
->;
-export type IAddWordToFlashcardDeckResponse = z.infer<
-  typeof AddWordToFlashcardDeckResponseSchema
->;
-
+export type IFlashcardDeckResponseData = z.infer<typeof FlashcardDeckResponseDataSchema>;
+export type IFlashcardDeckListResponseData = z.infer<typeof FlashcardDeckListResponseDataSchema>;
+export type IFlashcardDeckListResponse = z.infer<typeof FlashcardDeckListResponseSchema>;
+export type IFlashcardDeckDetailResponse = z.infer<typeof FlashcardDeckDetailResponseSchema>;
+export type IFlashcardDeckCardListResponse = z.infer<typeof FlashcardDeckCardListResponseSchema>;
+export type IFlashcardDeckCardResponse = z.infer<typeof FlashcardDeckCardResponseSchema>;
+export type ICreateFlashcardDeckResponse = z.infer<typeof CreateFlashcardDeckResponseSchema>;
+export type IAddWordToFlashcardDeckResponse = z.infer<typeof AddWordToFlashcardDeckResponseSchema>;

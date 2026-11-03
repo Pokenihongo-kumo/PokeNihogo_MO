@@ -50,10 +50,8 @@ export const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
   const [sampleText, setSampleText] = useState("こんにちは。今日はいい天気ですね。");
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
-  const [tempSelectedVoiceName, setTempSelectedVoiceName] = useState<string | null>(
-    selectedVoiceName || null
-  );
-  
+  const [tempSelectedVoiceName, setTempSelectedVoiceName] = useState<string | null>(selectedVoiceName || null);
+
   // Animation values
   const fadeAnim = useMemo(() => new Animated.Value(0), []);
   const scaleAnim = useMemo(() => new Animated.Value(0.9), []);
@@ -104,20 +102,17 @@ export const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
     setIsSelectOpen(false);
   }, []);
 
-  const handlePreview = useCallback(
-    async () => {
-      if (!onPreviewVoice || !sampleText.trim() || !tempSelectedVoiceName) return;
-      setIsPreviewing(true);
-      try {
-        await onPreviewVoice(tempSelectedVoiceName, sampleText.trim());
-      } catch (error) {
-        console.error("Error previewing voice:", error);
-      } finally {
-        setIsPreviewing(false);
-      }
-    },
-    [onPreviewVoice, sampleText, tempSelectedVoiceName]
-  );
+  const handlePreview = useCallback(async () => {
+    if (!onPreviewVoice || !sampleText.trim() || !tempSelectedVoiceName) return;
+    setIsPreviewing(true);
+    try {
+      await onPreviewVoice(tempSelectedVoiceName, sampleText.trim());
+    } catch (error) {
+      console.error("Error previewing voice:", error);
+    } finally {
+      setIsPreviewing(false);
+    }
+  }, [onPreviewVoice, sampleText, tempSelectedVoiceName]);
 
   const selectedVoice = useMemo(() => {
     return voices.find((v) => v.name === tempSelectedVoiceName);
@@ -145,47 +140,44 @@ export const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
     }
   }, [selectedVoiceName, onCancel, onClose]);
 
-  const getVoiceDisplayName = useCallback((voice: VoiceOption) => {
-    const genderLabel =
-      voice.ssmlGender === "MALE"
-        ? t("home.ai.conversation.voice_male", "Male")
-        : voice.ssmlGender === "FEMALE"
-          ? t("home.ai.conversation.voice_female", "Female")
-          : voice.ssmlGender === "NEUTRAL"
-            ? t("home.ai.conversation.voice_neutral", "Neutral")
-            : "";
-    return genderLabel ? `${voice.name} (${genderLabel})` : voice.name;
-  }, [t]);
+  const getVoiceDisplayName = useCallback(
+    (voice: VoiceOption) => {
+      const genderLabel =
+        voice.ssmlGender === "MALE"
+          ? t("home.ai.conversation.voice_male", "Male")
+          : voice.ssmlGender === "FEMALE"
+            ? t("home.ai.conversation.voice_female", "Female")
+            : voice.ssmlGender === "NEUTRAL"
+              ? t("home.ai.conversation.voice_neutral", "Neutral")
+              : "";
+      return genderLabel ? `${voice.name} (${genderLabel})` : voice.name;
+    },
+    [t],
+  );
 
-  const getGenderLabel = useCallback((gender?: string) => {
-    if (gender === "MALE") return t("home.ai.conversation.voice_male", "Male");
-    if (gender === "FEMALE") return t("home.ai.conversation.voice_female", "Female");
-    if (gender === "NEUTRAL") return t("home.ai.conversation.voice_neutral", "Neutral");
-    return "";
-  }, [t]);
+  const getGenderLabel = useCallback(
+    (gender?: string) => {
+      if (gender === "MALE") return t("home.ai.conversation.voice_male", "Male");
+      if (gender === "FEMALE") return t("home.ai.conversation.voice_female", "Female");
+      if (gender === "NEUTRAL") return t("home.ai.conversation.voice_neutral", "Neutral");
+      return "";
+    },
+    [t],
+  );
 
   return (
-    <Modal
-      visible={isOpen}
-      transparent
-      animationType="none"
-      onRequestClose={handleModalClose}
-      statusBarTranslucent
-    >
+    <Modal visible={isOpen} transparent animationType="none" onRequestClose={handleModalClose} statusBarTranslucent>
       <Pressable style={styles.overlay} onPress={handleModalClose}>
-        <Pressable
-          onPress={(e) => e.stopPropagation()}
-          style={styles.modalPressable}
-        >
-            <Animated.View
-              style={[
-                styles.modalContainer,
-                {
-                  opacity: fadeAnim,
-                  transform: [{ scale: scaleAnim }],
-                },
-              ]}
-            >
+        <Pressable onPress={(e) => e.stopPropagation()} style={styles.modalPressable}>
+          <Animated.View
+            style={[
+              styles.modalContainer,
+              {
+                opacity: fadeAnim,
+                transform: [{ scale: scaleAnim }],
+              },
+            ]}
+          >
             {/* Header */}
             <View style={styles.header} pointerEvents="box-none">
               <View style={styles.headerLeft}>
@@ -193,10 +185,7 @@ export const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                   {t("home.ai.conversation.select_voice_title", "Choose AI Voice")}
                 </ThemedText>
                 <ThemedText style={styles.subtitle}>
-                  {t(
-                    "home.ai.conversation.select_voice_subtitle",
-                    "Select a voice for your AI conversation"
-                  )}
+                  {t("home.ai.conversation.select_voice_subtitle", "Select a voice for your AI conversation")}
                 </ThemedText>
               </View>
             </View>
@@ -212,207 +201,173 @@ export const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                 // FIX: Quan trọng để tap hoạt động tốt trong ScrollView trên Android
                 keyboardShouldPersistTaps="handled"
               >
-              {isLoading ? (
-                <View style={styles.loadingContainer}>
-                  <ActivityIndicator size="large" color="#007AFF" />
-                  <ThemedText style={styles.loadingText}>
-                    {t("home.ai.conversation.loading_voices", "Loading voices...")}
-                  </ThemedText>
-                </View>
-              ) : voices.length === 0 ? (
-                <View style={styles.emptyContainer}>
-                  <ThemedText style={styles.emptyText}>
-                    {t(
-                      "home.ai.conversation.no_voices_available",
-                      "No voices available"
-                    )}
-                  </ThemedText>
-                </View>
-              ) : (
-                <>
-                  {/* Voice Select */}
-                  <View style={styles.formGroup}>
-                    <ThemedText style={styles.formLabel}>
-                      {t("home.ai.conversation.voice_label", "Voice")}
+                {isLoading ? (
+                  <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#007AFF" />
+                    <ThemedText style={styles.loadingText}>
+                      {t("home.ai.conversation.loading_voices", "Loading voices...")}
                     </ThemedText>
-                    
-                    {/* Select Container */}
-                    <View style={styles.selectContainer}>
-                      <TouchableOpacity
-                        style={[
-                          styles.selectTrigger,
-                          isSelectOpen && styles.selectTriggerOpen,
-                          selectedVoice && styles.selectTriggerSelected,
-                        ]}
-                        onPress={() => setIsSelectOpen(!isSelectOpen)}
-                        activeOpacity={0.7}
-                      >
-                        <ThemedText
+                  </View>
+                ) : voices.length === 0 ? (
+                  <View style={styles.emptyContainer}>
+                    <ThemedText style={styles.emptyText}>
+                      {t("home.ai.conversation.no_voices_available", "No voices available")}
+                    </ThemedText>
+                  </View>
+                ) : (
+                  <>
+                    {/* Voice Select */}
+                    <View style={styles.formGroup}>
+                      <ThemedText style={styles.formLabel}>{t("home.ai.conversation.voice_label", "Voice")}</ThemedText>
+
+                      {/* Select Container */}
+                      <View style={styles.selectContainer}>
+                        <TouchableOpacity
                           style={[
-                            styles.selectTriggerText,
-                            !selectedVoice && styles.selectPlaceholder,
+                            styles.selectTrigger,
+                            isSelectOpen && styles.selectTriggerOpen,
+                            selectedVoice && styles.selectTriggerSelected,
                           ]}
-                          numberOfLines={1}
+                          onPress={() => setIsSelectOpen(!isSelectOpen)}
+                          activeOpacity={0.7}
                         >
-                          {selectedVoice
-                            ? getVoiceDisplayName(selectedVoice)
-                            : t("home.ai.conversation.select_voice_placeholder", "Select a voice...")}
-                        </ThemedText>
-                        <View
-                          style={[
-                            styles.selectArrow,
-                            isSelectOpen && styles.selectArrowOpen,
-                          ]}
-                        >
-                          <ThemedText style={styles.selectArrowText}>▼</ThemedText>
-                        </View>
-                      </TouchableOpacity>
-                      
-                      {/* Dropdown List - FIX: Relative layout for better scrolling on Android */}
-                      {isSelectOpen && (
-                        <View style={styles.selectDropdown}>
-                          <ScrollView
-                            style={styles.selectOptionsList}
-                            showsVerticalScrollIndicator={true}
-                            nestedScrollEnabled={true}
-                            bounces={false}
-                            keyboardShouldPersistTaps="handled"
+                          <ThemedText
+                            style={[styles.selectTriggerText, !selectedVoice && styles.selectPlaceholder]}
+                            numberOfLines={1}
                           >
-                            {voices.map((voice) => {
-                              const isSelected = tempSelectedVoiceName === voice.name;
-                              return (
-                                <TouchableOpacity
-                                  key={voice.name}
-                                  style={[
-                                    styles.selectOption,
-                                    isSelected && styles.selectOptionSelected,
-                                  ]}
-                                  onPress={() => handleSelectVoice(voice.name)}
-                                  activeOpacity={0.7}
-                                >
-                                  <View style={styles.selectOptionContent}>
-                                    <View
-                                      style={[
-                                        styles.selectOptionIndicator,
-                                        isSelected && styles.selectOptionIndicatorSelected,
-                                      ]}
-                                    >
-                                      {isSelected && (
-                                        <View style={styles.selectOptionIndicatorDot} />
-                                      )}
-                                    </View>
-                                    <View style={styles.selectOptionInfo}>
-                                      <ThemedText
+                            {selectedVoice
+                              ? getVoiceDisplayName(selectedVoice)
+                              : t("home.ai.conversation.select_voice_placeholder", "Select a voice...")}
+                          </ThemedText>
+                          <View style={[styles.selectArrow, isSelectOpen && styles.selectArrowOpen]}>
+                            <ThemedText style={styles.selectArrowText}>▼</ThemedText>
+                          </View>
+                        </TouchableOpacity>
+
+                        {/* Dropdown List - FIX: Relative layout for better scrolling on Android */}
+                        {isSelectOpen && (
+                          <View style={styles.selectDropdown}>
+                            <ScrollView
+                              style={styles.selectOptionsList}
+                              showsVerticalScrollIndicator={true}
+                              nestedScrollEnabled={true}
+                              bounces={false}
+                              keyboardShouldPersistTaps="handled"
+                            >
+                              {voices.map((voice) => {
+                                const isSelected = tempSelectedVoiceName === voice.name;
+                                return (
+                                  <TouchableOpacity
+                                    key={voice.name}
+                                    style={[styles.selectOption, isSelected && styles.selectOptionSelected]}
+                                    onPress={() => handleSelectVoice(voice.name)}
+                                    activeOpacity={0.7}
+                                  >
+                                    <View style={styles.selectOptionContent}>
+                                      <View
                                         style={[
-                                          styles.selectOptionName,
-                                          isSelected && styles.selectOptionNameSelected,
+                                          styles.selectOptionIndicator,
+                                          isSelected && styles.selectOptionIndicatorSelected,
                                         ]}
                                       >
-                                        {voice.name}
-                                      </ThemedText>
-                                      {voice.ssmlGender && (
-                                        <ThemedText style={styles.selectOptionGender}>
-                                          {getGenderLabel(voice.ssmlGender)}
+                                        {isSelected && <View style={styles.selectOptionIndicatorDot} />}
+                                      </View>
+                                      <View style={styles.selectOptionInfo}>
+                                        <ThemedText
+                                          style={[
+                                            styles.selectOptionName,
+                                            isSelected && styles.selectOptionNameSelected,
+                                          ]}
+                                        >
+                                          {voice.name}
                                         </ThemedText>
-                                      )}
+                                        {voice.ssmlGender && (
+                                          <ThemedText style={styles.selectOptionGender}>
+                                            {getGenderLabel(voice.ssmlGender)}
+                                          </ThemedText>
+                                        )}
+                                      </View>
                                     </View>
-                                  </View>
-                                </TouchableOpacity>
-                              );
-                            })}
-                          </ScrollView>
-                        </View>
-                      )}
-                    </View>
-                  </View>
-
-                  {/* Sample Text Input */}
-                  {onPreviewVoice && (
-                    <View style={styles.formGroup}>
-                      <ThemedText style={styles.formLabel}>
-                        {t("home.ai.conversation.sample_text", "Sample Text")}
-                      </ThemedText>
-                      <View style={styles.sampleTextInputContainer}>
-                        <TextInput
-                          style={styles.sampleTextInput}
-                          value={sampleText}
-                          onChangeText={setSampleText}
-                          placeholder={t(
-                            "home.ai.conversation.sample_text_placeholder",
-                            "Enter text to preview..."
-                          )}
-                          multiline
-                          numberOfLines={3}
-                          placeholderTextColor="#9ca3af"
-                        />
+                                  </TouchableOpacity>
+                                );
+                              })}
+                            </ScrollView>
+                          </View>
+                        )}
                       </View>
                     </View>
-                  )}
 
-                  {/* Preview Button */}
-                  {onPreviewVoice && tempSelectedVoiceName && (
+                    {/* Sample Text Input */}
+                    {onPreviewVoice && (
+                      <View style={styles.formGroup}>
+                        <ThemedText style={styles.formLabel}>
+                          {t("home.ai.conversation.sample_text", "Sample Text")}
+                        </ThemedText>
+                        <View style={styles.sampleTextInputContainer}>
+                          <TextInput
+                            style={styles.sampleTextInput}
+                            value={sampleText}
+                            onChangeText={setSampleText}
+                            placeholder={t("home.ai.conversation.sample_text_placeholder", "Enter text to preview...")}
+                            multiline
+                            numberOfLines={3}
+                            placeholderTextColor="#9ca3af"
+                          />
+                        </View>
+                      </View>
+                    )}
+
+                    {/* Preview Button */}
+                    {onPreviewVoice && tempSelectedVoiceName && (
+                      <TouchableOpacity
+                        style={[styles.previewButton, isPreviewing && styles.previewButtonDisabled]}
+                        onPress={handlePreview}
+                        disabled={isPreviewing || !sampleText.trim()}
+                        activeOpacity={0.8}
+                      >
+                        {isPreviewing ? (
+                          <ActivityIndicator size="small" color="#ffffff" />
+                        ) : (
+                          <>
+                            <Play size={18} color="#ffffff" fill="#ffffff" />
+                            <ThemedText style={styles.previewButtonText}>
+                              {t("home.ai.conversation.preview_voice", "Preview Voice")}
+                            </ThemedText>
+                          </>
+                        )}
+                      </TouchableOpacity>
+                    )}
+
+                    {/* Confirm Button */}
                     <TouchableOpacity
-                      style={[
-                        styles.previewButton,
-                        isPreviewing && styles.previewButtonDisabled,
-                      ]}
-                      onPress={handlePreview}
-                      disabled={isPreviewing || !sampleText.trim()}
+                      style={[styles.confirmButton, !tempSelectedVoiceName && styles.confirmButtonDisabled]}
+                      onPress={handleConfirm}
+                      disabled={!tempSelectedVoiceName}
                       activeOpacity={0.8}
                     >
-                      {isPreviewing ? (
-                        <ActivityIndicator size="small" color="#ffffff" />
-                      ) : (
-                        <>
-                          <Play size={18} color="#ffffff" fill="#ffffff" />
-                          <ThemedText style={styles.previewButtonText}>
-                            {t("home.ai.conversation.preview_voice", "Preview Voice")}
-                          </ThemedText>
-                        </>
-                      )}
-                    </TouchableOpacity>
-                  )}
-
-                  {/* Confirm Button */}
-                  <TouchableOpacity
-                    style={[
-                      styles.confirmButton,
-                      !tempSelectedVoiceName && styles.confirmButtonDisabled,
-                    ]}
-                    onPress={handleConfirm}
-                    disabled={!tempSelectedVoiceName}
-                    activeOpacity={0.8}
-                  >
-                    <ThemedText
-                      style={[
-                        styles.confirmButtonText,
-                        !tempSelectedVoiceName && styles.confirmButtonTextDisabled,
-                      ]}
-                    >
-                      {t("home.ai.conversation.confirm_voice", "Confirm Voice Selection")}
-                    </ThemedText>
-                  </TouchableOpacity>
-
-                  {/* Cancel Button */}
-                  {showCancelButton && (
-                    <TouchableOpacity
-                      style={styles.cancelButton}
-                      onPress={handleCancel}
-                      activeOpacity={0.8}
-                    >
-                      <ThemedText style={styles.cancelButtonText}>
-                        {t("home.ai.conversation.cancel", "Cancel")}
+                      <ThemedText
+                        style={[styles.confirmButtonText, !tempSelectedVoiceName && styles.confirmButtonTextDisabled]}
+                      >
+                        {t("home.ai.conversation.confirm_voice", "Confirm Voice Selection")}
                       </ThemedText>
                     </TouchableOpacity>
-                  )}
-                </>
-              )}
+
+                    {/* Cancel Button */}
+                    {showCancelButton && (
+                      <TouchableOpacity style={styles.cancelButton} onPress={handleCancel} activeOpacity={0.8}>
+                        <ThemedText style={styles.cancelButtonText}>
+                          {t("home.ai.conversation.cancel", "Cancel")}
+                        </ThemedText>
+                      </TouchableOpacity>
+                    )}
+                  </>
+                )}
               </ScrollView>
             </View>
-            </Animated.View>
-          </Pressable>
+          </Animated.View>
         </Pressable>
-      </Modal>
+      </Pressable>
+    </Modal>
   );
 };
 
