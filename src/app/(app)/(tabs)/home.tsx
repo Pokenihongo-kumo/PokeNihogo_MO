@@ -23,23 +23,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import {
-  BookOpen,
-  BookText,
-  ChevronRight,
-  ChevronUp,
-  Languages,
-  Lock,
-  Sparkles,
-  X,
-} from "lucide-react-native";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { BookOpen, BookText, ChevronRight, ChevronUp, Languages, Lock, Sparkles, X } from "lucide-react-native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -59,21 +44,14 @@ import {
 } from "react-native";
 import { CopilotStep, useCopilot, walkthroughable } from "react-native-copilot";
 import { NativeViewGestureHandler } from "react-native-gesture-handler";
-import Reanimated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
+import Reanimated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import starters from "../../../../mock-data/starters.json";
 import { Starter } from "../../../types/starter.types";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // Enable LayoutAnimation on Android
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
@@ -162,7 +140,7 @@ const ExerciseCard: React.FC<{
         };
       }
     },
-    [t]
+    [t],
   );
 
   const getStatusColor = useCallback((status: string) => {
@@ -195,18 +173,15 @@ const ExerciseCard: React.FC<{
           return status;
       }
     },
-    [t]
+    [t],
   );
 
   const typeInfo = useMemo(
     () => getExerciseTypeInfo(exercise.exerciseName),
-    [exercise.exerciseName, getExerciseTypeInfo]
+    [exercise.exerciseName, getExerciseTypeInfo],
   );
   const Icon = typeInfo.icon;
-  const statusColor = useMemo(
-    () => getStatusColor(exercise.status),
-    [exercise.status, getStatusColor]
-  );
+  const statusColor = useMemo(() => getStatusColor(exercise.status), [exercise.status, getStatusColor]);
 
   return (
     <TouchableOpacity
@@ -225,15 +200,8 @@ const ExerciseCard: React.FC<{
         <ThemedText style={styles.testCardSubtitle} numberOfLines={1}>
           {exercise.lessonTitle}
         </ThemedText>
-        <View
-          style={[
-            styles.testCardStatus,
-            { backgroundColor: `${statusColor}15` },
-          ]}
-        >
-          <ThemedText
-            style={[styles.testCardStatusText, { color: statusColor }]}
-          >
+        <View style={[styles.testCardStatus, { backgroundColor: `${statusColor}15` }]}>
+          <ThemedText style={[styles.testCardStatusText, { color: statusColor }]}>
             {getStatusText(exercise.status)}
           </ThemedText>
         </View>
@@ -251,11 +219,7 @@ const SuggestionCard: React.FC<{
   icon: React.ComponentType<{ size: number; color: string }>;
   onPress: () => void;
 }> = ({ title, description, icon: Icon, onPress }) => (
-  <TouchableOpacity
-    style={styles.suggestionCard}
-    onPress={onPress}
-    activeOpacity={0.7}
-  >
+  <TouchableOpacity style={styles.suggestionCard} onPress={onPress} activeOpacity={0.7}>
     <View style={styles.suggestionIcon}>
       <Icon size={20} color="#3b82f6" />
     </View>
@@ -295,7 +259,7 @@ const useSrsTypeConfig = () => {
         icon: BookText,
       },
     }),
-    [t]
+    [t],
   );
 };
 
@@ -316,29 +280,17 @@ const useInsightContentCopy = () => {
       switch (content.type) {
         case "vocabulary":
           return {
-            primary:
-              content.wordJp ??
-              t("home.srs_insights.vocabulary_title", "Từ mới"),
-            secondary: [content.reading, content.meaning]
-              .filter(Boolean)
-              .join(" · "),
+            primary: content.wordJp ?? t("home.srs_insights.vocabulary_title", "Từ mới"),
+            secondary: [content.reading, content.meaning].filter(Boolean).join(" · "),
           };
         case "kanji":
           return {
-            primary:
-              content.character ?? t("home.srs_insights.kanji_title", "Kanji"),
-            secondary: [
-              content.meaning,
-              content.jlptLevel && `JLPT N${content.jlptLevel}`,
-            ]
-              .filter(Boolean)
-              .join(" · "),
+            primary: content.character ?? t("home.srs_insights.kanji_title", "Kanji"),
+            secondary: [content.meaning, content.jlptLevel && `JLPT N${content.jlptLevel}`].filter(Boolean).join(" · "),
           };
         case "grammar":
           return {
-            primary:
-              content.structure ??
-              t("home.srs_insights.grammar_title", "Ngữ pháp"),
+            primary: content.structure ?? t("home.srs_insights.grammar_title", "Ngữ pháp"),
             secondary: content.level
               ? t("home.srs_insights.grammar_level", {
                   level: content.level,
@@ -353,7 +305,7 @@ const useInsightContentCopy = () => {
           };
       }
     },
-    [t]
+    [t],
   );
 };
 
@@ -366,10 +318,7 @@ const InsightCard: React.FC<{
   const { t } = useTranslation();
   const getInsightContentCopy = useInsightContentCopy();
   const meta = metaConfig[insight.contentType] || metaConfig.VOCABULARY;
-  const { primary, secondary } = useMemo(
-    () => getInsightContentCopy(insight),
-    [insight, getInsightContentCopy]
-  );
+  const { primary, secondary } = useMemo(() => getInsightContentCopy(insight), [insight, getInsightContentCopy]);
   const Icon = meta.icon;
 
   return (
@@ -379,13 +328,9 @@ const InsightCard: React.FC<{
       onPress={() => onPress(insight)}
     >
       <View style={styles.insightBadgeRow}>
-        <View
-          style={[styles.insightBadge, { backgroundColor: `${meta.color}15` }]}
-        >
+        <View style={[styles.insightBadge, { backgroundColor: `${meta.color}15` }]}>
           <Icon size={16} color={meta.color} />
-          <ThemedText style={[styles.insightBadgeText, { color: meta.color }]}>
-            {meta.label}
-          </ThemedText>
+          <ThemedText style={[styles.insightBadgeText, { color: meta.color }]}>{meta.label}</ThemedText>
         </View>
         {!insight.isRead && <View style={styles.insightNewDot} />}
       </View>
@@ -430,13 +375,9 @@ export default function HomeScreen() {
   const [hasAutoOpenedAttendance, setHasAutoOpenedAttendance] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [showFlashcardModal, setShowFlashcardModal] = useState(false);
-  const [selectedInsight, setSelectedInsight] = useState<ISrsReviewItem | null>(
-    null
-  );
+  const [selectedInsight, setSelectedInsight] = useState<ISrsReviewItem | null>(null);
   const [isFrontSide, setIsFrontSide] = useState(true);
-  const [creatingExerciseId, setCreatingExerciseId] = useState<number | null>(
-    null
-  );
+  const [creatingExerciseId, setCreatingExerciseId] = useState<number | null>(null);
 
   // State for stacked vs expanded mode
   const [isInsightsExpanded, setIsInsightsExpanded] = useState(false);
@@ -452,8 +393,7 @@ export default function HomeScreen() {
 
   const { isFirstTimeLogin, starterId, email } = useUserStore();
 
-  const { data: attendanceSummary, isLoading: isAttendanceLoading } =
-    useAttendanceSummary();
+  const { data: attendanceSummary, isLoading: isAttendanceLoading } = useAttendanceSummary();
 
   const username = useMemo(() => {
     const trimmedName = user?.data?.name?.trim();
@@ -469,21 +409,16 @@ export default function HomeScreen() {
     return "Trainer";
   }, [user?.data?.name, email]);
 
-  const { data: recentExercisesData, refetch: refetchRecentExercises } =
-    useRecentExercises({
-      currentPage: 1,
-      pageSize: 10,
-    });
+  const { data: recentExercisesData, refetch: refetchRecentExercises } = useRecentExercises({
+    currentPage: 1,
+    pageSize: 10,
+  });
 
   const todayKey = useMemo(() => new Date().toISOString().split("T")[0], []);
   const normalizeDateKey = useNormalizeDateKey();
 
   const attendanceHistory = useMemo(() => {
-    return (
-      attendanceSummary?.attendances?.map((record) =>
-        normalizeDateKey(record.date)
-      ) || []
-    );
+    return attendanceSummary?.attendances?.map((record) => normalizeDateKey(record.date)) || [];
   }, [attendanceSummary?.attendances, normalizeDateKey]);
 
   const hasCheckedInToday = useMemo(() => {
@@ -493,12 +428,9 @@ export default function HomeScreen() {
     return attendanceHistory.includes(todayKey);
   }, [attendanceHistory, todayKey]);
 
-  const hasPersonalizedRecommendations = useCheckFeature(
-    SubscriptionFeatureKey.PERSONALIZED_RECOMMENDATIONS
-  );
+  const hasPersonalizedRecommendations = useCheckFeature(SubscriptionFeatureKey.PERSONALIZED_RECOMMENDATIONS);
 
-  const { data: marketplaceResponse, isLoading: isMarketplaceLoading } =
-    useSubscriptionMarketplacePackages();
+  const { data: marketplaceResponse, isLoading: isMarketplaceLoading } = useSubscriptionMarketplacePackages();
 
   const {
     data: srsReviewData,
@@ -523,17 +455,15 @@ export default function HomeScreen() {
       (pkg) =>
         pkg.tagName?.toUpperCase() === "AI_COACH" ||
         pkg.nameTranslation?.toLowerCase().includes("coach") ||
-        pkg.nameTranslation?.toLowerCase().includes("ai coach")
+        pkg.nameTranslation?.toLowerCase().includes("ai coach"),
     );
 
     // If not found by name, try to find by feature
     if (!package_) {
       package_ = marketplacePackages.find((pkg) =>
         pkg.features?.some(
-          (feature) =>
-            feature.feature?.featureKey ===
-            SubscriptionFeatureKey.PERSONALIZED_RECOMMENDATIONS
-        )
+          (feature) => feature.feature?.featureKey === SubscriptionFeatureKey.PERSONALIZED_RECOMMENDATIONS,
+        ),
       );
     }
 
@@ -541,18 +471,13 @@ export default function HomeScreen() {
   }, [marketplacePackages]);
 
   const selectedStarter = React.useMemo(() => {
-    return (
-      starters.find((starter: Starter) => starter.id === starterId) ||
-      starters[0]
-    );
+    return starters.find((starter: Starter) => starter.id === starterId) || starters[0];
   }, [starterId]);
 
   useEffect(() => {
     const checkWelcomeModalShown = async () => {
       try {
-        const hasBeenShown = await AsyncStorage.getItem(
-          WELCOME_MODAL_SHOWN_KEY
-        );
+        const hasBeenShown = await AsyncStorage.getItem(WELCOME_MODAL_SHOWN_KEY);
         if (hasBeenShown === "true") return;
         if (isFirstTimeLogin === true) {
           setShowWelcomeModal(true);
@@ -573,12 +498,7 @@ export default function HomeScreen() {
       setShowDailyLogin(true);
       setHasAutoOpenedAttendance(true);
     }
-  }, [
-    attendanceSummary,
-    hasCheckedInToday,
-    hasAutoOpenedAttendance,
-    isAttendanceLoading,
-  ]);
+  }, [attendanceSummary, hasCheckedInToday, hasAutoOpenedAttendance, isAttendanceLoading]);
 
   // Animation Style for Chevron
   const expandIconStyle = useAnimatedStyle(() => {
@@ -593,7 +513,7 @@ export default function HomeScreen() {
       refetchRecentExercises();
       // Reset creatingExerciseId when returning to home screen
       setCreatingExerciseId(null);
-    }, [refetchSrsReview, refetchRecentExercises])
+    }, [refetchSrsReview, refetchRecentExercises]),
   );
 
   const handleWelcomeModalClose = useCallback(() => {
@@ -605,20 +525,13 @@ export default function HomeScreen() {
   // Handle check-in success/error with alerts
   useEffect(() => {
     if (checkInMutation.isSuccess && checkInMutation.data) {
-      showAlert(
-        checkInMutation.data?.message ||
-          t("daily_login.success_message", "Điểm danh thành công!"),
-        "success"
-      );
+      showAlert(checkInMutation.data?.message || t("daily_login.success_message", "Điểm danh thành công!"), "success");
     }
   }, [checkInMutation.isSuccess, checkInMutation.data, showAlert, t]);
 
   useEffect(() => {
     if (checkInMutation.isError) {
-      const errorMessage = t(
-        "daily_login.error_message",
-        "Không thể điểm danh, vui lòng thử lại."
-      );
+      const errorMessage = t("daily_login.error_message", "Không thể điểm danh, vui lòng thử lại.");
       Alert.alert(t("daily_login.error_title", "Có lỗi xảy ra"), errorMessage);
       showAlert(errorMessage, "error");
     }
@@ -631,18 +544,12 @@ export default function HomeScreen() {
     if (markAsReadMutation.isSuccess) {
       // Check if we've already processed this mutation
       const currentInsightId = selectedInsight?.id;
-      if (
-        currentInsightId &&
-        processedMutationRef.current !== currentInsightId
-      ) {
+      if (currentInsightId && processedMutationRef.current !== currentInsightId) {
         processedMutationRef.current = currentInsightId;
 
         // Update local state immediately for better UX using functional update
         setSelectedInsight((prev) => (prev ? { ...prev, isRead: true } : null));
-        showAlert(
-          t("home.flashcard.marked_as_read", "Đã đánh dấu đã đọc"),
-          "success"
-        );
+        showAlert(t("home.flashcard.marked_as_read", "Đã đánh dấu đã đọc"), "success");
 
         // Reset mutation state immediately to prevent re-running
         markAsReadMutation.reset();
@@ -653,10 +560,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (markAsReadMutation.isError) {
-      showAlert(
-        t("home.flashcard.mark_read_error", "Không thể đánh dấu đã đọc"),
-        "error"
-      );
+      showAlert(t("home.flashcard.mark_read_error", "Không thể đánh dấu đã đọc"), "error");
       // Reset mutation state to prevent re-running
       markAsReadMutation.reset();
     }
@@ -681,31 +585,22 @@ export default function HomeScreen() {
     return !hasPersonalizedRecommendations;
   }, [hasPersonalizedRecommendations]);
 
-  const shouldRenderPersonalization =
-    isSrsLoading || !!srsReviewData || isPersonalizationLocked;
+  const shouldRenderPersonalization = isSrsLoading || !!srsReviewData || isPersonalizationLocked;
 
   const dominantInsightType = useMemo(() => {
     if (!srsInsights.length) return null;
-    const counts = srsInsights.reduce<Record<string, number>>(
-      (acc, insight) => {
-        acc[insight.contentType] = (acc[insight.contentType] || 0) + 1;
-        return acc;
-      },
-      {}
-    );
+    const counts = srsInsights.reduce<Record<string, number>>((acc, insight) => {
+      acc[insight.contentType] = (acc[insight.contentType] || 0) + 1;
+      return acc;
+    }, {});
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
     if (!sorted.length) return null;
     const [type, count] = sorted[0];
-    const meta =
-      srsTypeConfig[type as ISrsReviewItem["contentType"]] ??
-      srsTypeConfig.VOCABULARY;
+    const meta = srsTypeConfig[type as ISrsReviewItem["contentType"]] ?? srsTypeConfig.VOCABULARY;
     return { ...meta, count };
   }, [srsInsights, srsTypeConfig]);
 
-  const {
-    mutateAsync: createNewExerciseAttemptAsync,
-    isPending: isCreatingExercise,
-  } = useCreateNewExerciseAttempt();
+  const { mutateAsync: createNewExerciseAttemptAsync, isPending: isCreatingExercise } = useCreateNewExerciseAttempt();
 
   const handleExercisePress = useCallback(
     async (exercise: IRecentExerciseItem) => {
@@ -716,9 +611,7 @@ export default function HomeScreen() {
       try {
         setCreatingExerciseId(exercise.exerciseId);
         // Create a new exercise attempt
-        const response = await createNewExerciseAttemptAsync(
-          exercise.exerciseId.toString()
-        );
+        const response = await createNewExerciseAttemptAsync(exercise.exerciseId.toString());
         console.log(response);
         if (response?.data?.id) {
           // Reset creatingExerciseId before navigation to allow re-clicking when returning
@@ -733,33 +626,15 @@ export default function HomeScreen() {
           });
         } else {
           setCreatingExerciseId(null);
-          showAlert(
-            t(
-              "home.exercise.error_creating",
-              "Không thể tạo bài tập. Vui lòng thử lại."
-            ),
-            "error"
-          );
+          showAlert(t("home.exercise.error_creating", "Không thể tạo bài tập. Vui lòng thử lại."), "error");
         }
       } catch (error) {
         console.error("Error creating exercise attempt:", error);
         setCreatingExerciseId(null);
-        showAlert(
-          t(
-            "home.exercise.error_creating",
-            "Không thể tạo bài tập. Vui lòng thử lại."
-          ),
-          "error"
-        );
+        showAlert(t("home.exercise.error_creating", "Không thể tạo bài tập. Vui lòng thử lại."), "error");
       }
     },
-    [
-      isCreatingExercise,
-      creatingExerciseId,
-      createNewExerciseAttemptAsync,
-      t,
-      showAlert,
-    ]
+    [isCreatingExercise, creatingExerciseId, createNewExerciseAttemptAsync, t, showAlert],
   );
 
   const handleSuggestionPress = useCallback((type: string) => {
@@ -810,7 +685,7 @@ export default function HomeScreen() {
         flipAnim.setValue(0);
       }
     },
-    [isInsightsExpanded, toggleInsightsExpansion, flipAnim]
+    [isInsightsExpanded, toggleInsightsExpansion, flipAnim],
   );
 
   const handleCloseFlashcardModal = useCallback(() => {
@@ -891,9 +766,7 @@ export default function HomeScreen() {
     return () => copilotEvents.off("stop", handleTourStop);
   }, [copilotEvents]);
 
-  const refreshControl = (
-    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-  );
+  const refreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
 
   return (
     <HomeLayout ref={homeLayoutRef} refreshControl={refreshControl}>
@@ -903,9 +776,7 @@ export default function HomeScreen() {
           <ThemedText type="subtitle" style={styles.welcomeTitle}>
             {t("home.welcome_back", { username })}
           </ThemedText>
-          <ThemedText style={styles.welcomeSubtitle}>
-            {t("home.ready_to_continue")}
-          </ThemedText>
+          <ThemedText style={styles.welcomeSubtitle}>{t("home.ready_to_continue")}</ThemedText>
         </View>
 
         {shouldRenderPersonalization && (
@@ -913,34 +784,16 @@ export default function HomeScreen() {
             <View style={styles.aiSectionContainer}>
               {/* First Card - AI Coach Intro */}
               <LinearGradient
-                colors={
-                  isPersonalizationLocked
-                    ? ["#fefcfb", "#fff7ed", "#fff4e6"]
-                    : ["#eef2ff", "#fdf2f8"]
-                }
+                colors={isPersonalizationLocked ? ["#fefcfb", "#fff7ed", "#fff4e6"] : ["#eef2ff", "#fdf2f8"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                style={[
-                  styles.aiHeroCard,
-                  isPersonalizationLocked && styles.aiHeroCardLocked,
-                ]}
+                style={[styles.aiHeroCard, isPersonalizationLocked && styles.aiHeroCardLocked]}
               >
                 <View style={styles.aiHeroHeader}>
-                  <View
-                    style={[
-                      styles.aiHeroBadge,
-                      isPersonalizationLocked && styles.aiHeroBadgeLocked,
-                    ]}
-                  >
-                    <Sparkles
-                      size={16}
-                      color={isPersonalizationLocked ? "#d97706" : "#7c3aed"}
-                    />
+                  <View style={[styles.aiHeroBadge, isPersonalizationLocked && styles.aiHeroBadgeLocked]}>
+                    <Sparkles size={16} color={isPersonalizationLocked ? "#d97706" : "#7c3aed"} />
                     <ThemedText
-                      style={[
-                        styles.aiHeroBadgeText,
-                        isPersonalizationLocked && styles.aiHeroBadgeTextLocked,
-                      ]}
+                      style={[styles.aiHeroBadgeText, isPersonalizationLocked && styles.aiHeroBadgeTextLocked]}
                     >
                       {t("home.ai.assistant_badge", "Trợ lý AI")}
                     </ThemedText>
@@ -955,17 +808,12 @@ export default function HomeScreen() {
                   )}
                   {isPersonalizationLocked && (
                     <View style={styles.lockedPremiumBadge}>
-                      <ThemedText style={styles.lockedPremiumBadgeText}>
-                        Premium
-                      </ThemedText>
+                      <ThemedText style={styles.lockedPremiumBadgeText}>Premium</ThemedText>
                     </View>
                   )}
                 </View>
                 <ThemedText
-                  style={[
-                    styles.aiHeroTitle,
-                    isPersonalizationLocked && styles.aiHeroTitleLocked,
-                  ]}
+                  style={[styles.aiHeroTitle, isPersonalizationLocked && styles.aiHeroTitleLocked]}
                   numberOfLines={2}
                 >
                   {isPersonalizationLocked
@@ -973,26 +821,17 @@ export default function HomeScreen() {
                     : t("home.ai.unlocked_title", "Cá nhân hoá cho hôm nay")}
                 </ThemedText>
                 <ThemedText
-                  style={[
-                    styles.aiHeroSubtitle,
-                    isPersonalizationLocked && styles.aiHeroSubtitleLocked,
-                  ]}
+                  style={[styles.aiHeroSubtitle, isPersonalizationLocked && styles.aiHeroSubtitleLocked]}
                   numberOfLines={3}
                 >
                   {isPersonalizationLocked
-                    ? t(
-                        "home.ai.locked_subtitle",
-                        "Mua gói AI Coach để nhận gợi ý học tập riêng cho bạn."
-                      )
+                    ? t("home.ai.locked_subtitle", "Mua gói AI Coach để nhận gợi ý học tập riêng cho bạn.")
                     : dominantInsightType
                       ? t("home.ai.focus_message", {
                           topic: dominantInsightType.labelLower,
                           defaultValue: `Bạn đang cần củng cố ${dominantInsightType.labelLower} nhiều nhất.`,
                         })
-                      : t(
-                          "home.ai.no_insight_message",
-                          "Hệ thống sẽ theo dõi tiến trình để gửi thêm gợi ý khi có."
-                        )}
+                      : t("home.ai.no_insight_message", "Hệ thống sẽ theo dõi tiến trình để gửi thêm gợi ý khi có.")}
                 </ThemedText>
               </LinearGradient>
 
@@ -1005,22 +844,13 @@ export default function HomeScreen() {
                       {t("home.insight_locked.badge", "Tính năng cao cấp")}
                     </ThemedText>
                   </View>
-                  <ThemedText
-                    style={styles.insightLockedTitle}
-                    numberOfLines={2}
-                  >
-                    {t(
-                      "home.insight_locked.title",
-                      "Mở khóa trợ lý cá nhân hóa"
-                    )}
+                  <ThemedText style={styles.insightLockedTitle} numberOfLines={2}>
+                    {t("home.insight_locked.title", "Mở khóa trợ lý cá nhân hóa")}
                   </ThemedText>
-                  <ThemedText
-                    style={styles.insightLockedDescription}
-                    numberOfLines={3}
-                  >
+                  <ThemedText style={styles.insightLockedDescription} numberOfLines={3}>
                     {t(
                       "home.insight_locked.description",
-                      "Tự động phân tích sai sót, đề xuất flashcard cần ôn và nhắc bạn luyện tập mỗi ngày."
+                      "Tự động phân tích sai sót, đề xuất flashcard cần ôn và nhắc bạn luyện tập mỗi ngày.",
                     )}
                   </ThemedText>
                 </View>
@@ -1031,16 +861,12 @@ export default function HomeScreen() {
                 <CopilotStep
                   text={t(
                     "tour.ai_unlock_description",
-                    "Upgrade to Premium to unlock personalized AI assistant with smart features"
+                    "Upgrade to Premium to unlock personalized AI assistant with smart features",
                   )}
                   order={5}
                   name="ai_unlock"
                 >
-                  <WTTouchable
-                    style={styles.lockOverlay}
-                    onPress={handleUnlockPress}
-                    activeOpacity={0.9}
-                  >
+                  <WTTouchable style={styles.lockOverlay} onPress={handleUnlockPress} activeOpacity={0.9}>
                     <View style={styles.lockOverlayContent}>
                       <View style={styles.lockIconContainer}>
                         <Lock size={48} color="#d97706" />
@@ -1059,8 +885,7 @@ export default function HomeScreen() {
               style={[
                 styles.insightList,
                 // Add top margin when stacked to push content down because cards are moved UP by negative margin
-                !isInsightsExpanded &&
-                  srsInsights.length > 0 && { marginTop: 24 },
+                !isInsightsExpanded && srsInsights.length > 0 && { marginTop: 24 },
               ]}
             >
               {!isPersonalizationLocked && isSrsLoading && (
@@ -1071,104 +896,96 @@ export default function HomeScreen() {
                 </View>
               )}
 
-              {!isPersonalizationLocked &&
-                !isSrsLoading &&
-                srsInsights.length > 0 && (
-                  <View style={styles.insightCardsWrapper}>
-                    {isInsightsExpanded ? (
-                      <ScrollView
-                        style={styles.insightScrollView}
-                        contentContainerStyle={styles.insightScrollContent}
-                        showsVerticalScrollIndicator={true}
-                        nestedScrollEnabled={true}
-                      >
-                        {srsInsights.map((insight, index) => {
-                          const cardStyle: ViewStyle = {
-                            marginTop: index === 0 ? 0 : 12,
-                            zIndex: 1,
+              {!isPersonalizationLocked && !isSrsLoading && srsInsights.length > 0 && (
+                <View style={styles.insightCardsWrapper}>
+                  {isInsightsExpanded ? (
+                    <ScrollView
+                      style={styles.insightScrollView}
+                      contentContainerStyle={styles.insightScrollContent}
+                      showsVerticalScrollIndicator={true}
+                      nestedScrollEnabled={true}
+                    >
+                      {srsInsights.map((insight, index) => {
+                        const cardStyle: ViewStyle = {
+                          marginTop: index === 0 ? 0 : 12,
+                          zIndex: 1,
+                        };
+
+                        return (
+                          <InsightCard
+                            key={insight.id}
+                            insight={insight}
+                            onPress={handleInsightCardPress}
+                            metaConfig={srsTypeConfig}
+                            style={cardStyle}
+                          />
+                        );
+                      })}
+                    </ScrollView>
+                  ) : (
+                    <>
+                      {srsInsights.map((insight, index) => {
+                        // If stacked, only render top 3 cards to save rendering
+                        if (index > 2) return null;
+
+                        let cardStyle: ViewStyle = {};
+
+                        if (index === 0) {
+                          // First card relative
+                          cardStyle = {
+                            zIndex: 10,
                           };
+                        } else {
+                          // Stacked cards
+                          cardStyle = {
+                            position: "absolute",
+                            top: -7 * index, // Stack upwards
+                            left: 0,
+                            right: 0,
+                            height: "100%", // FORCE HEIGHT to match first card, hiding bottom
+                            zIndex: 10 - index,
+                            transform: [{ scaleX: 1 - index * 0.04 }], // Slight width reduction
+                            backgroundColor: "#fff", // Ensure opacity doesn't show through
+                          };
+                        }
 
-                          return (
-                            <InsightCard
-                              key={insight.id}
-                              insight={insight}
-                              onPress={handleInsightCardPress}
-                              metaConfig={srsTypeConfig}
-                              style={cardStyle}
-                            />
-                          );
-                        })}
-                      </ScrollView>
-                    ) : (
-                      <>
-                        {srsInsights.map((insight, index) => {
-                          // If stacked, only render top 3 cards to save rendering
-                          if (index > 2) return null;
+                        return (
+                          <InsightCard
+                            key={insight.id}
+                            insight={insight}
+                            onPress={handleInsightCardPress}
+                            metaConfig={srsTypeConfig}
+                            style={cardStyle}
+                          />
+                        );
+                      })}
+                    </>
+                  )}
 
-                          let cardStyle: ViewStyle = {};
+                  {/* Small collapse button ONLY when expanded, to allow user to re-stack */}
+                  {isInsightsExpanded && srsInsights.length > 1 && (
+                    <TouchableOpacity onPress={toggleInsightsExpansion} style={styles.expandButton} activeOpacity={0.7}>
+                      <Reanimated.View style={expandIconStyle}>
+                        <ChevronUp size={20} color="#9ca3af" />
+                      </Reanimated.View>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              )}
 
-                          if (index === 0) {
-                            // First card relative
-                            cardStyle = {
-                              zIndex: 10,
-                            };
-                          } else {
-                            // Stacked cards
-                            cardStyle = {
-                              position: "absolute",
-                              top: -7 * index, // Stack upwards
-                              left: 0,
-                              right: 0,
-                              height: "100%", // FORCE HEIGHT to match first card, hiding bottom
-                              zIndex: 10 - index,
-                              transform: [{ scaleX: 1 - index * 0.04 }], // Slight width reduction
-                              backgroundColor: "#fff", // Ensure opacity doesn't show through
-                            };
-                          }
-
-                          return (
-                            <InsightCard
-                              key={insight.id}
-                              insight={insight}
-                              onPress={handleInsightCardPress}
-                              metaConfig={srsTypeConfig}
-                              style={cardStyle}
-                            />
-                          );
-                        })}
-                      </>
+              {!isPersonalizationLocked && !isSrsLoading && srsInsights.length === 0 && (
+                <View style={styles.insightEmptyState}>
+                  <ThemedText style={styles.insightEmptyTitle}>
+                    {t("home.insight_empty.title", "Mọi thứ đang rất tốt!")}
+                  </ThemedText>
+                  <ThemedText style={styles.insightEmptyDescription}>
+                    {t(
+                      "home.insight_empty.description",
+                      "Khi bạn luyện tập thêm, trợ lý AI sẽ dựa vào lịch sử để đề xuất các nội dung cần ưu tiên.",
                     )}
-
-                    {/* Small collapse button ONLY when expanded, to allow user to re-stack */}
-                    {isInsightsExpanded && srsInsights.length > 1 && (
-                      <TouchableOpacity
-                        onPress={toggleInsightsExpansion}
-                        style={styles.expandButton}
-                        activeOpacity={0.7}
-                      >
-                        <Reanimated.View style={expandIconStyle}>
-                          <ChevronUp size={20} color="#9ca3af" />
-                        </Reanimated.View>
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                )}
-
-              {!isPersonalizationLocked &&
-                !isSrsLoading &&
-                srsInsights.length === 0 && (
-                  <View style={styles.insightEmptyState}>
-                    <ThemedText style={styles.insightEmptyTitle}>
-                      {t("home.insight_empty.title", "Mọi thứ đang rất tốt!")}
-                    </ThemedText>
-                    <ThemedText style={styles.insightEmptyDescription}>
-                      {t(
-                        "home.insight_empty.description",
-                        "Khi bạn luyện tập thêm, trợ lý AI sẽ dựa vào lịch sử để đề xuất các nội dung cần ưu tiên."
-                      )}
-                    </ThemedText>
-                  </View>
-                )}
+                  </ThemedText>
+                </View>
+              )}
             </View>
           </View>
         )}
@@ -1179,13 +996,8 @@ export default function HomeScreen() {
             <ThemedText type="subtitle" style={styles.sectionTitle}>
               {t("home.recent_exercises")}
             </ThemedText>
-            <TouchableOpacity
-              onPress={() => router.push(ROUTES.ME.EXERCISE_HISTORY)}
-              activeOpacity={0.7}
-            >
-              <ThemedText style={styles.seeAllText}>
-                {t("home.see_all")}
-              </ThemedText>
+            <TouchableOpacity onPress={() => router.push(ROUTES.ME.EXERCISE_HISTORY)} activeOpacity={0.7}>
+              <ThemedText style={styles.seeAllText}>{t("home.see_all")}</ThemedText>
             </TouchableOpacity>
           </View>
           {recentExercises.length > 0 ? (
@@ -1209,10 +1021,7 @@ export default function HomeScreen() {
                 {t("home.recent_empty.title", "Chưa có bài tập gần đây")}
               </ThemedText>
               <ThemedText style={styles.recentEmptyDescription}>
-                {t(
-                  "home.recent_empty.description",
-                  "Hoàn thành một bài học hoặc luyện tập để xem lịch sử tại đây."
-                )}
+                {t("home.recent_empty.description", "Hoàn thành một bài học hoặc luyện tập để xem lịch sử tại đây.")}
               </ThemedText>
             </View>
           )}
@@ -1262,20 +1071,12 @@ export default function HomeScreen() {
       />
 
       {/* Flashcard Modal */}
-      <Modal
-        visible={showFlashcardModal}
-        transparent
-        animationType="fade"
-        onRequestClose={handleCloseFlashcardModal}
-      >
+      <Modal visible={showFlashcardModal} transparent animationType="fade" onRequestClose={handleCloseFlashcardModal}>
         <TouchableWithoutFeedback onPress={handleCloseFlashcardModal}>
           <View style={styles.flashcardModalOverlay}>
             <TouchableWithoutFeedback>
               <View style={styles.flashcardModalContainer}>
-                <TouchableOpacity
-                  style={styles.flashcardCloseButton}
-                  onPress={handleCloseFlashcardModal}
-                >
+                <TouchableOpacity style={styles.flashcardCloseButton} onPress={handleCloseFlashcardModal}>
                   <X size={24} color="#6b7280" />
                 </TouchableOpacity>
 
@@ -1319,53 +1120,28 @@ export default function HomeScreen() {
                               <View style={styles.flashcardContent}>
                                 {isKanji ? (
                                   <View style={styles.flashcardFrontContent}>
-                                    <ThemedText
-                                      style={[
-                                        styles.flashcardKanjiCharacter,
-                                        { color: "#b45309" },
-                                      ]}
-                                    >
+                                    <ThemedText style={[styles.flashcardKanjiCharacter, { color: "#b45309" }]}>
                                       {content?.character || ""}
                                     </ThemedText>
                                   </View>
                                 ) : isGrammar ? (
                                   <View style={styles.flashcardFrontContent}>
-                                    <ThemedText
-                                      style={[
-                                        styles.flashcardGrammarStructure,
-                                        { color: "#0e7490" },
-                                      ]}
-                                    >
+                                    <ThemedText style={[styles.flashcardGrammarStructure, { color: "#0e7490" }]}>
                                       {content?.structure || ""}
                                     </ThemedText>
                                     {content?.level && (
-                                      <ThemedText
-                                        style={[
-                                          styles.flashcardGrammarLevel,
-                                          { color: "#06b6d4" },
-                                        ]}
-                                      >
+                                      <ThemedText style={[styles.flashcardGrammarLevel, { color: "#06b6d4" }]}>
                                         {content.level}
                                       </ThemedText>
                                     )}
                                   </View>
                                 ) : (
                                   <View style={styles.flashcardFrontContent}>
-                                    <ThemedText
-                                      style={[
-                                        styles.flashcardVocabularyWord,
-                                        { color: "#0369a1" },
-                                      ]}
-                                    >
+                                    <ThemedText style={[styles.flashcardVocabularyWord, { color: "#0369a1" }]}>
                                       {content?.wordJp || ""}
                                     </ThemedText>
                                     {content?.reading && (
-                                      <ThemedText
-                                        style={[
-                                          styles.flashcardVocabularyReading,
-                                          { color: "#0ea5e9" },
-                                        ]}
-                                      >
+                                      <ThemedText style={[styles.flashcardVocabularyReading, { color: "#0ea5e9" }]}>
                                         {content.reading}
                                       </ThemedText>
                                     )}
@@ -1397,16 +1173,12 @@ export default function HomeScreen() {
                               renderToHardwareTextureAndroid={true}
                               pointerEvents={isFrontSide ? "none" : "auto"}
                             >
-                              <NativeViewGestureHandler
-                                ref={backScrollRef as any}
-                              >
+                              <NativeViewGestureHandler ref={backScrollRef as any}>
                                 <ScrollView
                                   nestedScrollEnabled
                                   keyboardShouldPersistTaps="always"
                                   scrollEventThrottle={16}
-                                  contentContainerStyle={
-                                    styles.flashcardBackContent
-                                  }
+                                  contentContainerStyle={styles.flashcardBackContent}
                                   showsVerticalScrollIndicator={false}
                                   style={{ flex: 1 }}
                                 >
@@ -1422,49 +1194,21 @@ export default function HomeScreen() {
                                             },
                                           ]}
                                         >
-                                          <ThemedText
-                                            style={[
-                                              styles.flashcardBackText,
-                                              { color: "#92400e" },
-                                            ]}
-                                          >
+                                          <ThemedText style={[styles.flashcardBackText, { color: "#92400e" }]}>
                                             {content.meaning}
                                           </ThemedText>
                                         </View>
                                       )}
-                                      {(content?.onReading ||
-                                        content?.kunReading) && (
-                                        <View
-                                          style={
-                                            styles.flashcardReadingContainer
-                                          }
-                                        >
+                                      {(content?.onReading || content?.kunReading) && (
+                                        <View style={styles.flashcardReadingContainer}>
                                           {content?.onReading && (
-                                            <ThemedText
-                                              style={[
-                                                styles.flashcardReadingText,
-                                                { color: "#d97706" },
-                                              ]}
-                                            >
-                                              {t(
-                                                "home.flashcard.on_reading",
-                                                "On"
-                                              )}
-                                              : {content.onReading}
+                                            <ThemedText style={[styles.flashcardReadingText, { color: "#d97706" }]}>
+                                              {t("home.flashcard.on_reading", "On")}: {content.onReading}
                                             </ThemedText>
                                           )}
                                           {content?.kunReading && (
-                                            <ThemedText
-                                              style={[
-                                                styles.flashcardReadingText,
-                                                { color: "#d97706" },
-                                              ]}
-                                            >
-                                              {t(
-                                                "home.flashcard.kun_reading",
-                                                "Kun"
-                                              )}
-                                              : {content.kunReading}
+                                            <ThemedText style={[styles.flashcardReadingText, { color: "#d97706" }]}>
+                                              {t("home.flashcard.kun_reading", "Kun")}: {content.kunReading}
                                             </ThemedText>
                                           )}
                                         </View>
@@ -1472,42 +1216,26 @@ export default function HomeScreen() {
                                     </View>
                                   ) : isGrammar ? (
                                     <View style={styles.flashcardBackInner}>
-                                      {content?.usages &&
-                                        content.usages.length > 0 && (
-                                          <View
-                                            style={[
-                                              styles.flashcardBackBox,
-                                              {
-                                                backgroundColor: "#cffafe",
-                                                borderColor: "#a5f3fc",
-                                              },
-                                            ]}
-                                          >
-                                            <ThemedText
-                                              style={[
-                                                styles.flashcardBackText,
-                                                { color: "#155e75" },
-                                              ]}
-                                            >
-                                              {content.usages[0]?.explanation ||
-                                                ""}
+                                      {content?.usages && content.usages.length > 0 && (
+                                        <View
+                                          style={[
+                                            styles.flashcardBackBox,
+                                            {
+                                              backgroundColor: "#cffafe",
+                                              borderColor: "#a5f3fc",
+                                            },
+                                          ]}
+                                        >
+                                          <ThemedText style={[styles.flashcardBackText, { color: "#155e75" }]}>
+                                            {content.usages[0]?.explanation || ""}
+                                          </ThemedText>
+                                          {content.usages[0]?.exampleSentence && (
+                                            <ThemedText style={[styles.flashcardExampleText, { color: "#0e7490" }]}>
+                                              {content.usages[0].exampleSentence}
                                             </ThemedText>
-                                            {content.usages[0]
-                                              ?.exampleSentence && (
-                                              <ThemedText
-                                                style={[
-                                                  styles.flashcardExampleText,
-                                                  { color: "#0e7490" },
-                                                ]}
-                                              >
-                                                {
-                                                  content.usages[0]
-                                                    .exampleSentence
-                                                }
-                                              </ThemedText>
-                                            )}
-                                          </View>
-                                        )}
+                                          )}
+                                        </View>
+                                      )}
                                     </View>
                                   ) : (
                                     <View style={styles.flashcardBackInner}>
@@ -1521,12 +1249,7 @@ export default function HomeScreen() {
                                             },
                                           ]}
                                         >
-                                          <ThemedText
-                                            style={[
-                                              styles.flashcardBackText,
-                                              { color: "#0369a1" },
-                                            ]}
-                                          >
+                                          <ThemedText style={[styles.flashcardBackText, { color: "#0369a1" }]}>
                                             {content.meaning}
                                           </ThemedText>
                                         </View>

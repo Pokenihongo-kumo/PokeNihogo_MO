@@ -1,23 +1,12 @@
 import { ThemedText } from "@components/ThemedText";
-import {
-  BottomSheet,
-  BottomSheetContent,
-  BottomSheetHeader,
-  BottomSheetTitle,
-} from "@components/ui/BottomSheet";
+import { BottomSheet, BottomSheetContent, BottomSheetHeader, BottomSheetTitle } from "@components/ui/BottomSheet";
 import { useConversationRooms } from "@hooks/useConversation";
 import { ROUTES } from "@routes/routes";
 import { ConversationRoom } from "@services/conversation";
 import { router } from "expo-router";
 import React, { Fragment, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ActivityIndicator,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, RefreshControl, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ConversationCard } from "./ConversationCard";
 
 interface ConversationListSheetProps {
@@ -48,10 +37,7 @@ export const ConversationListSheet: React.FC<ConversationListSheetProps> = ({
     setRefreshing(false);
   }, [refetch]);
 
-  const conversations = useMemo(
-    () => data?.results ?? [],
-    [data?.results]
-  );
+  const conversations = useMemo(() => data?.results ?? [], [data?.results]);
 
   const handleSelectConversation = useCallback(
     (conversation: ConversationRoom) => {
@@ -65,7 +51,7 @@ export const ConversationListSheet: React.FC<ConversationListSheetProps> = ({
       }
       onClose();
     },
-    [onClose, onSelectConversation]
+    [onClose, onSelectConversation],
   );
 
   const handleNewConversation = useCallback(() => {
@@ -86,27 +72,21 @@ export const ConversationListSheet: React.FC<ConversationListSheetProps> = ({
         onPress={() => handleSelectConversation(item)}
       />
     ),
-    [currentConversationId, handleSelectConversation]
+    [currentConversationId, handleSelectConversation],
   );
 
   const renderEmptyList = useCallback(
     () => (
       <View style={styles.emptyState}>
         <ThemedText style={styles.emptyStateText}>
-          {t(
-            "home.ai.conversation.empty_list",
-            "No conversations yet. Start a new conversation!"
-          )}
+          {t("home.ai.conversation.empty_list", "No conversations yet. Start a new conversation!")}
         </ThemedText>
       </View>
     ),
-    [t]
+    [t],
   );
 
-  const renderSeparator = useCallback(
-    () => <View style={styles.itemSeparator} />,
-    []
-  );
+  const renderSeparator = useCallback(() => <View style={styles.itemSeparator} />, []);
 
   const listContent = useMemo(() => {
     if (!conversations.length) {
@@ -126,14 +106,8 @@ export const ConversationListSheet: React.FC<ConversationListSheetProps> = ({
   }, [conversations, renderConversation, renderSeparator, renderEmptyList]);
 
   const refreshControlElement = useMemo(
-    () => (
-      <RefreshControl
-        refreshing={refreshing}
-        onRefresh={handleRefresh}
-        tintColor="#007AFF"
-      />
-    ),
-    [refreshing, handleRefresh]
+    () => <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#007AFF" />,
+    [refreshing, handleRefresh],
   );
 
   const handleOpenChange = useCallback(
@@ -142,7 +116,7 @@ export const ConversationListSheet: React.FC<ConversationListSheetProps> = ({
         onClose();
       }
     },
-    [onClose]
+    [onClose],
   );
 
   return (
@@ -157,17 +131,11 @@ export const ConversationListSheet: React.FC<ConversationListSheetProps> = ({
         contentContainerStyle={styles.contentContainer}
       >
         <BottomSheetHeader style={styles.sheetHeader}>
-          <BottomSheetTitle>
-            {t("home.ai.conversation.list_title", "Conversations")}
-          </BottomSheetTitle>
+          <BottomSheetTitle>{t("home.ai.conversation.list_title", "Conversations")}</BottomSheetTitle>
         </BottomSheetHeader>
 
         <View style={styles.newConversationWrapper}>
-          <TouchableOpacity
-            onPress={handleNewConversation}
-            activeOpacity={0.8}
-            style={styles.newConversationButton}
-          >
+          <TouchableOpacity onPress={handleNewConversation} activeOpacity={0.8} style={styles.newConversationButton}>
             <ThemedText style={styles.newConversationText}>
               ✏️ {t("home.ai.conversation.new_conversation", "New Conversation")}
             </ThemedText>
@@ -177,19 +145,10 @@ export const ConversationListSheet: React.FC<ConversationListSheetProps> = ({
         {isLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator color="#007AFF" />
-            <ThemedText style={styles.loadingText}>
-              {t("home.ai.conversation.loading", "Loading...")}
-            </ThemedText>
+            <ThemedText style={styles.loadingText}>{t("home.ai.conversation.loading", "Loading...")}</ThemedText>
           </View>
         ) : (
-          <View
-            style={[
-              styles.listContent,
-              conversations.length === 0 && styles.listEmptyPadding,
-            ]}
-          >
-            {listContent}
-          </View>
+          <View style={[styles.listContent, conversations.length === 0 && styles.listEmptyPadding]}>{listContent}</View>
         )}
       </BottomSheetContent>
     </BottomSheet>

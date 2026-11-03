@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Animated,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from "react-native";
+import { Animated, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 
 export interface QuizQuestionOption {
   id: string;
@@ -48,12 +41,7 @@ export function QuizQuestionCard({
       }}
     >
       <View style={styles.questionWrapper}>
-        <View
-          style={[
-            styles.qaCard,
-            isUnanswered && styles.qaCardUnanswered,
-          ]}
-        >
+        <View style={[styles.qaCard, isUnanswered && styles.qaCardUnanswered]}>
           {/* Header with number badge */}
           <View style={styles.headerRow}>
             <View style={styles.numberBadge}>
@@ -81,21 +69,11 @@ export function QuizQuestionCard({
                   <TouchableOpacity
                     onPress={() => onSelect(opt.id, index)}
                     activeOpacity={0.85}
-                    style={[
-                      styles.optionButton,
-                      isSelected && styles.optionSelected,
-                    ]}
+                    style={[styles.optionButton, isSelected && styles.optionSelected]}
                   >
                     <View style={styles.optionContent}>
-                      <View
-                        style={[
-                          styles.optionCircle,
-                          isSelected && styles.circleSelected,
-                        ]}
-                      >
-                        <Text style={styles.optionLabel}>
-                          {String.fromCharCode(65 + index)}
-                        </Text>
+                      <View style={[styles.optionCircle, isSelected && styles.circleSelected]}>
+                        <Text style={styles.optionLabel}>{String.fromCharCode(65 + index)}</Text>
                       </View>
                       <Text style={styles.optionText}>{opt.text}</Text>
                     </View>
@@ -116,7 +94,8 @@ const styles = StyleSheet.create({
   qaCard: {
     backgroundColor: "white",
     borderRadius: 16,
-    padding: 32,position: "relative",
+    padding: 32,
+    position: "relative",
   },
   qaCardUnanswered: {
     borderWidth: 2,

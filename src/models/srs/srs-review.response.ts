@@ -34,11 +34,7 @@ export type SrsGrammarContent = {
   usages?: SrsGrammarUsage[];
 };
 
-export type SrsContent =
-  | SrsVocabularyContent
-  | SrsKanjiContent
-  | SrsGrammarContent
-  | Record<string, any>;
+export type SrsContent = SrsVocabularyContent | SrsKanjiContent | SrsGrammarContent | Record<string, any>;
 
 export interface ISrsReviewItem {
   id: number;
@@ -71,4 +67,3 @@ export interface ISrsReviewResponse {
     data: ISrsReviewData;
   };
 }
-

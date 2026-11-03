@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Placement Question Answer Schema
 export const PlacementAnswerSchema = z.object({
@@ -11,7 +11,7 @@ export const PlacementAnswerSchema = z.object({
 export const PlacementQuestionSchema = z.object({
   id: z.number(),
   question: z.string(),
-  questionType: z.enum(['KANJI', 'VOCABULARY', 'GRAMMAR', 'READING', 'LISTENING']),
+  questionType: z.enum(["KANJI", "VOCABULARY", "GRAMMAR", "READING", "LISTENING"]),
   audioUrl: z.string().nullable(),
   pronunciation: z.string(),
   levelN: z.number(), // 3, 4, or 5 for N3, N4, N5

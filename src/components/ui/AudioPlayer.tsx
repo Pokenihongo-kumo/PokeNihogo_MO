@@ -87,7 +87,7 @@ export default function AudioPlayer({
           }
           // Call parent callback if provided
           onPlaybackStatusUpdate?.(status);
-        }
+        },
       );
       setSound(newSound);
 
@@ -145,7 +145,7 @@ export default function AudioPlayer({
             duration: 600,
             useNativeDriver: true,
           }),
-        ])
+        ]),
       );
       loop.start();
       return () => loop.stop();
@@ -170,7 +170,7 @@ export default function AudioPlayer({
           duration: 800,
           easing: Easing.linear,
           useNativeDriver: true,
-        })
+        }),
       );
       loop.start();
     }
@@ -199,9 +199,7 @@ export default function AudioPlayer({
             alignItems: "center",
             justifyContent: "center",
             borderWidth: 1,
-            borderColor: isPlaying
-              ? iconColor
-              : buttonStyle?.borderColor || "#e5e7eb",
+            borderColor: isPlaying ? iconColor : buttonStyle?.borderColor || "#e5e7eb",
             backgroundColor: isPlaying
               ? iconColor === "#ffffff"
                 ? "rgba(255,255,255,0.2)"
@@ -230,11 +228,7 @@ export default function AudioPlayer({
             ],
           }}
         >
-          {isLoading ? (
-            <Loader2 size={18} color={iconColor} />
-          ) : (
-            <Volume2 size={18} color={iconColor} />
-          )}
+          {isLoading ? <Loader2 size={18} color={iconColor} /> : <Volume2 size={18} color={iconColor} />}
         </Animated.View>
       </TouchableOpacity>
     </View>

@@ -37,49 +37,37 @@ const ReadingCard: React.FC<{
   const { t } = useTranslation();
   const isLocked = item.status === "NOT_STARTED";
   // LockOverlay chỉ hiển thị khi bài có status INACTIVE và price = 1 (không áp dụng cho price = 0)
-  const shouldShowLockOverlay =
-    item.status === "NOT_STARTED" && item.test?.price === 1;
-  const isUnlimited =
-    item.limit === 0 && (item.test?.limit === 0 || item.test?.limit == null);
+  const shouldShowLockOverlay = item.status === "NOT_STARTED" && item.test?.price === 1;
+  const isUnlimited = item.limit === 0 && (item.test?.limit === 0 || item.test?.limit == null);
   const isExhausted = !isUnlimited && item.limit === 0 && item.test?.limit > 0;
   const isDisabled = isExhausted; // Chỉ disable khi exhausted, không disable khi locked
   // Chỉ áp dụng locked style khi có LockOverlay (price = 1), không áp dụng cho price = 0
   const shouldApplyLockedStyle = shouldShowLockOverlay;
-  
+
   return (
     <TouchableOpacity
-      style={[
-        styles.card, 
-        { borderLeftColor: READING_ACCENT },
-        shouldApplyLockedStyle && styles.lockedCard
-      ]}
+      style={[styles.card, { borderLeftColor: READING_ACCENT }, shouldApplyLockedStyle && styles.lockedCard]}
       onPress={isLocked ? onLockedPress : isExhausted ? undefined : onPress}
       activeOpacity={isExhausted ? 1 : 0.8}
       disabled={isDisabled}
     >
       <View style={styles.cardHeader}>
-        <View style={[
-          styles.iconContainer, 
-          { backgroundColor: "#3b82f6" },
-          shouldApplyLockedStyle && styles.lockedIconContainer
-        ]}>
+        <View
+          style={[
+            styles.iconContainer,
+            { backgroundColor: "#3b82f6" },
+            shouldApplyLockedStyle && styles.lockedIconContainer,
+          ]}
+        >
           <BookOpen size={24} color={shouldApplyLockedStyle ? "#9ca3af" : "#ffffff"} />
         </View>
         <View style={styles.materialInfo}>
           <View style={styles.materialHeaderRow}>
-            <ThemedText 
-              type="subtitle" 
-              style={[
-                styles.materialTitle,
-                shouldApplyLockedStyle && styles.lockedText
-              ]}
-            >
+            <ThemedText type="subtitle" style={[styles.materialTitle, shouldApplyLockedStyle && styles.lockedText]}>
               {item.test?.name}
             </ThemedText>
             <View style={styles.levelBadge}>
-              <ThemedText style={styles.levelText}>
-                N{item.test?.levelN}
-              </ThemedText>
+              <ThemedText style={styles.levelText}>N{item.test?.levelN}</ThemedText>
             </View>
           </View>
         </View>
@@ -87,7 +75,7 @@ const ReadingCard: React.FC<{
 
       <View style={styles.cardFooter}>
         <View style={styles.metaInfo}>
-          {(isUnlimited ? (
+          {isUnlimited ? (
             <ThemedText style={styles.timeText}>∞</ThemedText>
           ) : isExhausted ? (
             <ThemedText style={[styles.timeText, styles.exhaustedText]}>
@@ -97,7 +85,7 @@ const ReadingCard: React.FC<{
             <ThemedText style={styles.timeText}>
               {item.limit} / {item.test?.limit}
             </ThemedText>
-          ))}
+          )}
         </View>
       </View>
 
@@ -129,8 +117,7 @@ export const ReadingContent: React.FC = () => {
     pageSize: 10,
   });
 
-  const items: UserTestItem[] =
-    (userTestsData as any)?.data?.data?.results ?? [];
+  const items: UserTestItem[] = (userTestsData as any)?.data?.data?.results ?? [];
 
   React.useEffect(() => {
     const ready = !isLoading;
@@ -203,16 +190,10 @@ export const ReadingContent: React.FC = () => {
       </ThemedText>
 
       <View style={styles.materialsContainer}>
-        {isLoading && (
-          <ThemedText style={{ textAlign: "center" }}>
-            {t("common.loading", "Loading...")}
-          </ThemedText>
-        )}
+        {isLoading && <ThemedText style={{ textAlign: "center" }}>{t("common.loading", "Loading...")}</ThemedText>}
         {!!error && (
           <ThemedText style={{ textAlign: "center", color: "#ef4444" }}>
-            {error instanceof Error
-              ? error.message
-              : t("common.error", "Error")}
+            {error instanceof Error ? error.message : t("common.error", "Error")}
           </ThemedText>
         )}
         {!isLoading &&
@@ -268,7 +249,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
     padding: 16,
-    borderLeftWidth: 4,},
+    borderLeftWidth: 4,
+  },
   cardHeader: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -332,7 +314,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
     padding: 20,
-    marginBottom: 16,},
+    marginBottom: 16,
+  },
   statsTitle: {
     fontSize: 18,
     fontWeight: "600",
@@ -393,4 +376,3 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-

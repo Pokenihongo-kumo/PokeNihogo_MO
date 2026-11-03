@@ -1,7 +1,4 @@
-import uploadService, {
-  IUploadImagePayload,
-  IUploadImageResponse,
-} from "@services/upload";
+import uploadService, { IUploadImagePayload, IUploadImageResponse } from "@services/upload";
 import { useMutation } from "@tanstack/react-query";
 
 export const useUploadImage = () => {
@@ -11,4 +8,3 @@ export const useUploadImage = () => {
 };
 
 export type { IUploadImagePayload, IUploadImageResponse };
-

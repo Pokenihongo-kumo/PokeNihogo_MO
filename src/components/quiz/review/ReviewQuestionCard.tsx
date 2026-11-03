@@ -1,14 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { IReviewResultQuestionBank } from "@models/user-exercise-attempt/user-exercise-attempt.response";
 import React from "react";
-import {
-  Animated,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from "react-native";
+import { Animated, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 
 interface ReviewQuestionCardProps {
   question: IReviewResultQuestionBank;
@@ -41,7 +34,7 @@ export function ReviewQuestionCard({
   onLayout,
 }: ReviewQuestionCardProps) {
   const questionIdStr = question.id.toString();
-  
+
   // Check if question is incorrect or unanswered
   // Highlight red only when isCorrect is false (either wrong answer or unanswered)
   const shouldHighlightRed = question.isCorrect === false;
@@ -99,62 +92,37 @@ export function ReviewQuestionCard({
                     },
                   ]}
                 >
-                  <TouchableOpacity
-                    disabled
-                    activeOpacity={1}
-                    style={optionStyle}
-                  >
+                  <TouchableOpacity disabled activeOpacity={1} style={optionStyle}>
                     <View style={styles.optionContent}>
                       <View style={circleStyle}>
-                        <Text style={styles.optionLabel}>
-                          {String.fromCharCode(65 + index)}
-                        </Text>
+                        <Text style={styles.optionLabel}>{String.fromCharCode(65 + index)}</Text>
                       </View>
                       <Text style={styles.optionText}>{answer.answer}</Text>
-                      {isCorrectAnswer && (
-                        <MaterialCommunityIcons
-                          name="check-circle"
-                          size={18}
-                          color="#10b981"
-                        />
-                      )}
+                      {isCorrectAnswer && <MaterialCommunityIcons name="check-circle" size={18} color="#10b981" />}
                     </View>
 
                     {/* Show explanation inline if available */}
-                    {hasExplanation &&
-                      (isCorrectAnswer || isUserSelected) && (
-                        <View
-                          style={[
-                            styles.explanationContainer,
-                            isCorrectAnswer
-                              ? styles.explanationCorrect
-                              : undefined,
-                            isUserSelected && !isCorrectAnswer
-                              ? styles.explanationWrong
-                              : undefined,
-                          ]}
-                        >
-                          {isCorrectAnswer && (
-                            <View style={styles.explanationHeader}>
-                              <MaterialCommunityIcons
-                                name="check-circle"
-                                size={16}
-                                color="#10b981"
-                              />
-                              <Text style={styles.explanationLabel}>
-                                Câu trả lời chính xác
-                              </Text>
-                            </View>
-                          )}
-                          {explanation && (
-                            <View style={styles.explanationContent}>
-                              <Text style={styles.explanationText}>
-                                {explanation.en}
-                              </Text>
-                            </View>
-                          )}
-                        </View>
-                      )}
+                    {hasExplanation && (isCorrectAnswer || isUserSelected) && (
+                      <View
+                        style={[
+                          styles.explanationContainer,
+                          isCorrectAnswer ? styles.explanationCorrect : undefined,
+                          isUserSelected && !isCorrectAnswer ? styles.explanationWrong : undefined,
+                        ]}
+                      >
+                        {isCorrectAnswer && (
+                          <View style={styles.explanationHeader}>
+                            <MaterialCommunityIcons name="check-circle" size={16} color="#10b981" />
+                            <Text style={styles.explanationLabel}>Câu trả lời chính xác</Text>
+                          </View>
+                        )}
+                        {explanation && (
+                          <View style={styles.explanationContent}>
+                            <Text style={styles.explanationText}>{explanation.en}</Text>
+                          </View>
+                        )}
+                      </View>
+                    )}
                   </TouchableOpacity>
                 </Animated.View>
               );
@@ -172,7 +140,8 @@ const styles = StyleSheet.create({
   qaCard: {
     backgroundColor: "white",
     borderRadius: 16,
-    padding: 32,position: "relative",
+    padding: 32,
+    position: "relative",
     borderWidth: 2,
     borderColor: "transparent",
   },

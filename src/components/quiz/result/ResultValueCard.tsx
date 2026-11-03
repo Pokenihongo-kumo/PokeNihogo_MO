@@ -21,25 +21,12 @@ export default function ResultValueCard({
 }: ResultValueCardProps) {
   const isCompact = size === "compact";
   return (
-    <View
-      style={[
-        styles.card,
-        { borderColor: headerGradientColors[0] },
-        isCompact && styles.cardCompact,
-        style,
-      ]}
-    >
+    <View style={[styles.card, { borderColor: headerGradientColors[0] }, isCompact && styles.cardCompact, style]}>
       <LinearGradient colors={[...headerGradientColors]} style={styles.header}>
-        <Text style={[styles.headerText, isCompact && styles.headerTextCompact]}>
-          {title}
-        </Text>
+        <Text style={[styles.headerText, isCompact && styles.headerTextCompact]}>{title}</Text>
       </LinearGradient>
       <View style={[styles.body, isCompact && styles.bodyCompact]}>
-        {typeof icon === "string" ? (
-          <Text style={[styles.icon, isCompact && styles.iconCompact]}>{icon}</Text>
-        ) : (
-          icon
-        )}
+        {typeof icon === "string" ? <Text style={[styles.icon, isCompact && styles.iconCompact]}>{icon}</Text> : icon}
         <Text style={[styles.value, isCompact && styles.valueCompact]}>{value}</Text>
       </View>
     </View>
@@ -51,7 +38,8 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 16,
     overflow: "hidden",
-    backgroundColor: "rgba(255,255,255,0.92)",borderWidth: 2,
+    backgroundColor: "rgba(255,255,255,0.92)",
+    borderWidth: 2,
     borderColor: "#3b82f6",
   },
   cardCompact: {
@@ -97,4 +85,3 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
-

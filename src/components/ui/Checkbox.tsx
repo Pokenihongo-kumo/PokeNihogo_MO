@@ -8,10 +8,7 @@ interface CheckboxProps extends ViewProps {
 }
 
 const Checkbox = React.forwardRef<View, CheckboxProps>(
-  (
-    { checked = false, onCheckedChange, disabled = false, style, ...props },
-    ref
-  ) => {
+  ({ checked = false, onCheckedChange, disabled = false, style, ...props }, ref) => {
     const handlePress = () => {
       if (!disabled) {
         onCheckedChange?.(!checked);
@@ -58,11 +55,10 @@ const Checkbox = React.forwardRef<View, CheckboxProps>(
         )}
       </TouchableOpacity>
     );
-  }
+  },
 );
 
 Checkbox.displayName = "Checkbox";
 
 export { Checkbox };
 export type { CheckboxProps };
-

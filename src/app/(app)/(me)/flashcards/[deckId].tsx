@@ -55,15 +55,7 @@ const INITIAL_WORD_FORM_STATE = {
   imageUrl: "",
 };
 
-const FilterToggle = ({
-  label,
-  active,
-  onPress,
-}: {
-  label: string;
-  active: boolean;
-  onPress: () => void;
-}) => (
+const FilterToggle = ({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) => (
   <TouchableOpacity
     activeOpacity={0.85}
     onPress={onPress}
@@ -177,7 +169,7 @@ const FlashcardDeckDetailScreen = () => {
         showAlert(message, type);
       }
     },
-    [showAlert]
+    [showAlert],
   );
 
   const resetEditForm = useCallback(() => {
@@ -198,7 +190,7 @@ const FlashcardDeckDetailScreen = () => {
       contentType: FlashcardContentType.VOCABULARY,
       search: debouncedSearch || undefined,
     }),
-    [currentPage, pageSize, debouncedSearch]
+    [currentPage, pageSize, debouncedSearch],
   );
 
   const itemsPerPageSelectOptions = useMemo(
@@ -207,48 +199,37 @@ const FlashcardDeckDetailScreen = () => {
         label: option.label,
         value: option.value,
       })),
-    []
+    [],
   );
 
-  const { data, isLoading, isFetching, refetch } = useFlashcardDeckCards(
-    numericDeckId,
-    queryParams
-  );
+  const { data, isLoading, isFetching, refetch } = useFlashcardDeckCards(numericDeckId, queryParams);
 
   const createDeckCardMutation = useCreateFlashcardDeckCard();
   const updateCardWithMetadataMutation = useUpdateFlashcardDeckCardWithMetadata();
   const deleteCardsMutation = useDeleteFlashcardDeckCards();
   const markCardReadMutation = useMarkFlashcardCardRead();
-  const isSavingCard =
-    updateCardWithMetadataMutation.isPending ||
-    createDeckCardMutation.isPending;
+  const isSavingCard = updateCardWithMetadataMutation.isPending || createDeckCardMutation.isPending;
 
-  const cards: IFlashcardDeckCard[] = useMemo(
-    () => data?.data?.results ?? [],
-    [data]
-  );
+  const cards: IFlashcardDeckCard[] = useMemo(() => data?.data?.results ?? [], [data]);
   const isPracticeDisabled = cards.length === 0;
   const pagination = data?.data?.pagination;
   const totalItems = pagination?.totalItem ?? 0;
   const totalPages = Math.max(pagination?.totalPage ?? 1, 1);
 
-  const selectedCard = useMemo(
-    () => cards.find((card) => card.id === selectedCardId),
-    [cards, selectedCardId]
-  );
+  const selectedCard = useMemo(() => cards.find((card) => card.id === selectedCardId), [cards, selectedCardId]);
 
   // Refetch data when screen is focused
   useFocusEffect(
     useCallback(() => {
       if (numericDeckId) {
         // Invalidate all flashcard-deck-cards queries for this deck to trigger refetch
-        queryClient.invalidateQueries({ 
-          queryKey: ["flashcard-deck-cards", numericDeckId] 
+        queryClient.invalidateQueries({
+          queryKey: ["flashcard-deck-cards", numericDeckId],
         });
         // Also manually refetch to ensure fresh data
         refetch();
       }
-    }, [queryClient, numericDeckId, refetch])
+    }, [queryClient, numericDeckId, refetch]),
   );
 
   const handleRefresh = useCallback(async () => {
@@ -276,10 +257,7 @@ const FlashcardDeckDetailScreen = () => {
   const handlePlayAudio = useCallback(async (url?: string | null) => {
     if (!url) return;
     try {
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: url },
-        { shouldPlay: true }
-      );
+      const { sound } = await Audio.Sound.createAsync({ uri: url }, { shouldPlay: true });
       sound.setOnPlaybackStatusUpdate((status) => {
         if (status.isLoaded && status.didJustFinish) {
           sound.unloadAsync();
@@ -298,7 +276,7 @@ const FlashcardDeckDetailScreen = () => {
 
   const handleSaveNote = () => {
     if (!numericDeckId || !selectedCardId) return;
-    
+
     const selectedCard = cards.find((card) => card.id === selectedCardId);
     if (!selectedCard) return;
 
@@ -314,7 +292,7 @@ const FlashcardDeckDetailScreen = () => {
           showFlashcardAlert(
             t("flashcard_detail.note_update_success_title", "Đã lưu ghi chú"),
             t("flashcard_detail.note_update_success_desc", "Ghi chú đã được cập nhật."),
-            "success"
+            "success",
           );
           setNoteModalVisible(false);
         },
@@ -322,44 +300,47 @@ const FlashcardDeckDetailScreen = () => {
           showFlashcardAlert(
             t("flashcard_detail.note_update_error_title", "Có lỗi xảy ra"),
             t("flashcard_detail.note_update_error_desc", "Vui lòng thử lại sau."),
-            "error"
+            "error",
           );
         },
-      }
+      },
     );
   };
 
-  const handleToggleRead = useCallback((card: IFlashcardDeckCard) => {
-    if (!numericDeckId) return;
-    
-    const newReadStatus = !card.read;
-    
-    markCardReadMutation.mutate(
-      {
-        deckId: numericDeckId,
-        cardId: card.id,
-        read: newReadStatus,
-      },
-      {
-        onSuccess: () => {
-          // Silent success - no alert needed for read status toggle
+  const handleToggleRead = useCallback(
+    (card: IFlashcardDeckCard) => {
+      if (!numericDeckId) return;
+
+      const newReadStatus = !card.read;
+
+      markCardReadMutation.mutate(
+        {
+          deckId: numericDeckId,
+          cardId: card.id,
+          read: newReadStatus,
         },
-        onError: () => {
-          showFlashcardAlert(
-            t("flashcard_detail.read_toggle_error_title", "Có lỗi xảy ra"),
-            t("flashcard_detail.read_toggle_error_desc", "Không thể cập nhật trạng thái. Vui lòng thử lại sau."),
-            "error"
-          );
+        {
+          onSuccess: () => {
+            // Silent success - no alert needed for read status toggle
+          },
+          onError: () => {
+            showFlashcardAlert(
+              t("flashcard_detail.read_toggle_error_title", "Có lỗi xảy ra"),
+              t("flashcard_detail.read_toggle_error_desc", "Không thể cập nhật trạng thái. Vui lòng thử lại sau."),
+              "error",
+            );
+          },
         },
-      }
-    );
-  }, [numericDeckId, markCardReadMutation, showFlashcardAlert, t]);
+      );
+    },
+    [numericDeckId, markCardReadMutation, showFlashcardAlert, t],
+  );
 
   const handleOpenEditModal = (card: IFlashcardDeckCard) => {
     setIsCreateMode(false);
     const vocabulary = card?.vocabulary;
     let meaningsText = "";
-    
+
     // Handle meanings - could be translation key or actual array/string
     if (vocabulary?.meanings) {
       if (typeof vocabulary.meanings === "string" && vocabulary.meanings.startsWith("vocabulary.")) {
@@ -371,7 +352,7 @@ const FlashcardDeckDetailScreen = () => {
         meaningsText = meanings.join("; ");
       }
     }
-    
+
     setEditingCard(card);
     setEditFormData({
       wordJp: vocabulary?.wordJp || "",
@@ -380,7 +361,7 @@ const FlashcardDeckDetailScreen = () => {
       imageUrl: vocabulary?.imageUrl || "",
     });
     setEditModalVisible(true);
-    
+
     // Close swipeable
     if (swipeableRefs.current[card.id]) {
       swipeableRefs.current[card.id]?.close();
@@ -425,11 +406,8 @@ const FlashcardDeckDetailScreen = () => {
     if (!trimmedWord) {
       showFlashcardAlert(
         t("flashcard_detail.word_required_title", "Thiếu từ vựng"),
-        t(
-          "flashcard_detail.word_required_desc",
-          "Vui lòng nhập từ tiếng Nhật trước khi lưu."
-        ),
-        "error"
+        t("flashcard_detail.word_required_desc", "Vui lòng nhập từ tiếng Nhật trước khi lưu."),
+        "error",
       );
       return;
     }
@@ -463,25 +441,19 @@ const FlashcardDeckDetailScreen = () => {
           onSuccess: () => {
             showFlashcardAlert(
               t("flashcard_detail.create_success_title", "Đã thêm"),
-              t(
-                "flashcard_detail.create_success_desc",
-                "Từ mới đã được thêm vào bộ thẻ."
-              ),
-              "success"
+              t("flashcard_detail.create_success_desc", "Từ mới đã được thêm vào bộ thẻ."),
+              "success",
             );
             handleCloseEditModal();
           },
           onError: () => {
             showFlashcardAlert(
               t("flashcard_detail.create_error_title", "Có lỗi xảy ra"),
-              t(
-                "flashcard_detail.create_error_desc",
-                "Vui lòng thử lại sau."
-              ),
-              "error"
+              t("flashcard_detail.create_error_desc", "Vui lòng thử lại sau."),
+              "error",
             );
           },
-        }
+        },
       );
       return;
     }
@@ -499,31 +471,25 @@ const FlashcardDeckDetailScreen = () => {
         onSuccess: () => {
           showFlashcardAlert(
             t("flashcard_detail.edit_saved_title", "Đã lưu"),
-            t(
-              "flashcard_detail.edit_saved_desc",
-              "Thông tin đã được cập nhật."
-            ),
-            "success"
+            t("flashcard_detail.edit_saved_desc", "Thông tin đã được cập nhật."),
+            "success",
           );
           handleCloseEditModal();
         },
         onError: () => {
           showFlashcardAlert(
             t("flashcard_detail.edit_error_title", "Có lỗi xảy ra"),
-            t(
-              "flashcard_detail.edit_error_desc",
-              "Vui lòng thử lại sau."
-            ),
-            "error"
+            t("flashcard_detail.edit_error_desc", "Vui lòng thử lại sau."),
+            "error",
           );
         },
-      }
+      },
     );
   };
 
   const handleDelete = (card: IFlashcardDeckCard) => {
     if (!numericDeckId) return;
-    
+
     // Close swipeable
     if (swipeableRefs.current[card.id]) {
       swipeableRefs.current[card.id]?.close();
@@ -539,17 +505,17 @@ const FlashcardDeckDetailScreen = () => {
           showFlashcardAlert(
             t("flashcard_detail.delete_success_title", "Đã xóa"),
             t("flashcard_detail.delete_success_desc", "Từ đã được xóa khỏi bộ thẻ."),
-            "success"
+            "success",
           );
         },
         onError: () => {
           showFlashcardAlert(
             t("flashcard_detail.delete_error_title", "Có lỗi xảy ra"),
             t("flashcard_detail.delete_error_desc", "Vui lòng thử lại sau."),
-            "error"
+            "error",
           );
         },
-      }
+      },
     );
   };
 
@@ -565,9 +531,9 @@ const FlashcardDeckDetailScreen = () => {
     });
 
     return (
-      <View 
-        className="flex-row items-stretch" 
-        style={{ 
+      <View
+        className="flex-row items-stretch"
+        style={{
           width: 160,
           borderRadius: 16,
           overflow: "hidden",
@@ -615,9 +581,7 @@ const FlashcardDeckDetailScreen = () => {
   const renderCardItem = (card: IFlashcardDeckCard, index: number) => {
     const vocabulary = card?.vocabulary;
     const meanings = parseMeanings(vocabulary?.meanings);
-    const readings = vocabulary?.reading 
-      ? vocabulary.reading.split(/\s+/).filter(Boolean)
-      : [];
+    const readings = vocabulary?.reading ? vocabulary.reading.split(/\s+/).filter(Boolean) : [];
     return (
       <View className="mb-4" key={card.id}>
         <Swipeable
@@ -637,67 +601,64 @@ const FlashcardDeckDetailScreen = () => {
               backgroundColor: card.read ? "#f0fdf4" : "#ffffff",
             }}
           >
-        <View className="flex-row justify-between items-start mb-3">
-          <View className="flex-row items-center gap-2 flex-1" style={{ flexShrink: 1, minWidth: 0 }}>
-            <View className="flex-row items-center gap-2" style={{ flexShrink: 0 }}>
-              <View 
-                className="h-8 w-8 rounded-full items-center justify-center"
-                style={{ 
-                  backgroundColor: card.read ? "#dcfce7" : "#e0f2fe",
-                }}
-              >
-                <Text 
-                  style={{ 
-                    color: card.read ? "#15803d" : "#0284c7", 
-                    fontWeight: "700",
-                    fontSize: 12,
-                  }}
+            <View className="flex-row justify-between items-start mb-3">
+              <View className="flex-row items-center gap-2 flex-1" style={{ flexShrink: 1, minWidth: 0 }}>
+                <View className="flex-row items-center gap-2" style={{ flexShrink: 0 }}>
+                  <View
+                    className="h-8 w-8 rounded-full items-center justify-center"
+                    style={{
+                      backgroundColor: card.read ? "#dcfce7" : "#e0f2fe",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: card.read ? "#15803d" : "#0284c7",
+                        fontWeight: "700",
+                        fontSize: 12,
+                      }}
+                    >
+                      {index + 1 + (currentPage - 1) * pageSize}
+                    </Text>
+                  </View>
+                </View>
+                <View className="flex-row items-center gap-2 flex-1" style={{ flexShrink: 1, minWidth: 0 }}>
+                  <Text
+                    style={{ fontSize: 18, fontWeight: "700", color: "#0ea5e9" }}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {vocabulary?.wordJp || t("flashcard_detail.unknown_word", "Chưa rõ")}
+                  </Text>
+                  {filters.phonetic && readings.length > 0 && (
+                    <Text style={{ color: "#64748b", fontSize: 12 }} numberOfLines={1}>
+                      {readings.slice(0, 2).join(", ")}
+                      {readings.length > 2 && " ..."}
+                    </Text>
+                  )}
+                </View>
+              </View>
+              <View className="flex-row items-center gap-2" style={{ flexShrink: 0 }}>
+                {vocabulary?.audioUrl && (
+                  <TouchableOpacity
+                    onPress={() => handlePlayAudio(vocabulary?.audioUrl)}
+                    className="p-2 rounded-full bg-slate-100"
+                  >
+                    <Volume2 size={18} color="#0284c7" />
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity
+                  className="flex-row items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100"
+                  onPress={() => handleOpenNoteModal(card.id, card.notes)}
                 >
-                  {index + 1 + (currentPage - 1) * pageSize}
-                </Text>
+                  <StickyNote size={16} color="#0ea5e9" />
+                  <Text style={{ fontSize: 13, color: "#0f172a", fontWeight: "600" }}>
+                    {t("flashcard_detail.note_button", "Note")}
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
-            <View className="flex-row items-center gap-2 flex-1" style={{ flexShrink: 1, minWidth: 0 }}>
-              <Text 
-                style={{ fontSize: 18, fontWeight: "700", color: "#0ea5e9" }}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {vocabulary?.wordJp || t("flashcard_detail.unknown_word", "Chưa rõ")}
-              </Text>
-              {filters.phonetic && readings.length > 0 && (
-                <Text 
-                  style={{ color: "#64748b", fontSize: 12 }}
-                  numberOfLines={1}
-                >
-                  {readings.slice(0, 2).join(", ")}
-                  {readings.length > 2 && " ..."}
-                </Text>
-              )}
-            </View>
-          </View>
-          <View className="flex-row items-center gap-2" style={{ flexShrink: 0 }}>
-            {vocabulary?.audioUrl && (
-              <TouchableOpacity
-                onPress={() => handlePlayAudio(vocabulary?.audioUrl)}
-                className="p-2 rounded-full bg-slate-100"
-              >
-                <Volume2 size={18} color="#0284c7" />
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity
-              className="flex-row items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100"
-              onPress={() => handleOpenNoteModal(card.id, card.notes)}
-            >
-              <StickyNote size={16} color="#0ea5e9" />
-              <Text style={{ fontSize: 13, color: "#0f172a", fontWeight: "600" }}>
-                {t("flashcard_detail.note_button", "Note")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
 
-        {/* {filters.word && !!vocabulary?.wordJp && (
+            {/* {filters.word && !!vocabulary?.wordJp && (
           <View className="mb-3">
             <Text style={{ fontSize: 32, fontWeight: "700", color: "#0369a1" }}>
               {vocabulary?.wordJp}
@@ -705,49 +666,47 @@ const FlashcardDeckDetailScreen = () => {
           </View>
         )} */}
 
-        {filters.meaning && meanings.length > 0 && (
-          <View className="mb-3">
-            {meanings.slice(0, 3).map((meaning, idx) => (
-              <Text
-                key={`${card.id}-meaning-${idx}`}
-                style={{
-                  color: "#1f2937",
-                  fontSize: 16,
-                  marginBottom: idx === Math.min(meanings.length, 3) - 1 ? 0 : 4,
-                }}
-              >
-                {meaning}
-              </Text>
-            ))}
-            {meanings.length > 3 && (
-              <Text
-                style={{
-                  color: "#64748b",
-                  fontSize: 16,
-                  marginTop: 4,
-                  fontStyle: "italic",
-                }}
-              >
-                ...
-              </Text>
+            {filters.meaning && meanings.length > 0 && (
+              <View className="mb-3">
+                {meanings.slice(0, 3).map((meaning, idx) => (
+                  <Text
+                    key={`${card.id}-meaning-${idx}`}
+                    style={{
+                      color: "#1f2937",
+                      fontSize: 16,
+                      marginBottom: idx === Math.min(meanings.length, 3) - 1 ? 0 : 4,
+                    }}
+                  >
+                    {meaning}
+                  </Text>
+                ))}
+                {meanings.length > 3 && (
+                  <Text
+                    style={{
+                      color: "#64748b",
+                      fontSize: 16,
+                      marginTop: 4,
+                      fontStyle: "italic",
+                    }}
+                  >
+                    ...
+                  </Text>
+                )}
+              </View>
             )}
-          </View>
-        )}
 
-        {card.notes && (
-          <View className="mt-2 px-3 py-2 rounded-xl bg-slate-50 border border-dashed border-slate-200">
-            <Text style={{ fontSize: 13, color: "#475569" }}>{card.notes}</Text>
-          </View>
-        )}
+            {card.notes && (
+              <View className="mt-2 px-3 py-2 rounded-xl bg-slate-50 border border-dashed border-slate-200">
+                <Text style={{ fontSize: 13, color: "#475569" }}>{card.notes}</Text>
+              </View>
+            )}
 
-        <View className="mt-4 flex-row items-center justify-end">
-          <Text style={{ fontSize: 12, color: "#94a3b8" }}>
-            {formatDate(card.updatedAt || card.createdAt)}
-          </Text>
-          {/* <Text style={{ fontSize: 12, color: "#0284c7" }}>
+            <View className="mt-4 flex-row items-center justify-end">
+              <Text style={{ fontSize: 12, color: "#94a3b8" }}>{formatDate(card.updatedAt || card.createdAt)}</Text>
+              {/* <Text style={{ fontSize: 12, color: "#0284c7" }}>
             #{card.id}
           </Text> */}
-        </View>
+            </View>
           </View>
         </Swipeable>
       </View>
@@ -758,116 +717,112 @@ const FlashcardDeckDetailScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f8fafc" }}>
       <View className="flex-1 bg-slate-50">
         <View className="px-4 py-3 flex-row items-center justify-between bg-white border-b border-slate-100">
-        <TouchableOpacity onPress={() => router.back()} className="p-2 rounded-full bg-slate-100">
-          <ChevronLeft size={20} color="#0f172a" />
-        </TouchableOpacity>
-        <View className="flex-1 px-3">
-          <Text style={{ fontSize: 16, fontWeight: "700", color: "#0f172a" }}>
-            {name || t("flashcard_detail.title", "Flashcard Deck")}
-          </Text>
-          <Text style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
-            VOCABULARY • {totalItems} {t("flashcard_detail.cards_label", "thẻ")}
-          </Text>
-        </View>
-        <View className="flex-row items-center gap-2">
-          <TouchableOpacity
-            className="p-2 rounded-full bg-slate-100"
-            onPress={handleOpenCreateModal}
-            disabled={isSavingCard}
-          >
-            <Plus size={18} color="#0f172a" />
+          <TouchableOpacity onPress={() => router.back()} className="p-2 rounded-full bg-slate-100">
+            <ChevronLeft size={20} color="#0f172a" />
           </TouchableOpacity>
-        </View>
-      </View>
-
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={{ padding: 16, paddingBottom: insetBottom + 130 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-      >
-        <View className="flex-row flex-wrap gap-3 mb-4">
-          <FilterToggle
-            label={t("flashcard_detail.filter_word", "Word")}
-            active={filters.word}
-            onPress={() => handleToggleFilter("word")}
-          />
-          <FilterToggle
-            label={t("flashcard_detail.filter_mean", "Mean")}
-            active={filters.meaning}
-            onPress={() => handleToggleFilter("meaning")}
-          />
-          <FilterToggle
-            label={t("flashcard_detail.filter_phonetic", "Phonetic")}
-            active={filters.phonetic}
-            onPress={() => handleToggleFilter("phonetic")}
-          />
+          <View className="flex-1 px-3">
+            <Text style={{ fontSize: 16, fontWeight: "700", color: "#0f172a" }}>
+              {name || t("flashcard_detail.title", "Flashcard Deck")}
+            </Text>
+            <Text style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
+              VOCABULARY • {totalItems} {t("flashcard_detail.cards_label", "thẻ")}
+            </Text>
+          </View>
+          <View className="flex-row items-center gap-2">
+            <TouchableOpacity
+              className="p-2 rounded-full bg-slate-100"
+              onPress={handleOpenCreateModal}
+              disabled={isSavingCard}
+            >
+              <Plus size={18} color="#0f172a" />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <View className="bg-white border border-slate-200 rounded-2xl px-4 py-3 mb-4 flex-row items-center">
-          <Search size={18} color="#94a3b8" />
-          <TextInput
-            placeholder={t("flashcard_detail.search_placeholder", "Tìm kiếm từ vựng...")}
-            placeholderTextColor="#94a3b8"
-            value={searchKeyword}
-            onChangeText={setSearchKeyword}
-            style={{ flex: 1, marginHorizontal: 12, fontSize: 15, color: "#0f172a" }}
-            returnKeyType="search"
-          />
-          <TouchableOpacity className="p-1.5 rounded-full bg-slate-100">
-            <Shuffle size={16} color="#0f172a" />
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          className="mb-6 rounded-3xl overflow-hidden"
-          activeOpacity={isPracticeDisabled ? 1 : 0.9}
-          onPress={isPracticeDisabled ? undefined : handlePractice}
-          disabled={isPracticeDisabled}
-          style={{ opacity: isPracticeDisabled ? 0.5 : 1 }}
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ padding: 16, paddingBottom: insetBottom + 130 }}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         >
-          <LinearGradient colors={["#0ea5e9", "#2563eb"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
-            <View className="flex-row items-center justify-between px-5 py-4">
-              <View>
-                <Text style={{ color: "#fff", fontSize: 16, fontWeight: "700" }}>
-                  {t("flashcard_detail.practice_title", "Practice")}
-                </Text>
-                <Text style={{ color: "#e0f2fe", fontSize: 13, marginTop: 2 }}>
-                  {isPracticeDisabled
-                    ? t("flashcard_detail.practice_disabled_subtitle", "Cần ít nhất 1 thẻ để luyện tập")
-                    : t("flashcard_detail.practice_subtitle", "Xem lại bộ thẻ này ngay")}
-                </Text>
-              </View>
-            </View>
-          </LinearGradient>
-        </TouchableOpacity>
+          <View className="flex-row flex-wrap gap-3 mb-4">
+            <FilterToggle
+              label={t("flashcard_detail.filter_word", "Word")}
+              active={filters.word}
+              onPress={() => handleToggleFilter("word")}
+            />
+            <FilterToggle
+              label={t("flashcard_detail.filter_mean", "Mean")}
+              active={filters.meaning}
+              onPress={() => handleToggleFilter("meaning")}
+            />
+            <FilterToggle
+              label={t("flashcard_detail.filter_phonetic", "Phonetic")}
+              active={filters.phonetic}
+              onPress={() => handleToggleFilter("phonetic")}
+            />
+          </View>
 
-        {isLoading ? (
-          <View className="py-12 items-center">
-            <ActivityIndicator size="large" color="#0ea5e9" />
+          <View className="bg-white border border-slate-200 rounded-2xl px-4 py-3 mb-4 flex-row items-center">
+            <Search size={18} color="#94a3b8" />
+            <TextInput
+              placeholder={t("flashcard_detail.search_placeholder", "Tìm kiếm từ vựng...")}
+              placeholderTextColor="#94a3b8"
+              value={searchKeyword}
+              onChangeText={setSearchKeyword}
+              style={{ flex: 1, marginHorizontal: 12, fontSize: 15, color: "#0f172a" }}
+              returnKeyType="search"
+            />
+            <TouchableOpacity className="p-1.5 rounded-full bg-slate-100">
+              <Shuffle size={16} color="#0f172a" />
+            </TouchableOpacity>
           </View>
-        ) : cards.length === 0 ? (
-          <EmptyState
-            title={t("flashcard_detail.empty_title", "Chưa có thẻ nào")}
-            description={t(
-              "flashcard_detail.empty_description",
-              "Thử thay đổi bộ lọc hoặc thêm từ mới vào bộ thẻ này."
-            )}
-          />
-        ) : (
-          <View>
-            {cards.map((card, index) => renderCardItem(card, index))}
-            {isFetching && (
-              <View className="py-4 flex-row items-center justify-center gap-2">
-                <Loader2 size={18} color="#94a3b8" />
-                <Text style={{ color: "#64748b" }}>
-                  {t("flashcard_detail.loading_more", "Đang cập nhật...")}
-                </Text>
+
+          <TouchableOpacity
+            className="mb-6 rounded-3xl overflow-hidden"
+            activeOpacity={isPracticeDisabled ? 1 : 0.9}
+            onPress={isPracticeDisabled ? undefined : handlePractice}
+            disabled={isPracticeDisabled}
+            style={{ opacity: isPracticeDisabled ? 0.5 : 1 }}
+          >
+            <LinearGradient colors={["#0ea5e9", "#2563eb"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+              <View className="flex-row items-center justify-between px-5 py-4">
+                <View>
+                  <Text style={{ color: "#fff", fontSize: 16, fontWeight: "700" }}>
+                    {t("flashcard_detail.practice_title", "Practice")}
+                  </Text>
+                  <Text style={{ color: "#e0f2fe", fontSize: 13, marginTop: 2 }}>
+                    {isPracticeDisabled
+                      ? t("flashcard_detail.practice_disabled_subtitle", "Cần ít nhất 1 thẻ để luyện tập")
+                      : t("flashcard_detail.practice_subtitle", "Xem lại bộ thẻ này ngay")}
+                  </Text>
+                </View>
               </View>
-            )}
-          </View>
-        )}
+            </LinearGradient>
+          </TouchableOpacity>
+
+          {isLoading ? (
+            <View className="py-12 items-center">
+              <ActivityIndicator size="large" color="#0ea5e9" />
+            </View>
+          ) : cards.length === 0 ? (
+            <EmptyState
+              title={t("flashcard_detail.empty_title", "Chưa có thẻ nào")}
+              description={t(
+                "flashcard_detail.empty_description",
+                "Thử thay đổi bộ lọc hoặc thêm từ mới vào bộ thẻ này.",
+              )}
+            />
+          ) : (
+            <View>
+              {cards.map((card, index) => renderCardItem(card, index))}
+              {isFetching && (
+                <View className="py-4 flex-row items-center justify-center gap-2">
+                  <Loader2 size={18} color="#94a3b8" />
+                  <Text style={{ color: "#64748b" }}>{t("flashcard_detail.loading_more", "Đang cập nhật...")}</Text>
+                </View>
+              )}
+            </View>
+          )}
         </ScrollView>
       </View>
 
@@ -929,9 +884,7 @@ const FlashcardDeckDetailScreen = () => {
                 <X size={20} color="#94a3b8" />
               </TouchableOpacity>
             </View>
-            <Text style={{ fontSize: 14, color: "#475569", marginBottom: 12 }}>
-              {selectedCard?.vocabulary?.wordJp}
-            </Text>
+            <Text style={{ fontSize: 14, color: "#475569", marginBottom: 12 }}>{selectedCard?.vocabulary?.wordJp}</Text>
             <View className="border border-slate-200 rounded-2xl bg-slate-50">
               <TextInput
                 multiline
@@ -970,21 +923,14 @@ const FlashcardDeckDetailScreen = () => {
         </View>
       </Modal>
 
-      <Modal
-        visible={editModalVisible}
-        animationType="fade"
-        transparent
-        onRequestClose={handleCloseEditModal}
-      >
+      <Modal visible={editModalVisible} animationType="fade" transparent onRequestClose={handleCloseEditModal}>
         <View className="flex-1 bg-black/40 justify-center items-center px-6">
           <View className="w-full max-w-md rounded-3xl bg-white p-6">
             <View className="flex-row justify-between items-center mb-4">
               <Text style={{ fontSize: 18, fontWeight: "700", color: "#0f172a" }}>
                 {isCreateMode
                   ? t("flashcard_detail.create_word_title", "Thêm từ mới")
-                  : `${t("flashcard_detail.edit_word_title", "Edit word")}: "${
-                      editingCard?.vocabulary?.wordJp || ""
-                    }"`}
+                  : `${t("flashcard_detail.edit_word_title", "Edit word")}: "${editingCard?.vocabulary?.wordJp || ""}"`}
               </Text>
               <TouchableOpacity onPress={handleCloseEditModal} disabled={isSavingCard}>
                 <X size={20} color="#94a3b8" />
@@ -1069,9 +1015,7 @@ const FlashcardDeckDetailScreen = () => {
                   <ActivityIndicator color="#fff" />
                 ) : (
                   <Text style={{ color: "#fff", fontWeight: "700" }}>
-                    {isCreateMode
-                      ? t("flashcard_detail.create_done", "Add")
-                      : t("flashcard_detail.edit_done", "Done")}
+                    {isCreateMode ? t("flashcard_detail.create_done", "Add") : t("flashcard_detail.edit_done", "Done")}
                   </Text>
                 )}
               </TouchableOpacity>
@@ -1084,4 +1028,3 @@ const FlashcardDeckDetailScreen = () => {
 };
 
 export default FlashcardDeckDetailScreen;
-

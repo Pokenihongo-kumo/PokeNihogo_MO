@@ -11,4 +11,3 @@ export const UpsertUserTestAnswerLogRequestSchema = z.object({
 });
 
 export type IUpsertUserTestAnswerLogRequest = z.infer<typeof UpsertUserTestAnswerLogRequestSchema>;
-

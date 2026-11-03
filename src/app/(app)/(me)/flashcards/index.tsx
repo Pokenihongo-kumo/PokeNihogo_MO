@@ -2,22 +2,13 @@ import EmptyState from "@components/ui/EmptyState";
 import { EnhancedPagination } from "@components/ui/Pagination";
 import { Select } from "@components/ui/Select";
 import { useDebounce } from "@hooks/useDebounce";
-import {
-  useCreateFlashcardDeck,
-  useFlashcardDecks,
-} from "@hooks/useFlashcard";
+import { useCreateFlashcardDeck, useFlashcardDecks } from "@hooks/useFlashcard";
 import { useMinimalAlert } from "@hooks/useMinimalAlert";
 import { IFlashcardDeck } from "@models/flashcard/flashcard.common";
 import { useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect } from "expo-router";
-import {
-  ChevronLeft,
-  Loader2,
-  Plus,
-  Search,
-  Sparkles,
-} from "lucide-react-native";
+import { ChevronLeft, Loader2, Plus, Search, Sparkles } from "lucide-react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -31,10 +22,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { getApiErrorMessage } from "@utils/api-error.utils";
 
 const ITEMS_PER_PAGE_OPTIONS = [
@@ -56,10 +44,7 @@ const formatDate = (date?: string | null) => {
   }
 };
 
-const statusBadgeStyles: Record<
-  string,
-  { bg: string; text: string; labelKey: string; fallback: string }
-> = {
+const statusBadgeStyles: Record<string, { bg: string; text: string; labelKey: string; fallback: string }> = {
   ACTIVE: {
     bg: "#dcfce7",
     text: "#15803d",
@@ -100,7 +85,7 @@ const FlashcardDeckListScreen = () => {
       pageSize,
       search: debouncedSearch || undefined,
     }),
-    [currentPage, pageSize, debouncedSearch]
+    [currentPage, pageSize, debouncedSearch],
   );
 
   const itemsPerPageSelectOptions = useMemo(
@@ -109,11 +94,10 @@ const FlashcardDeckListScreen = () => {
         label: t(option.labelKey, option.fallback),
         value: option.value,
       })),
-    [t]
+    [t],
   );
 
-  const { data, isLoading, isFetching, refetch } =
-    useFlashcardDecks(queryParams);
+  const { data, isLoading, isFetching, refetch } = useFlashcardDecks(queryParams);
   const createDeckMutation = useCreateFlashcardDeck();
 
   const decks: IFlashcardDeck[] = data?.data?.results ?? [];
@@ -125,18 +109,18 @@ const FlashcardDeckListScreen = () => {
   useFocusEffect(
     useCallback(() => {
       // Invalidate all flashcard-decks queries to trigger refetch
-      queryClient.invalidateQueries({ 
-        queryKey: ["flashcard-decks"] 
+      queryClient.invalidateQueries({
+        queryKey: ["flashcard-decks"],
       });
-    }, [queryClient])
+    }, [queryClient]),
   );
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
       // Invalidate and refetch all flashcard-decks queries
-      await queryClient.invalidateQueries({ 
-        queryKey: ["flashcard-decks"] 
+      await queryClient.invalidateQueries({
+        queryKey: ["flashcard-decks"],
       });
       // Also manually refetch to ensure fresh data
       await refetch();
@@ -175,9 +159,7 @@ const FlashcardDeckListScreen = () => {
       >
         <View className="flex-row justify-between items-center mb-3">
           <View className="flex-1 pr-4">
-            <Text style={{ fontSize: 18, fontWeight: "700", color: "#0f172a" }}>
-              {deck.name}
-            </Text>
+            <Text style={{ fontSize: 18, fontWeight: "700", color: "#0f172a" }}>{deck.name}</Text>
             <Text style={{ color: "#94a3b8", marginTop: 4, fontSize: 13 }}>
               ID #{deck.id} · {formatDate(deck.updatedAt || deck.createdAt)}
             </Text>
@@ -190,9 +172,7 @@ const FlashcardDeckListScreen = () => {
               borderRadius: 999,
             }}
           >
-            <Text
-              style={{ color: badge.text, fontWeight: "600", fontSize: 12 }}
-            >
+            <Text style={{ color: badge.text, fontWeight: "600", fontSize: 12 }}>
               {t(badge.labelKey, badge.fallback)}
             </Text>
           </View>
@@ -200,21 +180,13 @@ const FlashcardDeckListScreen = () => {
 
         <View className="flex-row items-center justify-between">
           <View>
-            <Text style={{ fontSize: 32, fontWeight: "800", color: "#0369a1" }}>
-              {deck.totalCards}
-            </Text>
-            <Text style={{ color: "#64748b", fontSize: 13 }}>
-              {t("flashcard_list.cards_count", "cards")}
-            </Text>
+            <Text style={{ fontSize: 32, fontWeight: "800", color: "#0369a1" }}>{deck.totalCards}</Text>
+            <Text style={{ color: "#64748b", fontSize: 13 }}>{t("flashcard_list.cards_count", "cards")}</Text>
           </View>
 
           <View className="items-end">
-            <Text style={{ color: "#94a3b8", fontSize: 12 }}>
-              {t("flashcard_list.created_at", "Created")}
-            </Text>
-            <Text style={{ color: "#0f172a", fontWeight: "600" }}>
-              {formatDate(deck.createdAt)}
-            </Text>
+            <Text style={{ color: "#94a3b8", fontSize: 12 }}>{t("flashcard_list.created_at", "Created")}</Text>
+            <Text style={{ color: "#0f172a", fontWeight: "600" }}>{formatDate(deck.createdAt)}</Text>
           </View>
         </View>
 
@@ -223,9 +195,7 @@ const FlashcardDeckListScreen = () => {
             className="flex-1 rounded-2xl bg-sky-500 py-3 items-center"
             onPress={() => handleViewDeck(deck)}
           >
-            <Text style={{ color: "#fff", fontWeight: "600" }}>
-              {t("flashcard_list.view_detail", "View detail")}
-            </Text>
+            <Text style={{ color: "#fff", fontWeight: "600" }}>{t("flashcard_list.view_detail", "View detail")}</Text>
           </TouchableOpacity>
           {/* <TouchableOpacity
             className="flex-1 rounded-2xl bg-sky-500 py-3 items-center"
@@ -256,9 +226,7 @@ const FlashcardDeckListScreen = () => {
   const handleCreateDeck = () => {
     const trimmedName = newDeckName.trim();
     if (!trimmedName) {
-      setCreateDeckError(
-        t("flashcard_list.create_error_required", "Tên bộ flashcard không được để trống")
-      );
+      setCreateDeckError(t("flashcard_list.create_error_required", "Tên bộ flashcard không được để trống"));
       return;
     }
 
@@ -268,14 +236,11 @@ const FlashcardDeckListScreen = () => {
       {
         onSuccess: () => {
           showAlert(
-            `${t(
-              "flashcard_list.create_success_title",
-              "Tạo bộ flashcard thành công"
-            )} - ${t(
+            `${t("flashcard_list.create_success_title", "Tạo bộ flashcard thành công")} - ${t(
               "flashcard_list.create_success_desc",
-              "Bạn có thể thêm từ mới ngay bây giờ."
+              "Bạn có thể thêm từ mới ngay bây giờ.",
             )}`,
-            "success"
+            "success",
           );
           setIsCreateModalVisible(false);
           setNewDeckName("");
@@ -283,17 +248,11 @@ const FlashcardDeckListScreen = () => {
         onError: (error: any) => {
           const message = getApiErrorMessage(
             error,
-            t("flashcard_list.create_error_desc", "Không thể tạo bộ flashcard. Vui lòng thử lại.")
+            t("flashcard_list.create_error_desc", "Không thể tạo bộ flashcard. Vui lòng thử lại."),
           );
-          showAlert(
-            `${t(
-              "flashcard_list.create_error_title",
-              "Tạo bộ flashcard thất bại"
-            )} - ${message}`,
-            "error"
-          );
+          showAlert(`${t("flashcard_list.create_error_title", "Tạo bộ flashcard thất bại")} - ${message}`, "error");
         },
-      }
+      },
     );
   };
 
@@ -301,10 +260,7 @@ const FlashcardDeckListScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f8fafc" }}>
       <View className="flex-1 bg-slate-50">
         <View className="px-4 py-3 flex-row items-center justify-between bg-white border-b border-slate-100">
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="p-2 rounded-full bg-slate-100"
-          >
+          <TouchableOpacity onPress={() => router.back()} className="p-2 rounded-full bg-slate-100">
             <ChevronLeft size={20} color="#0f172a" />
           </TouchableOpacity>
           <Text style={{ fontSize: 18, fontWeight: "700", color: "#0f172a" }}>
@@ -325,26 +281,16 @@ const FlashcardDeckListScreen = () => {
             padding: 16,
             paddingBottom: insetBottom + 120,
           }}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         >
-          <LinearGradient
-            colors={["#cffafe", "#e0f2fe"]}
-            className="rounded-3xl mb-5 overflow-hidden"
-          >
+          <LinearGradient colors={["#cffafe", "#e0f2fe"]} className="rounded-3xl mb-5 overflow-hidden">
             <View className="px-5 py-5 flex-row items-center justify-between">
               <View style={{ flex: 1, paddingRight: 12 }}>
-                <Text
-                  style={{ fontSize: 20, fontWeight: "800", color: "#0f172a" }}
-                >
+                <Text style={{ fontSize: 20, fontWeight: "800", color: "#0f172a" }}>
                   {t("flashcard_list.hero_title", "Quản lý bộ flashcard")}
                 </Text>
                 <Text style={{ marginTop: 6, color: "#0f172a", opacity: 0.7 }}>
-                  {t(
-                    "flashcard_list.hero_subtitle",
-                    "Xem nhanh tiến độ và mở bộ thẻ để ôn luyện."
-                  )}
+                  {t("flashcard_list.hero_subtitle", "Xem nhanh tiến độ và mở bộ thẻ để ôn luyện.")}
                 </Text>
               </View>
               <View className="h-14 w-14 rounded-2xl bg-white/80 items-center justify-center">
@@ -356,10 +302,7 @@ const FlashcardDeckListScreen = () => {
           <View className="bg-white border border-slate-200 rounded-2xl px-4 py-3 mb-4 flex-row items-center">
             <Search size={18} color="#94a3b8" />
             <TextInput
-              placeholder={t(
-                "flashcard_list.search_placeholder",
-                "Search flashcard decks..."
-              )}
+              placeholder={t("flashcard_list.search_placeholder", "Search flashcard decks...")}
               placeholderTextColor="#94a3b8"
               value={search}
               onChangeText={setSearch}
@@ -380,10 +323,7 @@ const FlashcardDeckListScreen = () => {
           ) : decks.length === 0 ? (
             <EmptyState
               title={t("flashcard_list.empty_title", "Chưa có bộ flashcard")}
-              description={t(
-                "flashcard_list.empty_description",
-                "Tạo bộ flashcard đầu tiên để bắt đầu luyện tập."
-              )}
+              description={t("flashcard_list.empty_description", "Tạo bộ flashcard đầu tiên để bắt đầu luyện tập.")}
             />
           ) : (
             <>
@@ -391,9 +331,7 @@ const FlashcardDeckListScreen = () => {
               {isFetching && (
                 <View className="py-4 flex-row items-center justify-center gap-2">
                   <Loader2 size={18} color="#94a3b8" />
-                  <Text style={{ color: "#64748b" }}>
-                    {t("flashcard_list.loading_more", "Đang tải thêm...")}
-                  </Text>
+                  <Text style={{ color: "#64748b" }}>{t("flashcard_list.loading_more", "Đang tải thêm...")}</Text>
                 </View>
               )}
             </>
@@ -443,12 +381,7 @@ const FlashcardDeckListScreen = () => {
         </View>
       </View>
 
-      <Modal
-        visible={isCreateModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={handleCloseCreateModal}
-      >
+      <Modal visible={isCreateModalVisible} transparent animationType="fade" onRequestClose={handleCloseCreateModal}>
         <View
           style={{
             flex: 1,
@@ -480,10 +413,7 @@ const FlashcardDeckListScreen = () => {
               {t("flashcard_list.create_modal_title", "Tạo bộ flashcard mới")}
             </Text>
             <TextInput
-              placeholder={t(
-                "flashcard_list.create_modal_placeholder",
-                "Nhập tên bộ flashcard"
-              )}
+              placeholder={t("flashcard_list.create_modal_placeholder", "Nhập tên bộ flashcard")}
               placeholderTextColor="#94a3b8"
               value={newDeckName}
               onChangeText={setNewDeckName}
@@ -499,11 +429,7 @@ const FlashcardDeckListScreen = () => {
               editable={!createDeckMutation.isPending}
               autoFocus
             />
-            {createDeckError ? (
-              <Text style={{ color: "#dc2626", fontSize: 13 }}>
-                {createDeckError}
-              </Text>
-            ) : null}
+            {createDeckError ? <Text style={{ color: "#dc2626", fontSize: 13 }}>{createDeckError}</Text> : null}
             <View
               style={{
                 flexDirection: "row",
@@ -519,9 +445,7 @@ const FlashcardDeckListScreen = () => {
                   paddingHorizontal: 16,
                 }}
               >
-                <Text style={{ color: "#64748b", fontWeight: "600" }}>
-                  {t("common.cancel", "Hủy")}
-                </Text>
+                <Text style={{ color: "#64748b", fontWeight: "600" }}>{t("common.cancel", "Hủy")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleCreateDeck}
@@ -537,9 +461,7 @@ const FlashcardDeckListScreen = () => {
                   opacity: createDeckMutation.isPending ? 0.7 : 1,
                 }}
               >
-                {createDeckMutation.isPending && (
-                  <ActivityIndicator size="small" color="#fff" />
-                )}
+                {createDeckMutation.isPending && <ActivityIndicator size="small" color="#fff" />}
                 <Text style={{ color: "#fff", fontWeight: "700" }}>
                   {t("flashcard_list.create_modal_submit", "Tạo mới")}
                 </Text>

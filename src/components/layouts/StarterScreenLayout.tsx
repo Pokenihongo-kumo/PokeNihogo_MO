@@ -31,10 +31,7 @@ export default function StarterScreenLayout({
   // RENDER
   // ============================================================================
   return (
-    <LinearGradient
-      colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
-      style={{ flex: 1 }}
-    >
+    <LinearGradient colors={["#79B4C4", "#85C3C3", "#9BC7B9"]} style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" />
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header Section - Back button and progress indicator */}
@@ -48,15 +45,11 @@ export default function StarterScreenLayout({
             }}
           >
             {/* Back Button */}
-            <View style={{ width: 40 }}>
-              {onBack && <BackScreen noWrapper onPress={onBack} />}
-            </View>
+            <View style={{ width: 40 }}>{onBack && <BackScreen noWrapper onPress={onBack} />}</View>
 
             {/* Step Progress Indicator */}
             {currentStep && (
-              <View
-                style={{ flex: 1, alignItems: "center", paddingVertical: 30 }}
-              >
+              <View style={{ flex: 1, alignItems: "center", paddingVertical: 30 }}>
                 <StepProgress
                   currentStep={currentStep}
                   totalSteps={totalSteps}

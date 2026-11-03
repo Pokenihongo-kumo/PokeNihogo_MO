@@ -9,25 +9,13 @@ interface UserAvatarProps {
   onPress?: () => void;
 }
 
-export default function UserAvatar({
-  name,
-  avatar,
-  size = "small",
-  style,
-  onPress,
-}: UserAvatarProps) {
+export default function UserAvatar({ name, avatar, size = "small", style, onPress }: UserAvatarProps) {
   const isLarge = size === "large";
   const avatarSize = isLarge ? 96 : 40;
   const fontSize = isLarge ? 40 : 18;
 
   const AvatarContent = () => (
-    <View
-      style={[
-        styles.container,
-        { width: avatarSize, height: avatarSize },
-        style,
-      ]}
-    >
+    <View style={[styles.container, { width: avatarSize, height: avatarSize }, style]}>
       {avatar ? (
         <Image
           source={{ uri: avatar }}
@@ -51,9 +39,7 @@ export default function UserAvatar({
             },
           ]}
         >
-          <Text style={[styles.placeholderText, { fontSize }]}>
-            {name?.charAt(0)?.toUpperCase()}
-          </Text>
+          <Text style={[styles.placeholderText, { fontSize }]}>{name?.charAt(0)?.toUpperCase()}</Text>
         </View>
       )}
     </View>

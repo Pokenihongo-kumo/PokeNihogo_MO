@@ -114,21 +114,25 @@ export const ExerciseHistoryItemSchema = z.object({
   time: z.number(), // time spent in seconds
   status: z.nativeEnum(ExerciseAttemptStatus),
   completedAt: z.string(),
-  lesson: z.object({
-    id: z.number(),
-    titleJp: z.string(),
-    levelJlpt: z.number(),
-  }).optional(),
+  lesson: z
+    .object({
+      id: z.number(),
+      titleJp: z.string(),
+      levelJlpt: z.number(),
+    })
+    .optional(),
 });
 
 export const ExerciseHistoryListResponseSchema = z.object({
   statusCode: z.number(),
   message: z.string(),
-  data: z.object({
-    results: z.array(ExerciseHistoryItemSchema),
-    totalCount: z.number(),
-    hasMore: z.boolean().optional(),
-  }).optional(),
+  data: z
+    .object({
+      results: z.array(ExerciseHistoryItemSchema),
+      totalCount: z.number(),
+      hasMore: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 export type IExerciseHistoryItem = z.infer<typeof ExerciseHistoryItemSchema>;
@@ -168,4 +172,3 @@ export const LessonExercisesResponseSchema = z.object({
 export type IExerciseReward = z.infer<typeof ExerciseRewardSchema>;
 export type ILessonExerciseItem = z.infer<typeof LessonExerciseItemSchema>;
 export type ILessonExercisesResponse = z.infer<typeof LessonExercisesResponseSchema>;
-

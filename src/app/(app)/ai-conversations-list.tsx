@@ -67,24 +67,18 @@ export default function AiConversationsListScreen() {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [conversationToDelete, setConversationToDelete] = useState<ConversationRoom | null>(null);
   const swipeableRefs = useRef<{ [key: string]: Swipeable | null }>({});
-  
+
   const hasAIKaiwa = useCheckFeature(SubscriptionFeatureKey.AI_KAIWA);
-  const {
-    data: marketplaceResponse,
-    isLoading: isMarketplaceLoading,
-  } = useSubscriptionMarketplacePackages();
-  
+  const { data: marketplaceResponse, isLoading: isMarketplaceLoading } = useSubscriptionMarketplacePackages();
+
   const { data, isLoading, refetch } = useConversationRooms({
     currentPage: 1,
     pageSize: 50,
   });
-  
+
   const deleteMutation = useDeleteConversationRoom();
 
-  const conversations = useMemo(
-    () => data?.results ?? [],
-    [data?.results]
-  );
+  const conversations = useMemo(() => data?.results ?? [], [data?.results]);
 
   const marketplacePackages: MarketplacePackage[] | undefined = useMemo(() => {
     return marketplaceResponse?.data?.data as MarketplacePackage[] | undefined;
@@ -95,9 +89,7 @@ export default function AiConversationsListScreen() {
       return undefined;
     }
     return marketplacePackages.find(
-      (pkg) =>
-        pkg.tagName?.toUpperCase() === "ULTRA" ||
-        pkg.nameTranslation?.toLowerCase().includes("ultra")
+      (pkg) => pkg.tagName?.toUpperCase() === "ULTRA" || pkg.nameTranslation?.toLowerCase().includes("ultra"),
     );
   }, [marketplacePackages]);
 
@@ -107,10 +99,7 @@ export default function AiConversationsListScreen() {
         ?.map((feature) => {
           const name = feature.feature?.nameTranslation;
           if (!name) return null;
-          const valueSuffix =
-            feature.value && feature.value !== "null"
-              ? ` (x${feature.value})`
-              : "";
+          const valueSuffix = feature.value && feature.value !== "null" ? ` (x${feature.value})` : "";
           return `${name}${valueSuffix}`;
         })
         ?.filter((item): item is string => Boolean(item)) ?? []
@@ -140,8 +129,7 @@ export default function AiConversationsListScreen() {
       const lower = feature.toLowerCase();
       return priorityKeywords.some((keyword) => lower.includes(keyword));
     });
-    const highlightSource =
-      prioritized.length > 0 ? prioritized : ultraFeatures;
+    const highlightSource = prioritized.length > 0 ? prioritized : ultraFeatures;
     return highlightSource
       .slice(0, 2)
       .map((feature) => feature.replace(/\(x[0-9.]+\)/i, "").trim())
@@ -154,7 +142,7 @@ export default function AiConversationsListScreen() {
       title: t("home.ai.conversation.hero_title"),
       subtitle: t("home.ai.conversation.hero_subtitle"),
     }),
-    [t]
+    [t],
   );
 
   const heroStats = useMemo(
@@ -172,7 +160,7 @@ export default function AiConversationsListScreen() {
         label: t("home.ai.conversation.hero_stats_consistency_label"),
       },
     ],
-    [t]
+    [t],
   );
 
   const featureHighlights = useMemo(() => {
@@ -186,17 +174,14 @@ export default function AiConversationsListScreen() {
     ];
   }, [ultraFeatures, t]);
 
-  const socialProofText = useMemo(
-    () => t("home.ai.conversation.social_proof"),
-    [t]
-  );
+  const socialProofText = useMemo(() => t("home.ai.conversation.social_proof"), [t]);
 
   const guaranteeCopy = useMemo(
     () => ({
       title: t("home.ai.conversation.guarantee_title"),
       subtitle: t("home.ai.conversation.guarantee_subtitle"),
     }),
-    [t]
+    [t],
   );
 
   const onRefresh = useCallback(async () => {
@@ -227,7 +212,7 @@ export default function AiConversationsListScreen() {
         params: { conversationId: conversation.conversationId },
       });
     },
-    [closeAllSwipeables]
+    [closeAllSwipeables],
   );
 
   const handleNewConversation = useCallback(() => {
@@ -247,13 +232,10 @@ export default function AiConversationsListScreen() {
     // Optional: handle when swipeable closes
   }, []);
 
-  const handleDeleteConversation = useCallback(
-    (conversation: ConversationRoom) => {
-      setConversationToDelete(conversation);
-      setDeleteModalVisible(true);
-    },
-    []
-  );
+  const handleDeleteConversation = useCallback((conversation: ConversationRoom) => {
+    setConversationToDelete(conversation);
+    setDeleteModalVisible(true);
+  }, []);
 
   const handleConfirmDelete = useCallback(async () => {
     if (!conversationToDelete) return;
@@ -266,23 +248,13 @@ export default function AiConversationsListScreen() {
       if (swipeableRefs.current[conversationToDelete.conversationId]) {
         swipeableRefs.current[conversationToDelete.conversationId]?.close();
       }
-      setAlertMessage(
-        t(
-          "home.ai.conversation.delete_success",
-          "Đã xóa cuộc hội thoại thành công"
-        )
-      );
+      setAlertMessage(t("home.ai.conversation.delete_success", "Đã xóa cuộc hội thoại thành công"));
       setAlertType("success");
       setAlertVisible(true);
     } catch {
       setDeleteModalVisible(false);
       setConversationToDelete(null);
-      setAlertMessage(
-        t(
-          "home.ai.conversation.delete_error",
-          "Không thể xóa cuộc hội thoại. Vui lòng thử lại."
-        )
-      );
+      setAlertMessage(t("home.ai.conversation.delete_error", "Không thể xóa cuộc hội thoại. Vui lòng thử lại."));
       setAlertType("error");
       setAlertVisible(true);
     }
@@ -312,13 +284,10 @@ export default function AiConversationsListScreen() {
         onSwipeableClose={handleSwipeableClose}
       />
     ),
-    [handleSelectConversation, handleDeleteConversation, handleSwipeableWillOpen, handleSwipeableClose]
+    [handleSelectConversation, handleDeleteConversation, handleSwipeableWillOpen, handleSwipeableClose],
   );
 
-  const keyExtractor = useCallback(
-    (item: ConversationRoom) => item.conversationId,
-    []
-  );
+  const keyExtractor = useCallback((item: ConversationRoom) => item.conversationId, []);
 
   const renderEmpty = useCallback(
     () => (
@@ -328,16 +297,9 @@ export default function AiConversationsListScreen() {
           {t("home.ai.conversation.list_empty_title", "No conversations yet")}
         </ThemedText>
         <ThemedText style={styles.emptyDescription}>
-          {t(
-            "home.ai.conversation.list_empty_description",
-            "Start a new conversation to practice Japanese with AI"
-          )}
+          {t("home.ai.conversation.list_empty_description", "Start a new conversation to practice Japanese with AI")}
         </ThemedText>
-        <TouchableOpacity
-          onPress={handleNewConversation}
-          style={styles.emptyButton}
-          activeOpacity={0.85}
-        >
+        <TouchableOpacity onPress={handleNewConversation} style={styles.emptyButton} activeOpacity={0.85}>
           <Plus size={20} color="#ffffff" />
           <ThemedText style={styles.emptyButtonText}>
             {t("home.ai.conversation.new_conversation", "New Conversation")}
@@ -345,17 +307,14 @@ export default function AiConversationsListScreen() {
         </TouchableOpacity>
       </View>
     ),
-    [handleNewConversation, t]
+    [handleNewConversation, t],
   );
 
   const hasConversations = conversations.length > 0;
   const isInitialLoading = isLoading && !hasConversations;
   const listContentStyle = useMemo(
-    () =>
-      hasConversations
-        ? styles.listContent
-        : [styles.listContent, styles.listContentEmpty],
-    [hasConversations]
+    () => (hasConversations ? styles.listContent : [styles.listContent, styles.listContentEmpty]),
+    [hasConversations],
   );
 
   return (
@@ -369,9 +328,7 @@ export default function AiConversationsListScreen() {
         >
           <ArrowLeft size={22} color="#111827" />
         </TouchableOpacity>
-        <ThemedText style={styles.headerTitle}>
-          {t("home.ai.conversation.list_title", "AI Conversations")}
-        </ThemedText>
+        <ThemedText style={styles.headerTitle}>{t("home.ai.conversation.list_title", "AI Conversations")}</ThemedText>
         <View style={{ width: 22 }} />
       </View>
 
@@ -409,11 +366,7 @@ export default function AiConversationsListScreen() {
               }}
             >
               <Sparkles size={14} color="#fef9c3" style={{ marginRight: 6 }} />
-              <ThemedText
-                style={{ color: "#fffbea", fontSize: 13, fontWeight: "600" }}
-              >
-                {heroContent.badge}
-              </ThemedText>
+              <ThemedText style={{ color: "#fffbea", fontSize: 13, fontWeight: "600" }}>{heroContent.badge}</ThemedText>
             </View>
 
             <ThemedText
@@ -500,11 +453,7 @@ export default function AiConversationsListScreen() {
                   alignItems: index === 1 ? "center" : index === 2 ? "flex-end" : "flex-start",
                 }}
               >
-                <ThemedText
-                  style={{ fontSize: 20, fontWeight: "800", color: "#5b21b6" }}
-                >
-                  {stat.value}
-                </ThemedText>
+                <ThemedText style={{ fontSize: 20, fontWeight: "800", color: "#5b21b6" }}>{stat.value}</ThemedText>
                 <ThemedText
                   style={{
                     marginTop: 4,
@@ -537,8 +486,7 @@ export default function AiConversationsListScreen() {
                 marginBottom: 6,
               }}
             >
-              {ultraPackage?.nameTranslation ||
-                t("home.ai.conversation.locked_title")}
+              {ultraPackage?.nameTranslation || t("home.ai.conversation.locked_title")}
             </ThemedText>
             <ThemedText
               style={{
@@ -548,8 +496,7 @@ export default function AiConversationsListScreen() {
                 lineHeight: 22,
               }}
             >
-              {ultraPackage?.descriptionTranslation ||
-                t("home.ai.conversation.locked_description")}
+              {ultraPackage?.descriptionTranslation || t("home.ai.conversation.locked_description")}
             </ThemedText>
 
             {formattedUltraPrice ? (
@@ -736,9 +683,7 @@ export default function AiConversationsListScreen() {
               <ShieldCheck color="#1d4ed8" size={22} />
             </View>
             <View style={{ flex: 1 }}>
-              <ThemedText
-                style={{ fontSize: 16, fontWeight: "700", color: "#111827" }}
-              >
+              <ThemedText style={{ fontSize: 16, fontWeight: "700", color: "#111827" }}>
                 {guaranteeCopy.title}
               </ThemedText>
               <ThemedText
@@ -767,38 +712,26 @@ export default function AiConversationsListScreen() {
       ) : isInitialLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#007AFF" />
-          <ThemedText style={styles.loadingText}>
-            {t("home.ai.conversation.loading", "Loading...")}
-          </ThemedText>
+          <ThemedText style={styles.loadingText}>{t("home.ai.conversation.loading", "Loading...")}</ThemedText>
         </View>
       ) : (
         <>
-        <FlatList
-          data={conversations}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          contentContainerStyle={listContentStyle}
-          ListEmptyComponent={renderEmpty}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor="#007AFF"
-            />
-          }
-          showsVerticalScrollIndicator={false}
-          onScrollBeginDrag={closeAllSwipeables}
-        />
+          <FlatList
+            data={conversations}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            contentContainerStyle={listContentStyle}
+            ListEmptyComponent={renderEmpty}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#007AFF" />}
+            showsVerticalScrollIndicator={false}
+            onScrollBeginDrag={closeAllSwipeables}
+          />
 
-      {/* Floating Action Button */}
-      {hasConversations && (
-        <TouchableOpacity
-          onPress={handleNewConversation}
-          style={styles.fab}
-          activeOpacity={0.8}
-        >
-          <Plus size={24} color="#ffffff" />
-        </TouchableOpacity>
+          {/* Floating Action Button */}
+          {hasConversations && (
+            <TouchableOpacity onPress={handleNewConversation} style={styles.fab} activeOpacity={0.8}>
+              <Plus size={24} color="#ffffff" />
+            </TouchableOpacity>
           )}
         </>
       )}
@@ -809,7 +742,7 @@ export default function AiConversationsListScreen() {
         title={t("home.ai.conversation.delete_confirm_title", "Xóa cuộc hội thoại")}
         message={t(
           "home.ai.conversation.delete_confirm_message",
-          "Bạn có chắc chắn muốn xóa cuộc hội thoại này? Hành động này không thể hoàn tác."
+          "Bạn có chắc chắn muốn xóa cuộc hội thoại này? Hành động này không thể hoàn tác.",
         )}
         buttons={[
           {
@@ -925,6 +858,6 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     backgroundColor: "#007AFF",
     alignItems: "center",
-    justifyContent: "center",},
+    justifyContent: "center",
+  },
 });
-

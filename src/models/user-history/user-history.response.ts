@@ -69,4 +69,3 @@ export const RecentExercisesResponseSchema = z.object({
 
 export type IRecentExerciseItem = z.infer<typeof RecentExerciseItemSchema>;
 export type IRecentExercisesResponse = z.infer<typeof RecentExercisesResponseSchema>;
-

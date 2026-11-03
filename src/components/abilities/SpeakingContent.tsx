@@ -35,41 +35,25 @@ const SpeakingCard: React.FC<{
   onLockedPress: () => void;
 }> = ({ item, onPress, onLockedPress }) => {
   const isLocked = item.status === "NOT_STARTED";
-  const isUnlimited =
-    item.limit === 0 && (item.test?.limit === 0 || item.test?.limit == null);
+  const isUnlimited = item.limit === 0 && (item.test?.limit === 0 || item.test?.limit == null);
 
   return (
     <TouchableOpacity
-      style={[
-        styles.card,
-        { borderLeftColor: SPEAKING_ACCENT },
-        isLocked && styles.lockedCard,
-      ]}
+      style={[styles.card, { borderLeftColor: SPEAKING_ACCENT }, isLocked && styles.lockedCard]}
       onPress={isLocked ? onLockedPress : onPress}
       activeOpacity={0.8}
     >
       <View style={styles.cardHeader}>
-        <View
-          style={[
-            styles.iconContainer,
-            { backgroundColor: "#8b5cf6" },
-            isLocked && styles.lockedIconContainer,
-          ]}
-        >
+        <View style={[styles.iconContainer, { backgroundColor: "#8b5cf6" }, isLocked && styles.lockedIconContainer]}>
           <Mic size={24} color={isLocked ? "#9ca3af" : "#ffffff"} />
         </View>
         <View style={styles.exerciseInfo}>
           <View style={styles.materialHeaderRow}>
-            <ThemedText
-              type="subtitle"
-              style={[styles.exerciseTitle, isLocked && styles.lockedText]}
-            >
+            <ThemedText type="subtitle" style={[styles.exerciseTitle, isLocked && styles.lockedText]}>
               {item.test?.name}
             </ThemedText>
             <View style={styles.levelBadge}>
-              <ThemedText style={styles.levelText}>
-                N{item.test?.levelN}
-              </ThemedText>
+              <ThemedText style={styles.levelText}>N{item.test?.levelN}</ThemedText>
             </View>
           </View>
         </View>
@@ -194,16 +178,10 @@ export const SpeakingContent: React.FC = () => {
       </ThemedText>
 
       <View style={styles.exercisesContainer}>
-        {isLoading && (
-          <ThemedText style={{ textAlign: "center" }}>
-            {t("common.loading", "Loading...")}
-          </ThemedText>
-        )}
+        {isLoading && <ThemedText style={{ textAlign: "center" }}>{t("common.loading", "Loading...")}</ThemedText>}
         {!!error && (
           <ThemedText style={{ textAlign: "center", color: "#ef4444" }}>
-            {error instanceof Error
-              ? error.message
-              : t("common.error", "Error")}
+            {error instanceof Error ? error.message : t("common.error", "Error")}
           </ThemedText>
         )}
         {!isLoading &&
@@ -232,18 +210,10 @@ export const SpeakingContent: React.FC = () => {
           💡 {t("speaking.tips_title")}
         </ThemedText>
         <View style={styles.tipsList}>
-          <ThemedText style={styles.tipItem}>
-            • {t("speaking.tip_1")}
-          </ThemedText>
-          <ThemedText style={styles.tipItem}>
-            • {t("speaking.tip_2")}
-          </ThemedText>
-          <ThemedText style={styles.tipItem}>
-            • {t("speaking.tip_3")}
-          </ThemedText>
-          <ThemedText style={styles.tipItem}>
-            • {t("speaking.tip_4")}
-          </ThemedText>
+          <ThemedText style={styles.tipItem}>• {t("speaking.tip_1")}</ThemedText>
+          <ThemedText style={styles.tipItem}>• {t("speaking.tip_2")}</ThemedText>
+          <ThemedText style={styles.tipItem}>• {t("speaking.tip_3")}</ThemedText>
+          <ThemedText style={styles.tipItem}>• {t("speaking.tip_4")}</ThemedText>
         </View>
       </ThemedView>
     </View>

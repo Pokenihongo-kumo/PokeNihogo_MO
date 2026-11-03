@@ -7,7 +7,7 @@ import { ThemedText } from "./ThemedText";
 
 interface KanjiWriterProps {
   character: string;
-  mode?: 'practice' | 'quiz' | 'review'; // practice: ôn tập, quiz: kiểm tra, review: xem lại
+  mode?: "practice" | "quiz" | "review"; // practice: ôn tập, quiz: kiểm tra, review: xem lại
   onComplete?: (totalMistakes: number) => void;
   onCorrectStroke?: () => void;
   onMistake?: (strokeData: any) => void;
@@ -15,7 +15,7 @@ interface KanjiWriterProps {
 
 const KanjiWriter: React.FC<KanjiWriterProps> = ({
   character,
-  mode = 'practice', // Default to practice mode
+  mode = "practice", // Default to practice mode
   onComplete,
   onCorrectStroke,
   onMistake,
@@ -24,9 +24,7 @@ const KanjiWriter: React.FC<KanjiWriterProps> = ({
   const writer = useHanziWriter({
     character,
     loader: (char) => {
-      return fetch(
-        `https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`
-      ).then((res) => res.json());
+      return fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`).then((res) => res.json());
     },
   });
 
@@ -39,8 +37,8 @@ const KanjiWriter: React.FC<KanjiWriterProps> = ({
   const [showOutline, setShowOutline] = useState(true);
 
   // Mode-based configurations
-  const isQuizMode = mode === 'quiz';
-  const isReviewMode = mode === 'review';
+  const isQuizMode = mode === "quiz";
+  const isReviewMode = mode === "review";
 
   // Quiz mode: hide all options, only show quiz
   // Practice mode: show all options
@@ -80,57 +78,40 @@ const KanjiWriter: React.FC<KanjiWriterProps> = ({
           {isQuizMode
             ? t("kanji_writer.title.quiz", { character })
             : isReviewMode
-            ? t("kanji_writer.title.review", { character })
-            : t("kanji_writer.title.practice", { character })}
+              ? t("kanji_writer.title.review", { character })
+              : t("kanji_writer.title.practice", { character })}
         </ThemedText>
 
         {/* Toggle Controls - Only show in practice and review mode */}
         {!isQuizMode && (
           <View className="flex-row gap-2 mb-4 justify-center">
             <TouchableOpacity
-              className={`px-3 py-2 rounded-lg flex-row items-center ${
-                showGridlines ? "bg-blue-500" : "bg-gray-300"
-              }`}
+              className={`px-3 py-2 rounded-lg flex-row items-center ${showGridlines ? "bg-blue-500" : "bg-gray-300"}`}
               onPress={() => setShowGridlines(!showGridlines)}
             >
-              <Text className="text-white text-xs font-medium">
-                {t("kanji_writer.controls.gridlines")}
-              </Text>
+              <Text className="text-white text-xs font-medium">{t("kanji_writer.controls.gridlines")}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              className={`px-3 py-2 rounded-lg flex-row items-center ${
-                showCharacter ? "bg-blue-500" : "bg-gray-300"
-              }`}
+              className={`px-3 py-2 rounded-lg flex-row items-center ${showCharacter ? "bg-blue-500" : "bg-gray-300"}`}
               onPress={() => setShowCharacter(!showCharacter)}
             >
-              <Text className="text-white text-xs font-medium">
-                {t("kanji_writer.controls.character")}
-              </Text>
+              <Text className="text-white text-xs font-medium">{t("kanji_writer.controls.character")}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              className={`px-3 py-2 rounded-lg flex-row items-center ${
-                showOutline ? "bg-blue-500" : "bg-gray-300"
-              }`}
+              className={`px-3 py-2 rounded-lg flex-row items-center ${showOutline ? "bg-blue-500" : "bg-gray-300"}`}
               onPress={() => setShowOutline(!showOutline)}
             >
-              <Text className="text-white text-xs font-medium">
-                {t("kanji_writer.controls.outline")}
-              </Text>
+              <Text className="text-white text-xs font-medium">{t("kanji_writer.controls.outline")}</Text>
             </TouchableOpacity>
           </View>
         )}
 
-        <View
-          className="items-center justify-center mb-4"
-          style={{ height: 320 }}
-        >
+        <View className="items-center justify-center mb-4" style={{ height: 320 }}>
           <HanziWriter
             writer={writer}
-            loading={
-              <Text>{t("common.loading", { defaultValue: "Loading..." })}</Text>
-            }
+            loading={<Text>{t("common.loading", { defaultValue: "Loading..." })}</Text>}
             error={
               <View className="items-center">
                 <Text>{t("kanji_writer.load_error")}</Text>
@@ -150,14 +131,9 @@ const KanjiWriter: React.FC<KanjiWriterProps> = ({
             {!isQuizMode && showGridlines && <HanziWriter.GridLines color="#ddd" />}
             <HanziWriter.Svg>
               {!isQuizMode && showOutline && <HanziWriter.Outline color="#ccc" />}
-              {!isQuizMode && showCharacter && (
-                <HanziWriter.Character color="#555" radicalColor="green" />
-              )}
+              {!isQuizMode && showCharacter && <HanziWriter.Character color="#555" radicalColor="green" />}
               <HanziWriter.QuizStrokes />
-              <HanziWriter.QuizMistakeHighlighter
-                color="#539bf5"
-                strokeDuration={400}
-              />
+              <HanziWriter.QuizMistakeHighlighter color="#539bf5" strokeDuration={400} />
             </HanziWriter.Svg>
           </HanziWriter>
         </View>
@@ -168,15 +144,11 @@ const KanjiWriter: React.FC<KanjiWriterProps> = ({
             /* Quiz Mode: Only Start Quiz button */
             <View className="items-center">
               <TouchableOpacity
-                className={`px-6 py-3 rounded-lg ${
-                  quizActive ? "bg-red-500" : "bg-green-500"
-                }`}
+                className={`px-6 py-3 rounded-lg ${quizActive ? "bg-red-500" : "bg-green-500"}`}
                 onPress={quizActive ? writer.quiz.stop : startQuiz}
               >
                 <ThemedText className="text-white text-sm font-medium">
-                  {quizActive
-                    ? t("kanji_writer.buttons.stop_quiz")
-                    : t("kanji_writer.buttons.start_quiz")}
+                  {quizActive ? t("kanji_writer.buttons.stop_quiz") : t("kanji_writer.buttons.start_quiz")}
                 </ThemedText>
               </TouchableOpacity>
             </View>
@@ -189,15 +161,11 @@ const KanjiWriter: React.FC<KanjiWriterProps> = ({
                   {t("kanji_writer.sections.quiz")}
                 </ThemedText>
                 <TouchableOpacity
-                  className={`px-4 py-2 rounded-lg ${
-                    quizActive ? "bg-red-500" : "bg-gray-500"
-                  }`}
+                  className={`px-4 py-2 rounded-lg ${quizActive ? "bg-red-500" : "bg-gray-500"}`}
                   onPress={quizActive ? writer.quiz.stop : startQuiz}
                 >
                   <ThemedText className="text-white text-xs font-medium">
-                    {quizActive
-                      ? t("kanji_writer.buttons.stop_quiz")
-                      : t("kanji_writer.buttons.start_quiz")}
+                    {quizActive ? t("kanji_writer.buttons.stop_quiz") : t("kanji_writer.buttons.start_quiz")}
                   </ThemedText>
                 </TouchableOpacity>
               </View>
@@ -205,26 +173,18 @@ const KanjiWriter: React.FC<KanjiWriterProps> = ({
               {/* ANIMATE Section */}
               <View className="items-center">
                 <ThemedText className="text-sm font-semibold text-gray-600 mb-2">
-                  {isReviewMode
-                    ? t("kanji_writer.sections.review")
-                    : t("kanji_writer.sections.animate")}
+                  {isReviewMode ? t("kanji_writer.sections.review") : t("kanji_writer.sections.animate")}
                 </ThemedText>
                 <TouchableOpacity
-                  className={`px-4 py-2 rounded-lg ${
-                    animatorState === "playing" ? "bg-red-500" : "bg-blue-500"
-                  }`}
-                  onPress={
-                    animatorState === "playing"
-                      ? writer.animator.cancelAnimation
-                      : animateStrokes
-                  }
+                  className={`px-4 py-2 rounded-lg ${animatorState === "playing" ? "bg-red-500" : "bg-blue-500"}`}
+                  onPress={animatorState === "playing" ? writer.animator.cancelAnimation : animateStrokes}
                 >
                   <ThemedText className="text-white text-xs font-medium">
                     {animatorState === "playing"
                       ? t("kanji_writer.buttons.stop_animation")
                       : isReviewMode
-                      ? t("kanji_writer.buttons.view_strokes")
-                      : t("kanji_writer.buttons.animate_strokes")}
+                        ? t("kanji_writer.buttons.view_strokes")
+                        : t("kanji_writer.buttons.animate_strokes")}
                   </ThemedText>
                 </TouchableOpacity>
               </View>

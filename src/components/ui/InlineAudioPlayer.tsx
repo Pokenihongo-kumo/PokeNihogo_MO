@@ -1,6 +1,15 @@
 import { Audio, AVPlaybackStatusSuccess } from "expo-av";
 import React from "react";
-import { ActivityIndicator, Animated, Pressable, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
+import {
+  ActivityIndicator,
+  Animated,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 
 type InlineAudioPlayerProps = {
   audioUrl: string;
@@ -53,13 +62,9 @@ export default function InlineAudioPlayer({ audioUrl, style, accentColor = "#2dd
     if (sound) return sound;
     try {
       setIsLoading(true);
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        { uri: audioUrl },
-        { shouldPlay: false },
-        (status) => {
-          if (status.isLoaded) updateFromStatus(status as AVPlaybackStatusSuccess);
-        }
-      );
+      const { sound: newSound } = await Audio.Sound.createAsync({ uri: audioUrl }, { shouldPlay: false }, (status) => {
+        if (status.isLoaded) updateFromStatus(status as AVPlaybackStatusSuccess);
+      });
       setSound(newSound);
       // we'll turn off loading when the first status callback arrives (loaded/buffer state)
       return newSound;
@@ -91,9 +96,13 @@ export default function InlineAudioPlayer({ audioUrl, style, accentColor = "#2dd
   };
 
   return (
-    <View style={[styles.container, style]}> 
-      <TouchableOpacity onPress={togglePlay} activeOpacity={0.8} style={[styles.playWrapper, { borderColor: accentColor }]}> 
-        <View style={[styles.playInner, { backgroundColor: `${accentColor}1A` /* ~10% opacity */ }]}> 
+    <View style={[styles.container, style]}>
+      <TouchableOpacity
+        onPress={togglePlay}
+        activeOpacity={0.8}
+        style={[styles.playWrapper, { borderColor: accentColor }]}
+      >
+        <View style={[styles.playInner, { backgroundColor: `${accentColor}1A` /* ~10% opacity */ }]}>
           {isLoading ? (
             <ActivityIndicator size="small" color={accentColor} />
           ) : isPlaying ? (
@@ -119,7 +128,12 @@ export default function InlineAudioPlayer({ audioUrl, style, accentColor = "#2dd
           style={styles.barTouchable}
         >
           <View style={styles.barBase} />
-          <View style={[styles.barFill, { width: duration > 0 ? `${(position / duration) * 100}%` : "0%", backgroundColor: accentColor }]} />
+          <View
+            style={[
+              styles.barFill,
+              { width: duration > 0 ? `${(position / duration) * 100}%` : "0%", backgroundColor: accentColor },
+            ]}
+          />
           <Animated.View style={[styles.knob, { backgroundColor: accentColor, transform: [{ translateX: knobX }] }]} />
         </Pressable>
       </View>
@@ -136,7 +150,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 28,
     paddingHorizontal: 12,
-    paddingVertical: 10,},
+    paddingVertical: 10,
+  },
   playWrapper: {
     width: 44,
     height: 44,
@@ -173,4 +188,3 @@ const styles = StyleSheet.create({
   barFill: { position: "absolute", left: 0, height: 4, borderRadius: 2 },
   knob: { position: "absolute", width: 24, height: 24, borderRadius: 12, top: 0, opacity: 0.9 },
 });
-

@@ -30,68 +30,57 @@ type Level = "N5" | "N4" | "N3";
 const pokemonMascots = [
   {
     name: "Pikachu",
-    imageUrl:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/25.gif",
+    imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/25.gif",
     color: "#fbbf24",
   },
   {
     name: "Eevee",
-    imageUrl:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/133.gif",
+    imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/133.gif",
     color: "#f59e0b",
   },
   {
     name: "Bulbasaur",
-    imageUrl:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/1.gif",
+    imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/1.gif",
     color: "#10b981",
   },
   {
     name: "Charmander",
-    imageUrl:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/4.gif",
+    imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/4.gif",
     color: "#ef4444",
   },
   {
     name: "Squirtle",
-    imageUrl:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/7.gif",
+    imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/7.gif",
     color: "#3b82f6",
   },
   {
     name: "Jigglypuff",
-    imageUrl:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/39.gif",
+    imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/39.gif",
     color: "#f472b6",
   },
   {
     name: "Meowth",
-    imageUrl:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/52.gif",
+    imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/52.gif",
     color: "#a78bfa",
   },
   {
     name: "Psyduck",
-    imageUrl:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/54.gif",
+    imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/54.gif",
     color: "#60a5fa",
   },
   {
     name: "Snorlax",
-    imageUrl:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/143.gif",
+    imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/143.gif",
     color: "#94a3b8",
   },
   {
     name: "Mew",
-    imageUrl:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/151.gif",
+    imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/151.gif",
     color: "#fb7185",
   },
   {
     name: "Togepi",
-    imageUrl:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/175.gif",
+    imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/175.gif",
     color: "#f59e0b",
   },
 ];
@@ -125,7 +114,7 @@ export default function SelectLevelScreen() {
   useFocusEffect(
     useCallback(() => {
       setIsProcessing(false);
-    }, [])
+    }, []),
   );
 
   /**
@@ -248,7 +237,7 @@ export default function SelectLevelScreen() {
   const LevelOption = ({ level, label }: { level: Level; label: string }) => {
     const isActive = selected === level;
     const meta = getLevelMeta(level);
-    
+
     // Get note for each level
     const getLevelNote = (level: Level) => {
       switch (level) {
@@ -262,7 +251,7 @@ export default function SelectLevelScreen() {
           return "";
       }
     };
-    
+
     const note = getLevelNote(level);
 
     return (
@@ -335,10 +324,7 @@ export default function SelectLevelScreen() {
               overflow: "hidden",
             }}
           >
-            <Image
-              source={{ uri: mascot.imageUrl }}
-              style={{ width: "100%", height: "100%", resizeMode: "contain" }}
-            />
+            <Image source={{ uri: mascot.imageUrl }} style={{ width: "100%", height: "100%", resizeMode: "contain" }} />
           </View>
         </View>
 
@@ -400,10 +386,7 @@ export default function SelectLevelScreen() {
 
       {/* Title and Test Result Section */}
       <View style={{ paddingHorizontal: 20 }}>
-        <ThemedText
-          type="title"
-          style={{ marginBottom: 12, textAlign: "center" }}
-        >
+        <ThemedText type="title" style={{ marginBottom: 12, textAlign: "center" }}>
           {t("auth.select_level.title")}
         </ThemedText>
 
@@ -436,9 +419,7 @@ export default function SelectLevelScreen() {
               backgroundColor: "#ffffff",
             }}
           >
-            <ThemedText style={{ color: "#0ea5e9", fontWeight: "600" }}>
-              {t("auth.select_level.take_test")}
-            </ThemedText>
+            <ThemedText style={{ color: "#0ea5e9", fontWeight: "600" }}>{t("auth.select_level.take_test")}</ThemedText>
           </TouchableOpacity>
         </View>
 
@@ -451,9 +432,7 @@ export default function SelectLevelScreen() {
             disabled={!selected || isProcessing}
             onPress={onContinue}
           >
-            {isProcessing
-              ? t("common.processing") || "Processing..."
-              : t("common.continue")}
+            {isProcessing ? t("common.processing") || "Processing..." : t("common.continue")}
           </BounceButton>
         </View>
       </View>

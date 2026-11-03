@@ -22,9 +22,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
 
   // Initialize animations for answers
   if (!scaleAnims[question.id] && question.answers) {
-    scaleAnims[question.id] = question.answers.map(
-      () => new Animated.Value(1)
-    );
+    scaleAnims[question.id] = question.answers.map(() => new Animated.Value(1));
   }
 
   // Check if question is incorrect or unanswered
@@ -57,9 +55,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
                 isUserSelected={isUserSelected}
                 isCorrectAnswer={isCorrectAnswer}
                 explanation={explanation}
-                scaleAnim={
-                  scaleAnims[question.id]?.[index] || new Animated.Value(1)
-                }
+                scaleAnim={scaleAnims[question.id]?.[index] || new Animated.Value(1)}
               />
             );
           })}
@@ -74,7 +70,8 @@ const styles = StyleSheet.create({
   qaCard: {
     backgroundColor: "white",
     borderRadius: 16,
-    padding: 32,position: "relative",
+    padding: 32,
+    position: "relative",
     borderWidth: 2,
     borderColor: "transparent",
   },

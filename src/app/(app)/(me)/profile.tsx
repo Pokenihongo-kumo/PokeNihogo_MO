@@ -1,16 +1,16 @@
-import AnimatedSubscriptionCard from '@components/atoms/AnimatedSubscriptionCard';
-import UserAvatar from '@components/atoms/UserAvatar';
-import BackScreen from '@components/molecules/Back';
-import { useAchievement } from '@hooks/useAchievement';
-import { useAuth } from '@hooks/useAuth';
-import { useListPokemons } from '@hooks/usePokemonData';
-import { AchievementEntity } from '@models/achievement/achievement.entity';
-import { IPokemon } from '@models/pokemon/pokemon.common';
-import { IUserEntity } from '@models/user/user.entity';
-import { ROUTES } from '@routes/routes';
-import { formatDateToMMYYYY } from '@utils/date';
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import AnimatedSubscriptionCard from "@components/atoms/AnimatedSubscriptionCard";
+import UserAvatar from "@components/atoms/UserAvatar";
+import BackScreen from "@components/molecules/Back";
+import { useAchievement } from "@hooks/useAchievement";
+import { useAuth } from "@hooks/useAuth";
+import { useListPokemons } from "@hooks/usePokemonData";
+import { AchievementEntity } from "@models/achievement/achievement.entity";
+import { IPokemon } from "@models/pokemon/pokemon.common";
+import { IUserEntity } from "@models/user/user.entity";
+import { ROUTES } from "@routes/routes";
+import { formatDateToMMYYYY } from "@utils/date";
+import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import {
   Book,
   BookOpen,
@@ -22,21 +22,13 @@ import {
   Shield,
   Sparkles,
   Star,
-  StickyNote
-} from 'lucide-react-native';
-import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-  Image,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
-import * as Progress from 'react-native-progress';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  StickyNote,
+} from "lucide-react-native";
+import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import * as Progress from "react-native-progress";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Properly typed StatItem component
 interface StatItemProps {
@@ -50,7 +42,7 @@ interface StatItemProps {
 const StatItem: React.FC<StatItemProps> = ({ icon: Icon, value, label, color, accentColor }) => (
   <View className="flex-1">
     <LinearGradient
-      colors={['#ffffff', '#fafbfc']}
+      colors={["#ffffff", "#fafbfc"]}
       style={[styles.statCard, {}]}
       className="items-center py-5 px-3 rounded-3xl bg-white"
     >
@@ -85,11 +77,8 @@ interface AchievementBadgeProps {
 
 const AchievementBadge: React.FC<AchievementBadgeProps> = ({ name, icon, colors, imageUrl }) => (
   <View className="items-center w-22">
-    <View
-      style={[styles.achievementBadgeShadow, {}]}
-      className="w-21 h-21 rounded-full mb-3"
-    >
-      <View style={{ position: 'relative', width: 84, height: 84 }}>
+    <View style={[styles.achievementBadgeShadow, {}]} className="w-21 h-21 rounded-full mb-3">
+      <View style={{ position: "relative", width: 84, height: 84 }}>
         <LinearGradient
           colors={colors}
           style={styles.achievementBadge}
@@ -100,14 +89,14 @@ const AchievementBadge: React.FC<AchievementBadgeProps> = ({ name, icon, colors,
         {imageUrl ? (
           <View
             style={{
-              position: 'absolute',
+              position: "absolute",
               top: 6,
               left: 6,
               width: 72,
               height: 72,
               borderRadius: 36,
-              overflow: 'hidden',
-              backgroundColor: 'transparent'
+              overflow: "hidden",
+              backgroundColor: "transparent",
             }}
             className="items-center justify-center"
           >
@@ -115,16 +104,26 @@ const AchievementBadge: React.FC<AchievementBadgeProps> = ({ name, icon, colors,
               source={{ uri: imageUrl }}
               style={{
                 width: 72,
-                height: 72
+                height: 72,
               }}
               resizeMode="cover"
               onError={(error) => {
-                console.log('Image load error for:', imageUrl, error);
+                console.log("Image load error for:", imageUrl, error);
               }}
             />
           </View>
         ) : (
-          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             <Text className="text-4xl">{icon}</Text>
           </View>
         )}
@@ -138,24 +137,24 @@ const AchievementBadge: React.FC<AchievementBadgeProps> = ({ name, icon, colors,
 
 const CARD_PALETTES = {
   collection: {
-    gradient: ['#e0f2fe', '#bae6fd'],
-    accent: '#dbeafe',
+    gradient: ["#e0f2fe", "#bae6fd"],
+    accent: "#dbeafe",
   },
   exercise: {
-    gradient: ['#f5f3ff', '#ede9fe'],
-    accent: '#e0e7ff',
+    gradient: ["#f5f3ff", "#ede9fe"],
+    accent: "#e0e7ff",
   },
   rewards: {
-    gradient: ['#fdf2ff', '#fae8ff'],
-    accent: '#f5d0fe',
+    gradient: ["#fdf2ff", "#fae8ff"],
+    accent: "#f5d0fe",
   },
   dictionary: {
-    gradient: ['#fff7ed', '#ffedd5'],
-    accent: '#fed7aa',
+    gradient: ["#fff7ed", "#ffedd5"],
+    accent: "#fed7aa",
   },
   flashcards: {
-    gradient: ['#ecfdf5', '#d1fae5'],
-    accent: '#a7f3d0',
+    gradient: ["#ecfdf5", "#d1fae5"],
+    accent: "#a7f3d0",
   },
 } as const;
 
@@ -168,8 +167,8 @@ export default function ProfileScreen() {
   const { data: pokemonsData } = useListPokemons({
     pageSize: 3,
     currentPage: 1,
-    sortBy: 'id',
-    sortOrder: 'asc' as 'asc' | 'desc',
+    sortBy: "id",
+    sortOrder: "asc" as "asc" | "desc",
   });
 
   const { data: achievementsData } = useAchievement({
@@ -195,47 +194,43 @@ export default function ProfileScreen() {
   const allAchievements = useMemo(() => {
     if (!achievementsData?.results) return [] as AchievementEntity[];
 
-    return achievementsData.results.flatMap(
-      (group) => group.achievements?.results || []
-    ) as AchievementEntity[];
+    return achievementsData.results.flatMap((group) => group.achievements?.results || []) as AchievementEntity[];
   }, [achievementsData]);
 
   // Achievements that have been completed (earned badges)
   const earnedAchievements = useMemo(
-    () =>
-      allAchievements.filter(
-        (achievement) => achievement.userAchievement?.achievedAt !== null
-      ),
-    [allAchievements]
+    () => allAchievements.filter((achievement) => achievement.userAchievement?.achievedAt !== null),
+    [allAchievements],
   );
 
   return (
     <View className="flex-1 bg-slate-100">
       <StatusBar barStyle="light-content" translucent />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        bounces={true}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} bounces={true}>
         {/* Enhanced Hero Section */}
         <LinearGradient
-          colors={['#4A9FA2', '#5FA8AB', '#6FAFB2', '#7EC5C8']}
+          colors={["#4A9FA2", "#5FA8AB", "#6FAFB2", "#7EC5C8"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={[styles.heroSection, { paddingTop: insets.top }]}
           className="pb-25 relative overflow-hidden"
         >
           {/* Decorative Background Circles */}
-          <View style={[styles.decorativeCircle, styles.decorativeCircle1]} className="absolute bg-white/6 rounded-full" />
-          <View style={[styles.decorativeCircle, styles.decorativeCircle2]} className="absolute bg-white/6 rounded-full" />
-          <View style={[styles.decorativeCircle, styles.decorativeCircle3]} className="absolute bg-white/6 rounded-full" />
+          <View
+            style={[styles.decorativeCircle, styles.decorativeCircle1]}
+            className="absolute bg-white/6 rounded-full"
+          />
+          <View
+            style={[styles.decorativeCircle, styles.decorativeCircle2]}
+            className="absolute bg-white/6 rounded-full"
+          />
+          <View
+            style={[styles.decorativeCircle, styles.decorativeCircle3]}
+            className="absolute bg-white/6 rounded-full"
+          />
 
           {/* Header */}
-          <BackScreen
-            onPress={() => router.back()}
-            color='white'
-            title={t('profile.title')}
-            className='mb-6'
-          >
+          <BackScreen onPress={() => router.back()} color="white" title={t("profile.title")} className="mb-6">
             <TouchableOpacity
               onPress={() => router.push(ROUTES.ME.SETTINGS)}
               className="w-11 h-11 bg-white/25 rounded-2xl items-center justify-center shadow-sm"
@@ -258,8 +253,8 @@ export default function ProfileScreen() {
                 size={152}
                 progress={levelProgress}
                 thickness={11}
-                color={'#10b981'}
-                unfilledColor={'rgba(255,255,255,0.25)'}
+                color={"#10b981"}
+                unfilledColor={"rgba(255,255,255,0.25)"}
                 borderWidth={0}
                 strokeCap="round"
               />
@@ -276,14 +271,14 @@ export default function ProfileScreen() {
 
               {/* Level Badge */}
               <LinearGradient
-                colors={['#10b981', '#059669']}
+                colors={["#10b981", "#059669"]}
                 style={styles.levelBadge}
                 className="absolute -bottom-2 flex-row items-center px-3.5 py-1.5 rounded-2xl gap-1 shadow-lg"
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
               >
                 <Text className="text-sm font-extrabold text-white tracking-wide">
-                  {t('profile.level_prefix')} {userProfile?.level?.levelNumber || 1}
+                  {t("profile.level_prefix")} {userProfile?.level?.levelNumber || 1}
                 </Text>
               </LinearGradient>
             </View>
@@ -292,7 +287,7 @@ export default function ProfileScreen() {
             <Text className="text-4xl font-extrabold text-white mb-3 tracking-tight">{userProfile?.name}</Text>
 
             <LinearGradient
-              colors={['rgba(255,255,255,0.25)', 'rgba(255,255,255,0.15)']}
+              colors={["rgba(255,255,255,0.25)", "rgba(255,255,255,0.15)"]}
               style={styles.levelTag}
               className="flex-row items-center px-4.5 py-2.5 rounded-2xl gap-1.5 mb-3"
             >
@@ -302,7 +297,9 @@ export default function ProfileScreen() {
 
             <View className="flex-row items-center gap-1.5">
               <Calendar size={15} color="rgba(255,255,255,0.95)" strokeWidth={2.5} />
-              <Text className="text-sm font-semibold text-white/95 tracking-wide">{t('profile.joined')} {formatDateToMMYYYY(userProfile?.createdAt)}</Text>
+              <Text className="text-sm font-semibold text-white/95 tracking-wide">
+                {t("profile.joined")} {formatDateToMMYYYY(userProfile?.createdAt)}
+              </Text>
             </View>
           </TouchableOpacity>
         </LinearGradient>
@@ -311,11 +308,11 @@ export default function ProfileScreen() {
         <View className="px-5 -mt-20">
           {/* Stats Grid - only show what user actually has */}
           <View className="flex-row gap-3 mb-6">
-            {typeof userProfile?.exp === 'number' && (
+            {typeof userProfile?.exp === "number" && (
               <StatItem
                 icon={Star}
                 value={userProfile.exp.toLocaleString()}
-                label={t('profile.current_xp')}
+                label={t("profile.current_xp")}
                 color="#f59e0b"
                 accentColor="#fbbf24"
               />
@@ -325,7 +322,7 @@ export default function ProfileScreen() {
               <StatItem
                 icon={Shield}
                 value={userProfile.rankName}
-                label={t('profile.league')}
+                label={t("profile.league")}
                 color="#6FAFB2"
                 accentColor="#7EC5C8"
               />
@@ -338,11 +335,9 @@ export default function ProfileScreen() {
           {/* Progress & Milestones Section */}
           <View className="mb-8">
             <Text className="text-xs font-bold text-slate-400 uppercase tracking-[2px] mb-1">
-              {t('profile.section_progress_title')}
+              {t("profile.section_progress_title")}
             </Text>
-            <Text className="text-xl font-extrabold text-slate-900 mb-4">
-              {t('profile.section_progress_subtitle')}
-            </Text>
+            <Text className="text-xl font-extrabold text-slate-900 mb-4">{t("profile.section_progress_subtitle")}</Text>
 
             {/* Pokemon Collection Card */}
             <TouchableOpacity
@@ -364,7 +359,7 @@ export default function ProfileScreen() {
                 {/* Header */}
                 <View className="flex-row items-center mb-5">
                   <LinearGradient
-                    colors={['#14b8a6', '#0d9488']}
+                    colors={["#14b8a6", "#0d9488"]}
                     style={styles.collectionIconContainer}
                     className="w-13 h-13 rounded-2xl items-center justify-center mr-3.5 shadow-lg"
                   >
@@ -372,9 +367,11 @@ export default function ProfileScreen() {
                   </LinearGradient>
 
                   <View className="flex-1">
-                    <Text className="text-2xl font-extrabold text-slate-800 mb-1 tracking-tight">{t('profile.collection')}</Text>
+                    <Text className="text-2xl font-extrabold text-slate-800 mb-1 tracking-tight">
+                      {t("profile.collection")}
+                    </Text>
                     <Text className="text-sm font-semibold text-slate-500 tracking-wide">
-                      {t('profile.collection_description')}
+                      {t("profile.collection_description")}
                     </Text>
                   </View>
 
@@ -417,7 +414,7 @@ export default function ProfileScreen() {
                 {/* Header */}
                 <View className="flex-row items-center mb-5">
                   <LinearGradient
-                    colors={['#6366f1', '#4f46e5']}
+                    colors={["#6366f1", "#4f46e5"]}
                     style={styles.collectionIconContainer}
                     className="w-13 h-13 rounded-2xl items-center justify-center mr-3.5 shadow-lg"
                   >
@@ -425,9 +422,11 @@ export default function ProfileScreen() {
                   </LinearGradient>
 
                   <View className="flex-1">
-                    <Text className="text-2xl font-extrabold text-slate-800 mb-1 tracking-tight">{t('exercise_history.title')}</Text>
+                    <Text className="text-2xl font-extrabold text-slate-800 mb-1 tracking-tight">
+                      {t("exercise_history.title")}
+                    </Text>
                     <Text className="text-sm font-semibold text-slate-500 tracking-wide">
-                      {t('exercise_history.subtitle')}
+                      {t("exercise_history.subtitle")}
                     </Text>
                   </View>
 
@@ -458,7 +457,7 @@ export default function ProfileScreen() {
                 {/* Header */}
                 <View className="flex-row items-center mb-5">
                   <LinearGradient
-                    colors={['#a855f7', '#9333ea']}
+                    colors={["#a855f7", "#9333ea"]}
                     style={styles.collectionIconContainer}
                     className="w-13 h-13 rounded-2xl items-center justify-center mr-3.5 shadow-lg"
                   >
@@ -466,9 +465,11 @@ export default function ProfileScreen() {
                   </LinearGradient>
 
                   <View className="flex-1">
-                    <Text className="text-2xl font-extrabold text-slate-800 mb-1 tracking-tight">{t('reward_history.title')}</Text>
+                    <Text className="text-2xl font-extrabold text-slate-800 mb-1 tracking-tight">
+                      {t("reward_history.title")}
+                    </Text>
                     <Text className="text-sm font-semibold text-slate-500 tracking-wide">
-                      {t('reward_history.subtitle')}
+                      {t("reward_history.subtitle")}
                     </Text>
                   </View>
 
@@ -483,18 +484,12 @@ export default function ProfileScreen() {
           {/* Study Toolkit Section */}
           <View className="mb-8">
             <Text className="text-xs font-bold text-slate-400 uppercase tracking-[2px] mb-1">
-              {t('profile.section_learning_title')}
+              {t("profile.section_learning_title")}
             </Text>
-            <Text className="text-xl font-extrabold text-slate-900 mb-4">
-              {t('profile.section_learning_subtitle')}
-            </Text>
+            <Text className="text-xl font-extrabold text-slate-900 mb-4">{t("profile.section_learning_subtitle")}</Text>
 
             {/* Dictionary Card */}
-            <TouchableOpacity
-              onPress={() => router.push(ROUTES.ME.DICTIONARY)}
-              activeOpacity={0.7}
-              className="mb-4"
-            >
+            <TouchableOpacity onPress={() => router.push(ROUTES.ME.DICTIONARY)} activeOpacity={0.7} className="mb-4">
               <LinearGradient
                 colors={CARD_PALETTES.dictionary.gradient}
                 style={styles.collectionCard}
@@ -509,7 +504,7 @@ export default function ProfileScreen() {
                 {/* Header */}
                 <View className="flex-row items-center mb-5">
                   <LinearGradient
-                    colors={['#f59e0b', '#d97706']}
+                    colors={["#f59e0b", "#d97706"]}
                     style={styles.collectionIconContainer}
                     className="w-13 h-13 rounded-2xl items-center justify-center mr-3.5 shadow-lg"
                   >
@@ -517,9 +512,11 @@ export default function ProfileScreen() {
                   </LinearGradient>
 
                   <View className="flex-1">
-                    <Text className="text-2xl font-extrabold text-slate-800 mb-1 tracking-tight">{t('dictionary.title')}</Text>
+                    <Text className="text-2xl font-extrabold text-slate-800 mb-1 tracking-tight">
+                      {t("dictionary.title")}
+                    </Text>
                     <Text className="text-sm font-semibold text-slate-500 tracking-wide">
-                      {t('dictionary.search_description')}
+                      {t("dictionary.search_description")}
                     </Text>
                   </View>
 
@@ -531,10 +528,7 @@ export default function ProfileScreen() {
             </TouchableOpacity>
 
             {/* Flashcard Decks Card */}
-            <TouchableOpacity
-              onPress={() => router.push(ROUTES.ME.FLASHCARDS)}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity onPress={() => router.push(ROUTES.ME.FLASHCARDS)} activeOpacity={0.7}>
               <LinearGradient
                 colors={CARD_PALETTES.flashcards.gradient}
                 style={styles.collectionCard}
@@ -547,7 +541,7 @@ export default function ProfileScreen() {
 
                 <View className="flex-row items-center mb-5">
                   <LinearGradient
-                    colors={['#0ea5e9', '#0284c7']}
+                    colors={["#0ea5e9", "#0284c7"]}
                     style={styles.collectionIconContainer}
                     className="w-13 h-13 rounded-2xl items-center justify-center mr-3.5 shadow-lg"
                   >
@@ -556,10 +550,10 @@ export default function ProfileScreen() {
 
                   <View className="flex-1">
                     <Text className="text-2xl font-extrabold text-slate-800 mb-1 tracking-tight">
-                      {t('flashcard_list.title')}
+                      {t("flashcard_list.title")}
                     </Text>
                     <Text className="text-sm font-semibold text-slate-600 tracking-wide">
-                      {t('flashcard_list.hero_subtitle')}
+                      {t("flashcard_list.hero_subtitle")}
                     </Text>
                   </View>
 
@@ -573,21 +567,23 @@ export default function ProfileScreen() {
 
           {/* Achievements Section */}
           <LinearGradient
-            colors={['#ffffff', '#fefefe']}
+            colors={["#ffffff", "#fefefe"]}
             style={styles.achievementsCard}
             className="p-6 rounded-3xl mb-6 shadow-lg"
           >
             {/* Header */}
             <View className="flex-row justify-between items-center mb-6">
               <View>
-                <Text className="text-2xl font-extrabold text-slate-800 mb-1 tracking-tight">{t('profile.achievements')}</Text>
+                <Text className="text-2xl font-extrabold text-slate-800 mb-1 tracking-tight">
+                  {t("profile.achievements")}
+                </Text>
                 {allAchievements.length > 0 ? (
                   <Text className="text-sm font-semibold text-slate-500 tracking-wide">
-                    {earnedAchievements.length}/{allAchievements.length} {t('profile.achievements_earned')}
+                    {earnedAchievements.length}/{allAchievements.length} {t("profile.achievements_earned")}
                   </Text>
                 ) : (
                   <Text className="text-sm font-semibold text-slate-500 tracking-wide">
-                    0 {t('profile.achievements_earned')}
+                    0 {t("profile.achievements_earned")}
                   </Text>
                 )}
               </View>
@@ -597,7 +593,7 @@ export default function ProfileScreen() {
                 className="bg-blue-50 px-4.5 py-2.5 rounded-2xl"
                 activeOpacity={0.7}
               >
-                <Text className="text-sm font-extrabold text-blue-600 tracking-wide">{t('profile.view_all')}</Text>
+                <Text className="text-sm font-extrabold text-blue-600 tracking-wide">{t("profile.view_all")}</Text>
               </TouchableOpacity>
             </View>
 
@@ -611,13 +607,13 @@ export default function ProfileScreen() {
               {allAchievements.length > 0 ? (
                 allAchievements.slice(0, 5).map((achievement: AchievementEntity) => {
                   const tierColors: Record<string, [string, string]> = {
-                    BASIC: ['#38bdf8', '#0ea5e9'],
-                    ADVANCED: ['#fbbf24', '#f59e0b'],
-                    ELITE: ['#a855f7', '#7c3aed'],
+                    BASIC: ["#38bdf8", "#0ea5e9"],
+                    ADVANCED: ["#fbbf24", "#f59e0b"],
+                    ELITE: ["#a855f7", "#7c3aed"],
                   };
-                  const colors = tierColors[achievement.achievementTierType] || ['#64748b', '#475569'];
+                  const colors = tierColors[achievement.achievementTierType] || ["#64748b", "#475569"];
 
-                  console.log('achievement imageUrl: ', achievement.imageUrl);
+                  console.log("achievement imageUrl: ", achievement.imageUrl);
                   return (
                     <AchievementBadge
                       key={achievement.id}
@@ -631,7 +627,7 @@ export default function ProfileScreen() {
               ) : (
                 <View className="py-4 px-4">
                   <Text className="text-sm text-slate-500 text-center">
-                    {t('profile.achievements')} - {t('profile.view_all')}
+                    {t("profile.achievements")} - {t("profile.view_all")}
                   </Text>
                 </View>
               )}
@@ -654,12 +650,12 @@ const styles = StyleSheet.create({
   // Hero Section - Complex styles that can't be replaced
   heroSection: {
     paddingBottom: 100,
-    position: 'relative',
-    overflow: 'hidden',
+    position: "relative",
+    overflow: "hidden",
   },
   decorativeCircle: {
-    position: 'absolute',
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    position: "absolute",
+    backgroundColor: "rgba(255,255,255,0.06)",
     borderRadius: 9999,
   },
   decorativeCircle1: {
@@ -683,26 +679,26 @@ const styles = StyleSheet.create({
 
   // Avatar Section - Complex styles with shadows and positioning
   progressGlow: {
-    position: 'absolute',
+    position: "absolute",
     width: 152,
     height: 152,
     borderRadius: 76,
-    backgroundColor: '#10b981',
+    backgroundColor: "#10b981",
     opacity: 0.3,
   },
   levelBadge: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -8,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 20,
     gap: 4,
   },
   levelTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 18,
     paddingVertical: 10,
     borderRadius: 20,
@@ -712,18 +708,18 @@ const styles = StyleSheet.create({
 
   // Stat Cards - Complex shadow styles
   statCard: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 20,
     paddingHorizontal: 12,
     borderRadius: 24,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   iconContainer: {
     width: 56,
     height: 56,
     borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 12,
   },
   accentLine: {
@@ -737,22 +733,22 @@ const styles = StyleSheet.create({
   collectionCard: {
     padding: 24,
     borderRadius: 28,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   collectionIconContainer: {
     width: 52,
     height: 52,
     borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 14,
   },
   pokemonCard: {
     width: 84,
     height: 84,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   // Achievements - Complex shadow styles
@@ -776,8 +772,7 @@ const styles = StyleSheet.create({
     width: 84,
     height: 84,
     borderRadius: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
-
-})
+});

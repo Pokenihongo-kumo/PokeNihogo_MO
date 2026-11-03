@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  Modal,
-  Text,
-  TextProps,
-  TouchableOpacity,
-  View,
-  ViewProps,
-} from "react-native";
+import { Modal, Text, TextProps, TouchableOpacity, View, ViewProps } from "react-native";
 
 interface DropdownMenuProps {
   children: React.ReactNode;
@@ -72,12 +65,7 @@ const DropdownMenuTrigger = React.forwardRef<
   };
 
   return (
-    <TouchableOpacity
-      ref={ref}
-      onPress={handlePress}
-      activeOpacity={0.8}
-      {...props}
-    >
+    <TouchableOpacity ref={ref} onPress={handlePress} activeOpacity={0.8} {...props}>
       {children}
     </TouchableOpacity>
   );
@@ -91,127 +79,102 @@ const DropdownMenuContent = React.forwardRef<
     isOpen?: boolean;
     onOpenChange?: (open: boolean) => void;
   }
->(
-  (
-    {
-      children,
-      align = "start",
-      sideOffset = 4,
-      isOpen,
-      onOpenChange,
-      style,
-      ...props
-    },
-    ref
-  ) => {
-    if (!isOpen) return null;
+>(({ children, align = "start", sideOffset = 4, isOpen, onOpenChange, style, ...props }, ref) => {
+  if (!isOpen) return null;
 
-    const getAlignStyles = (): ViewProps["style"] => {
-      switch (align) {
-        case "start":
-          return { alignItems: "flex-start" };
-        case "end":
-          return { alignItems: "flex-end" };
-        default:
-          return { alignItems: "center" };
-      }
-    };
+  const getAlignStyles = (): ViewProps["style"] => {
+    switch (align) {
+      case "start":
+        return { alignItems: "flex-start" };
+      case "end":
+        return { alignItems: "flex-end" };
+      default:
+        return { alignItems: "center" };
+    }
+  };
 
-    return (
-      <Modal
-        visible={isOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => onOpenChange?.(false)}
+  return (
+    <Modal visible={isOpen} transparent animationType="fade" onRequestClose={() => onOpenChange?.(false)}>
+      <TouchableOpacity
+        style={{
+          flex: 1,
+          backgroundColor: "rgba(0, 0, 0, 0.3)",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          paddingTop: 100,
+        }}
+        activeOpacity={1}
+        onPress={() => onOpenChange?.(false)}
       >
         <TouchableOpacity
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0, 0, 0, 0.3)",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            paddingTop: 100,
-          }}
+          ref={ref}
+          style={[
+            {
+              backgroundColor: "#ffffff",
+              borderRadius: 8,
+              padding: 8,
+              minWidth: 200,
+              marginTop: sideOffset,
+            },
+            getAlignStyles(),
+            style,
+          ]}
           activeOpacity={1}
-          onPress={() => onOpenChange?.(false)}
+          onPress={() => {}}
+          {...props}
         >
-          <TouchableOpacity
-            ref={ref}
-            style={[
-              {
-                backgroundColor: "#ffffff",
-                borderRadius: 8,
-                padding: 8,
-                minWidth: 200,marginTop: sideOffset,
-              },
-              getAlignStyles(),
-              style,
-            ]}
-            activeOpacity={1}
-            onPress={() => {}}
-            {...props}
-          >
-            {children}
-          </TouchableOpacity>
+          {children}
         </TouchableOpacity>
-      </Modal>
-    );
-  }
-);
+      </TouchableOpacity>
+    </Modal>
+  );
+});
 
 DropdownMenuContent.displayName = "DropdownMenuContent";
 
 const DropdownMenuItem = React.forwardRef<
   React.ElementRef<typeof TouchableOpacity>,
   DropdownMenuItemProps & { onOpenChange?: (open: boolean) => void }
->(
-  (
-    { children, onPress, disabled = false, onOpenChange, style, ...props },
-    ref
-  ) => {
-    const handlePress = () => {
-      if (!disabled) {
-        onPress?.();
-        onOpenChange?.(false);
-      }
-    };
+>(({ children, onPress, disabled = false, onOpenChange, style, ...props }, ref) => {
+  const handlePress = () => {
+    if (!disabled) {
+      onPress?.();
+      onOpenChange?.(false);
+    }
+  };
 
-    return (
-      <TouchableOpacity
-        ref={ref}
-        style={[
-          {
-            paddingHorizontal: 12,
-            paddingVertical: 10,
-            borderRadius: 6,
-            opacity: disabled ? 0.5 : 1,
-          },
-          style,
-        ]}
-        onPress={handlePress}
-        disabled={disabled}
-        activeOpacity={0.7}
-        {...props}
+  return (
+    <TouchableOpacity
+      ref={ref}
+      style={[
+        {
+          paddingHorizontal: 12,
+          paddingVertical: 10,
+          borderRadius: 6,
+          opacity: disabled ? 0.5 : 1,
+        },
+        style,
+      ]}
+      onPress={handlePress}
+      disabled={disabled}
+      activeOpacity={0.7}
+      {...props}
+    >
+      <Text
+        style={{
+          fontSize: 16,
+          color: "#111827",
+        }}
       >
-        <Text
-          style={{
-            fontSize: 16,
-            color: "#111827",
-          }}
-        >
-          {children}
-        </Text>
-      </TouchableOpacity>
-    );
-  }
-);
+        {children}
+      </Text>
+    </TouchableOpacity>
+  );
+});
 
 DropdownMenuItem.displayName = "DropdownMenuItem";
 
-const DropdownMenuSeparator = ({
-  style,
-  ...props
-}: DropdownMenuSeparatorProps) => (
+const DropdownMenuSeparator = ({ style, ...props }: DropdownMenuSeparatorProps) => (
   <View
     style={[
       {
@@ -226,11 +189,7 @@ const DropdownMenuSeparator = ({
   />
 );
 
-const DropdownMenuLabel = ({
-  children,
-  style,
-  ...props
-}: DropdownMenuLabelProps) => (
+const DropdownMenuLabel = ({ children, style, ...props }: DropdownMenuLabelProps) => (
   <Text
     style={[
       {
@@ -248,9 +207,7 @@ const DropdownMenuLabel = ({
   </Text>
 );
 
-const DropdownMenuGroup = ({ children, ...props }: DropdownMenuGroupProps) => (
-  <View {...props}>{children}</View>
-);
+const DropdownMenuGroup = ({ children, ...props }: DropdownMenuGroupProps) => <View {...props}>{children}</View>;
 
 export {
   DropdownMenu,
@@ -259,7 +216,7 @@ export {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 };
 export type {
   DropdownMenuContentProps,
@@ -268,6 +225,5 @@ export type {
   DropdownMenuLabelProps,
   DropdownMenuProps,
   DropdownMenuSeparatorProps,
-  DropdownMenuTriggerProps
+  DropdownMenuTriggerProps,
 };
-

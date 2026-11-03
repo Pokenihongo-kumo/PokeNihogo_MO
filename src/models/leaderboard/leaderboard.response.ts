@@ -6,9 +6,9 @@ import { leaderboardEntitySchema } from "./leaderboard.entity";
  * Leaderboard Response Schema
  */
 const leaderboardResponseSchema = z.object({
-    results: z.array(leaderboardEntitySchema),
-    pagination: PaginationSchema,
-    me: leaderboardEntitySchema.optional(),
+  results: z.array(leaderboardEntitySchema),
+  pagination: PaginationSchema,
+  me: leaderboardEntitySchema.optional(),
 });
 
 export type ILeaderboardResponse = z.infer<typeof leaderboardResponseSchema>;

@@ -1,20 +1,17 @@
 import {
-    deleteConversationRoom,
-    getAvailableVoices,
-    getConversationRooms,
-    GetConversationRoomsResponse,
-    GetVoicesResponse,
-    VoiceOption,
+  deleteConversationRoom,
+  getAvailableVoices,
+  getConversationRooms,
+  GetConversationRoomsResponse,
+  GetVoicesResponse,
+  VoiceOption,
 } from "@services/conversation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 /**
  * Hook to fetch conversation rooms list
  */
-export const useConversationRooms = (params?: {
-  currentPage?: number;
-  pageSize?: number;
-}) => {
+export const useConversationRooms = (params?: { currentPage?: number; pageSize?: number }) => {
   const { data, isLoading, isError, refetch } = useQuery<GetConversationRoomsResponse>({
     queryKey: ["conversation-rooms", params],
     queryFn: () => getConversationRooms(params),
@@ -61,4 +58,3 @@ export const useAvailableVoices = () => {
     refetch,
   };
 };
-

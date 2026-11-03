@@ -1,0 +1,4 @@
+# Formatting-only commits, skipped by `git blame`
+# (git config blame.ignoreRevsFile .git-blame-ignore-revs)
+# style: format src with Prettier
+69ab5c649e86e7d75b8270d8c41d4da83326faf6

@@ -8,4 +8,3 @@ export const GlobalSocketManager = () => {
   useSocketNotificationListener();
   return null;
 };
-

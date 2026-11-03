@@ -4,22 +4,9 @@ import { ROUTES } from "@routes/routes";
 import { usePathname, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Animated,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Animated, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 // import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {
-  BookOpen,
-  Home,
-  MessageSquare,
-  Sword,
-  Trophy,
-} from "lucide-react-native";
+import { BookOpen, Home, MessageSquare, Sword, Trophy } from "lucide-react-native";
 
 interface Tab {
   name: string;
@@ -85,14 +72,14 @@ const CustomTab = () => {
       const cleanPathname = pathname.replace(ROUTES.TABS.ROOT, "");
       return cleanPathname === cleanRoute || pathname === route;
     },
-    [pathname]
+    [pathname],
   );
 
   const handleTabPress = useCallback(
     (tab: Tab) => {
       router.push(tab.route as any);
     },
-    [router]
+    [router],
   );
 
   const tabConfig = getTabConfig(t);
@@ -112,12 +99,7 @@ const CustomTab = () => {
         ]}
       >
         {tabConfig.map((tab) => (
-            <TabButton
-              key={tab.name}
-              tab={tab}
-              active={isActive(tab.route)}
-              onPress={() => handleTabPress(tab)}
-            />
+          <TabButton key={tab.name} tab={tab} active={isActive(tab.route)} onPress={() => handleTabPress(tab)} />
         ))}
       </View>
     </View>
@@ -127,11 +109,7 @@ const CustomTab = () => {
 const TabButton = ({ tab, active, onPress }: TabButtonProps) => {
   const Icon = tab.icon;
   const bounceAnim = useRef(new Animated.Value(active ? 1 : 0)).current;
-  const scaleAnim = useRef(
-    new Animated.Value(
-      active ? DIMENSIONS.SCALE_ACTIVE : DIMENSIONS.SCALE_INACTIVE
-    )
-  ).current;
+  const scaleAnim = useRef(new Animated.Value(active ? DIMENSIONS.SCALE_ACTIVE : DIMENSIONS.SCALE_INACTIVE)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -147,17 +125,17 @@ const TabButton = ({ tab, active, onPress }: TabButtonProps) => {
       // Chỉ rotate khi active, với sequence animation
       ...(active
         ? [
-          Animated.sequence([
-            Animated.timing(rotateAnim, {
-              toValue: 1,
-              ...ANIMATION_CONFIG.ROTATE_TIMING,
-            }),
-            Animated.timing(rotateAnim, {
-              toValue: 0,
-              ...ANIMATION_CONFIG.ROTATE_TIMING,
-            }),
-          ]),
-        ]
+            Animated.sequence([
+              Animated.timing(rotateAnim, {
+                toValue: 1,
+                ...ANIMATION_CONFIG.ROTATE_TIMING,
+              }),
+              Animated.timing(rotateAnim, {
+                toValue: 0,
+                ...ANIMATION_CONFIG.ROTATE_TIMING,
+              }),
+            ]),
+          ]
         : []),
     ]).start();
   }, [active, bounceAnim, scaleAnim, rotateAnim]);
@@ -173,11 +151,7 @@ const TabButton = ({ tab, active, onPress }: TabButtonProps) => {
   });
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={0.7}
-      style={styles.buttonWrapper}
-    >
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={styles.buttonWrapper}>
       <View style={styles.buttonContainer}>
         <Animated.View
           style={[
@@ -194,7 +168,8 @@ const TabButton = ({ tab, active, onPress }: TabButtonProps) => {
               Platform.select({
                 ios: [
                   active && {
-                    backgroundColor: tab.color,},
+                    backgroundColor: tab.color,
+                  },
                 ],
                 android: {
                   // Only show solid background when active; keep inactive transparent
@@ -203,11 +178,7 @@ const TabButton = ({ tab, active, onPress }: TabButtonProps) => {
               }),
             ]}
           >
-            <Icon
-              size={24}
-              color={active ? COLORS.WHITE : COLORS.GRAY_LIGHT}
-              strokeWidth={2.4}
-            />
+            <Icon size={24} color={active ? COLORS.WHITE : COLORS.GRAY_LIGHT} strokeWidth={2.4} />
           </View>
         </Animated.View>
 

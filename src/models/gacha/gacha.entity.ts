@@ -6,7 +6,8 @@ import { z } from "zod";
 /**
  * Gacha Item Schema
  */
-export const GachaItemSchema = z.object({
+export const GachaItemSchema = z
+  .object({
     id: z.number(),
     bannerId: z.number(),
     pokemonId: z.number(),
@@ -14,7 +15,8 @@ export const GachaItemSchema = z.object({
     ...byUser,
     ...at,
     pokemon: PokemonEntitySchemaWithoutUser,
-}).passthrough();
+  })
+  .passthrough();
 export type IGachaItemSchema = z.infer<typeof GachaItemSchema>;
 //------------------------End------------------------//
 //---------------------------------------------End---------------------------------------------//
@@ -24,28 +26,28 @@ export type IGachaItemSchema = z.infer<typeof GachaItemSchema>;
  * Gacha Banner Schema
  */
 export const GachaBannerSchema = z.object({
-    id: z.number(),
-    nameKey: z.string(),
-    startDate: z.string(),
-    endDate: z.string(),
-    status: z.enum(["PREVIEW", "EXPIRED", "INACTIVE", "ACTIVE"]),
-    enablePrecreate: z.boolean(),
-    precreateBeforeEndDays: z.number(),
-    isRandomItemAgain: z.boolean(),
-    hardPity5Star: z.number(),
-    costRoll: z.number(),
-    amount5Star: z.number(),
-    amount4Star: z.number(),
-    amount3Star: z.number(),
-    amount2Star: z.number(),
-    amount1Star: z.number(),
-    ...byUser,
-    ...at,
-    nameTranslation: z.string(),
-    nameTranslations: TranslationInputSchema.optional(),
-    pokemon: PokemonEntitySchemaWithoutUser.extend({
-        starType: z.string().optional(),
-    }),
+  id: z.number(),
+  nameKey: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
+  status: z.enum(["PREVIEW", "EXPIRED", "INACTIVE", "ACTIVE"]),
+  enablePrecreate: z.boolean(),
+  precreateBeforeEndDays: z.number(),
+  isRandomItemAgain: z.boolean(),
+  hardPity5Star: z.number(),
+  costRoll: z.number(),
+  amount5Star: z.number(),
+  amount4Star: z.number(),
+  amount3Star: z.number(),
+  amount2Star: z.number(),
+  amount1Star: z.number(),
+  ...byUser,
+  ...at,
+  nameTranslation: z.string(),
+  nameTranslations: TranslationInputSchema.optional(),
+  pokemon: PokemonEntitySchemaWithoutUser.extend({
+    starType: z.string().optional(),
+  }),
 });
 export type IGachaBannerSchema = z.infer<typeof GachaBannerSchema>;
 //------------------------End------------------------//

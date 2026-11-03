@@ -21,4 +21,3 @@ export const HOT_KEYWORDS = [
 
 // JLPT levels
 export const JLPT_LEVELS = ["N1", "N2", "N3", "N4", "N5"] as const;
-

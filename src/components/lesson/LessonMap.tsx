@@ -4,19 +4,8 @@ import { LessonProgress } from "@models/lesson/lesson.common";
 import { Image, type ImageSource } from "expo-image";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Dimensions,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-  ViewStyle,
-} from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import { Dimensions, Pressable, ScrollView, StyleSheet, View, ViewStyle } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Svg, { Circle } from "react-native-svg";
 
 // Lấy kích thước màn hình
@@ -45,22 +34,25 @@ const STATUS_ICON_MAP: Record<string, ImageSource> = {
   TESTING_LAST_FAILED: require("@assets/images/FAILED.png"),
 };
 
-const STATUS_STYLE_MAP: Record<
-  string,
-  { backgroundColor: string; shadowColor: string }
-> = {
+const STATUS_STYLE_MAP: Record<string, { backgroundColor: string; shadowColor: string }> = {
   COMPLETED: {
-    backgroundColor: "#dcfce7",},
+    backgroundColor: "#dcfce7",
+  },
   FAILED: {
-    backgroundColor: "#fee2e2",},
+    backgroundColor: "#fee2e2",
+  },
   IN_PROGRESS: {
-    backgroundColor: "#dbeafe",},
+    backgroundColor: "#dbeafe",
+  },
   NOT_STARTED: {
-    backgroundColor: "#f3f4f6",},
+    backgroundColor: "#f3f4f6",
+  },
   TESTING_LAST: {
-    backgroundColor: "#dbeafe",},
+    backgroundColor: "#dbeafe",
+  },
   TESTING_LAST_FAILED: {
-    backgroundColor: "#fee2e2",},
+    backgroundColor: "#fee2e2",
+  },
 };
 
 // Định nghĩa kiểu dữ liệu cho node bài học
@@ -80,7 +72,7 @@ export type LessonNode = {
 };
 
 // Type cho Duo source - có thể là ảnh hoặc Lottie animation
-export type DuoSource = 
+export type DuoSource =
   | { type: "lottie"; source: any } // Lottie: require() hoặc URL string
   | { type: "image"; source: any }; // Image: require() hoặc { uri: string }
 
@@ -88,14 +80,14 @@ export interface LessonMapProps {
   lessons: LessonProgress[];
   /**
    * Danh sách ảnh hoặc Lottie animation cho Duo (optional)
-   * 
+   *
    * Có thể truyền theo 2 cách:
    * 1. Format mới (khuyến nghị): [{ type: "lottie", source: require(...) }, { type: "image", source: "url" }]
    * 2. Format cũ (backward compatible): [require(...), "url", { uri: "..." }]
    *    - String hoặc object có uri -> tự động detect là image
    *    - require() hoặc object khác -> tự động detect là lottie
    */
-  duoImages?: (DuoSource | any)[]; 
+  duoImages?: (DuoSource | any)[];
   onLessonPress?: (lesson: LessonProgress) => void;
   screenWidth?: number; // Cho phép override screen width
 }
@@ -103,10 +95,7 @@ export interface LessonMapProps {
 /**
  * Convert LessonProgress[] thành LessonNode[] với tính toán vị trí đường cong
  */
-const convertLessonsToNodes = (
-  lessons: LessonProgress[],
-  screenWidth: number
-): LessonNode[] => {
+const convertLessonsToNodes = (lessons: LessonProgress[], screenWidth: number): LessonNode[] => {
   const data: LessonNode[] = [];
   const middleX = screenWidth / 2;
 
@@ -120,9 +109,7 @@ const convertLessonsToNodes = (
   }
   // Nếu không có IN_PROGRESS, tìm bài học đầu tiên chưa completed
   if (activeIndex === -1) {
-    activeIndex = lessons.findIndex(
-      (lesson) => lesson.status !== "COMPLETED"
-    );
+    activeIndex = lessons.findIndex((lesson) => lesson.status !== "COMPLETED");
   }
 
   for (let i = 0; i < lessons.length; i++) {
@@ -144,8 +131,7 @@ const convertLessonsToNodes = (
     } else if (indexInCycle <= HALF_CYCLE_NODES) {
       // index <= 4
       // Giai đoạn 2 (2, 3, 4): Giảm từ +60 về 0 (Node 3 -> 5)
-      normalizedOffset =
-        1 - (indexInCycle - PEAK_NODE_INDEX) / PEAK_NODE_INDEX;
+      normalizedOffset = 1 - (indexInCycle - PEAK_NODE_INDEX) / PEAK_NODE_INDEX;
       sign = 1;
     } else if (indexInCycle <= HALF_CYCLE_NODES + PEAK_NODE_INDEX) {
       // index <= 6
@@ -155,10 +141,7 @@ const convertLessonsToNodes = (
     } else {
       // index <= 7
       // Giai đoạn 4 (6, 7): Giảm từ -60 về -30 (Node 7 -> 8). Node 9 (index 0 của chu kỳ tiếp theo) là 0.
-      normalizedOffset =
-        1 -
-        (indexInCycle - (HALF_CYCLE_NODES + PEAK_NODE_INDEX)) /
-          PEAK_NODE_INDEX;
+      normalizedOffset = 1 - (indexInCycle - (HALF_CYCLE_NODES + PEAK_NODE_INDEX)) / PEAK_NODE_INDEX;
       sign = -1;
     }
 
@@ -169,8 +152,7 @@ const convertLessonsToNodes = (
 
     const rawStatus = (lesson.status as string) ?? "NOT_STARTED";
     const statusKey = rawStatus.toUpperCase();
-    const iconSource =
-      STATUS_ICON_MAP[statusKey] ?? STATUS_ICON_MAP.NOT_STARTED;
+    const iconSource = STATUS_ICON_MAP[statusKey] ?? STATUS_ICON_MAP.NOT_STARTED;
 
     // Logic xác định trạng thái
     const isCompleted = statusKey === "COMPLETED";
@@ -209,20 +191,15 @@ const LessonNodeComponent: React.FC<{
   const { showAlert } = useMinimalAlert();
 
   const style = useMemo(() => {
-    const iconContainerStyle: ViewStyle[] = [
-      styles.baseIconContainer,
-      styles.lessonIconWrapper,
-    ];
+    const iconContainerStyle: ViewStyle[] = [styles.baseIconContainer, styles.lessonIconWrapper];
     let shadowColor = "#1a1a1a";
 
     if (!isUnlocked) {
       iconContainerStyle.push(styles.lessonIconLocked);
       shadowColor = "#111111";
     } else {
-      const status =
-        ((node.lessonProgress.status as string) ?? "NOT_STARTED").toUpperCase();
-      const statusStyle =
-        STATUS_STYLE_MAP[status] ?? STATUS_STYLE_MAP.NOT_STARTED;
+      const status = ((node.lessonProgress.status as string) ?? "NOT_STARTED").toUpperCase();
+      const statusStyle = STATUS_STYLE_MAP[status] ?? STATUS_STYLE_MAP.NOT_STARTED;
 
       iconContainerStyle.push({
         backgroundColor: statusStyle.backgroundColor,
@@ -252,14 +229,14 @@ const LessonNodeComponent: React.FC<{
 
   const handlePress = () => {
     if (!isUnlocked) return;
-    
+
     // Kiểm tra nếu bài học là NOT_STARTED thì hiển thị alert và không cho bấm
     const status = ((node.lessonProgress.status as string) ?? "NOT_STARTED").toUpperCase();
     if (status === "NOT_STARTED") {
       showAlert(t("lessons.complete_previous_lesson"), "warning");
       return;
     }
-    
+
     onPress?.(node.lessonProgress);
   };
 
@@ -278,7 +255,7 @@ const LessonNodeComponent: React.FC<{
   // Căn giữa node tại vị trí (x, y)
   // Container cần đủ lớn để chứa progress ring (94px) và shadow
   const containerPadding = 15; // Padding để chứa progress ring lớn hơn và shadow
-  
+
   const nodeViewStyle = {
     position: "absolute" as const,
     left: node.x - (NODE_SIZE / 2 + containerPadding),
@@ -312,19 +289,19 @@ const LessonNodeComponent: React.FC<{
   const segmentLength = circumference / 3; // Mỗi đoạn chiếm 1/3 chu vi
   const segmentFillLength = segmentLength * 0.85; // 85% đoạn được fill, 15% là khoảng cách
   const segmentGapLength = segmentLength * 0.15; // Khoảng cách giữa các đoạn
-  
+
   // Tính toán progress cho từng đoạn (3 đoạn)
   const segmentProgress = progress * 3; // 0-3: tổng số đoạn đã hoàn thành
   const filledSegments = Math.floor(segmentProgress); // Số đoạn đã fill hoàn toàn (0, 1, 2, hoặc 3)
   const partialSegmentProgress = Math.max(0, Math.min(1, segmentProgress - filledSegments)); // Tiến độ của đoạn đang fill (0-1)
-  
+
   // Ngưỡng tối thiểu để hiển thị partial segment (tránh hiển thị khi quá nhỏ)
   const MIN_PARTIAL_LENGTH = 2; // pixels
-  
+
   // Tính toán strokeDasharray và strokeDashoffset cho progress
   // Logic: mỗi segment cần có gap trước và sau để tách biệt rõ ràng
   let progressDashArray = "";
-  
+
   if (filledSegments >= 3 || progress >= 1) {
     // Fill cả 3 đoạn (100%)
     progressDashArray = `${segmentFillLength} ${segmentGapLength} ${segmentFillLength} ${segmentGapLength} ${segmentFillLength} ${segmentGapLength}`;
@@ -370,9 +347,7 @@ const LessonNodeComponent: React.FC<{
   return (
     <View style={nodeViewStyle}>
       {/* Shadow Layer (tạo hiệu ứng 3D) */}
-      {isUnlocked && (
-        <Animated.View style={[shadowStyle, animatedShadowStyle]} />
-      )}
+      {isUnlocked && <Animated.View style={[shadowStyle, animatedShadowStyle]} />}
 
       {/* Progress Ring (Luôn hiển thị cho tất cả các node, chia thành 3 đoạn) - Đặt ngoài để không bị clip và không di chuyển khi press */}
       {showProgress && (
@@ -385,39 +360,35 @@ const LessonNodeComponent: React.FC<{
             pointerEvents: "none", // Không chặn touch events
           }}
         >
-          <Svg
-            height={progressSize}
-            width={progressSize}
-            style={styles.progressRing}
-          >
-          {/* Background circle - chia thành 3 đoạn với khoảng cách */}
-          <Circle
-            stroke="#d6d3c7"
-            fill="none"
-            cx={progressSize / 2}
-            cy={progressSize / 2}
-            r={radius}
-            strokeWidth={strokeWidth}
-            strokeDasharray={`${segmentFillLength} ${segmentGapLength}`}
-            strokeLinecap="round"
-            transform={`rotate(-90 ${progressSize / 2} ${progressSize / 2})`}
-          />
-          
-          {/* Progress circle - hiển thị progress dựa trên phần trăm hoàn thành */}
-          {progressDashArray && (
+          <Svg height={progressSize} width={progressSize} style={styles.progressRing}>
+            {/* Background circle - chia thành 3 đoạn với khoảng cách */}
             <Circle
-              stroke={progressColor}
+              stroke="#d6d3c7"
               fill="none"
               cx={progressSize / 2}
               cy={progressSize / 2}
               r={radius}
               strokeWidth={strokeWidth}
-              strokeDasharray={progressDashArray}
+              strokeDasharray={`${segmentFillLength} ${segmentGapLength}`}
               strokeLinecap="round"
               transform={`rotate(-90 ${progressSize / 2} ${progressSize / 2})`}
             />
-          )}
-        </Svg>
+
+            {/* Progress circle - hiển thị progress dựa trên phần trăm hoàn thành */}
+            {progressDashArray && (
+              <Circle
+                stroke={progressColor}
+                fill="none"
+                cx={progressSize / 2}
+                cy={progressSize / 2}
+                r={radius}
+                strokeWidth={strokeWidth}
+                strokeDasharray={progressDashArray}
+                strokeLinecap="round"
+                transform={`rotate(-90 ${progressSize / 2} ${progressSize / 2})`}
+              />
+            )}
+          </Svg>
         </View>
       )}
 
@@ -445,11 +416,7 @@ const LessonNodeComponent: React.FC<{
         >
           {/* Node Icon */}
           <View style={[...style.iconContainerStyle, { zIndex: 12 }]}>
-            <Image
-              source={node.iconSource}
-              style={styles.lessonStatusImage}
-              contentFit="contain"
-            />
+            <Image source={node.iconSource} style={styles.lessonStatusImage} contentFit="contain" />
           </View>
         </Pressable>
       </Animated.View>
@@ -463,12 +430,12 @@ const normalizeDuoSource = (source: any): DuoSource => {
   if (source && typeof source === "object" && "type" in source) {
     return source as DuoSource;
   }
-  
+
   // Auto-detect: nếu là string hoặc có uri -> image, ngược lại -> lottie
   if (typeof source === "string" || (source && typeof source === "object" && "uri" in source)) {
     return { type: "image", source };
   }
-  
+
   // Mặc định là Lottie (require() hoặc object khác)
   return { type: "lottie", source };
 };
@@ -526,13 +493,17 @@ const DynamicDuo: React.FC<{
         return (
           <View
             key={`duo-${duoNode.id}`}
-            style={[styles.duoPlaceholder, DUO_FINAL_POSITION, {
-              width: DUO_IMAGE_SIZE,
-              height: DUO_IMAGE_SIZE,
-              borderRadius: DUO_IMAGE_SIZE / 2, // Bo tròn hoàn toàn
-              overflow: "hidden",
-              aspectRatio: 1, // Đảm bảo hình vuông
-            }]}
+            style={[
+              styles.duoPlaceholder,
+              DUO_FINAL_POSITION,
+              {
+                width: DUO_IMAGE_SIZE,
+                height: DUO_IMAGE_SIZE,
+                borderRadius: DUO_IMAGE_SIZE / 2, // Bo tròn hoàn toàn
+                overflow: "hidden",
+                aspectRatio: 1, // Đảm bảo hình vuông
+              },
+            ]}
           >
             {duoSource.type === "lottie" ? (
               <View
@@ -594,10 +565,7 @@ export default function LessonMap({
   screenWidth = SCREEN_WIDTH,
 }: LessonMapProps) {
   // Convert lessons thành nodes với tính toán vị trí
-  const lessonNodes = useMemo(
-    () => convertLessonsToNodes(lessons, screenWidth),
-    [lessons, screenWidth]
-  );
+  const lessonNodes = useMemo(() => convertLessonsToNodes(lessons, screenWidth), [lessons, screenWidth]);
 
   // Normalize duoImages để hỗ trợ backward compatibility
   const normalizedDuoImages = useMemo(() => {
@@ -606,9 +574,7 @@ export default function LessonMap({
 
   // Tính toán chiều cao ScrollView để cuộn được hết các node
   const contentHeight =
-    lessonNodes.length > 0
-      ? lessonNodes[lessonNodes.length - 1].y + NODE_VERTICAL_SPACING + 50
-      : 600;
+    lessonNodes.length > 0 ? lessonNodes[lessonNodes.length - 1].y + NODE_VERTICAL_SPACING + 50 : 600;
 
   return (
     <View style={styles.container}>
@@ -616,17 +582,11 @@ export default function LessonMap({
       <ScrollView contentContainerStyle={{ height: contentHeight }}>
         {/* Render các Nodes Bài học */}
         {lessonNodes.map((node) => (
-          <LessonNodeComponent
-            key={`lesson-${node.lessonId}-${node.id}`}
-            node={node}
-            onPress={onLessonPress}
-          />
+          <LessonNodeComponent key={`lesson-${node.lessonId}-${node.id}`} node={node} onPress={onLessonPress} />
         ))}
 
         {/* Linh vật Duo (vị trí động và hướng nhìn động) */}
-        {normalizedDuoImages.length > 0 && (
-          <DynamicDuo lessonData={lessonNodes} duoImages={normalizedDuoImages} />
-        )}
+        {normalizedDuoImages.length > 0 && <DynamicDuo lessonData={lessonNodes} duoImages={normalizedDuoImages} />}
       </ScrollView>
     </View>
   );
@@ -677,4 +637,3 @@ const styles = StyleSheet.create({
     // Kích thước được set inline để đồng bộ với DUO_IMAGE_SIZE
   },
 });
-

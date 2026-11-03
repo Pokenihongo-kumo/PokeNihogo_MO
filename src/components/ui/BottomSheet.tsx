@@ -10,18 +10,8 @@ import {
   View,
   ViewProps,
 } from "react-native";
-import {
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
-import Animated, {
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -86,7 +76,7 @@ const BottomSheet = ({
         setInternalOpen(open);
       }
     },
-    [isControlled, controlledOnOpenChange]
+    [isControlled, controlledOnOpenChange],
   );
 
   // Close BottomSheet when component unmounts (e.g., when navigating away)
@@ -148,7 +138,7 @@ const BottomSheetTrigger = React.forwardRef<
               childProps.onPress(e);
             }
           },
-        } as any
+        } as any,
       );
     }
   }
@@ -163,8 +153,7 @@ const BottomSheetTrigger = React.forwardRef<
       (typeof childType === "object" &&
         (childType?.displayName === "View" ||
           childType?.name === "View" ||
-          (typeof childType === "function" &&
-            childType.toString().includes("View"))));
+          (typeof childType === "function" && childType.toString().includes("View"))));
 
     if (isViewType) {
       processedChildren = React.cloneElement(
@@ -172,7 +161,7 @@ const BottomSheetTrigger = React.forwardRef<
         {
           ...(children.props as any),
           pointerEvents: "box-none" as const,
-        } as any
+        } as any,
       );
     }
   }
@@ -215,7 +204,7 @@ const BottomSheetContent = React.forwardRef<
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     // translateY: 0 = off-screen (below), negative = slide up
     const translateY = useSharedValue(0); // Start off-screen below (at top: SCREEN_HEIGHT)
@@ -233,9 +222,7 @@ const BottomSheetContent = React.forwardRef<
     const scrollViewRef = React.useRef<Animated.ScrollView>(null);
     // Initialize isVisible based on isOpen state
     const [isVisible, setIsVisible] = React.useState(isOpen);
-    const animationTimeoutRef = React.useRef<ReturnType<
-      typeof setTimeout
-    > | null>(null);
+    const animationTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Initialize translateY position - start from bottom (off-screen)
     React.useEffect(() => {
@@ -308,7 +295,7 @@ const BottomSheetContent = React.forwardRef<
         const offsetY = event.nativeEvent.contentOffset.y;
         scrollY.value = offsetY;
       },
-      [scrollY]
+      [scrollY],
     );
 
     // Pan gesture for dragging the sheet down
@@ -331,7 +318,7 @@ const BottomSheetContent = React.forwardRef<
           // openTranslateY < newTranslateY < 0
           translateY.value = Math.max(
             Math.min(newTranslateY, 0), // Can't go above 0
-            openTranslateY // Can't go below openTranslateY (more negative)
+            openTranslateY, // Can't go below openTranslateY (more negative)
           );
         }
       })
@@ -383,11 +370,7 @@ const BottomSheetContent = React.forwardRef<
 
     const rHandleStyle = useAnimatedStyle(() => {
       // Handle opacity based on how close to open position
-      const opacity =
-        translateY.value <
-        openTranslateY + (SCREEN_HEIGHT - openTranslateY) * 0.1
-          ? 1
-          : 0.5;
+      const opacity = translateY.value < openTranslateY + (SCREEN_HEIGHT - openTranslateY) * 0.1 ? 1 : 0.5;
       return {
         opacity: withTiming(opacity, { duration: 200 }),
       };
@@ -416,11 +399,7 @@ const BottomSheetContent = React.forwardRef<
               rBackdropStyle,
             ]}
           >
-            <TouchableOpacity
-              style={{ flex: 1 }}
-              activeOpacity={1}
-              onPress={closeSheet}
-            />
+            <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={closeSheet} />
           </Animated.View>
 
           {/* Bottom Sheet */}
@@ -436,7 +415,8 @@ const BottomSheetContent = React.forwardRef<
                   height: visibleHeight,
                   backgroundColor: "#ffffff",
                   borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,zIndex: 2,
+                  borderTopRightRadius: 20,
+                  zIndex: 2,
                 },
                 rBottomSheetStyle,
                 style,
@@ -483,88 +463,60 @@ const BottomSheetContent = React.forwardRef<
         </GestureHandlerRootView>
       </Modal>
     );
-  }
+  },
 );
 
 BottomSheetContent.displayName = "BottomSheetContent";
 
-const BottomSheetHeader = React.forwardRef<View, BottomSheetHeaderProps>(
-  ({ children, style, ...props }, ref) => (
-    <View
-      ref={ref}
-      style={[
-        {
-          flexDirection: "column",
-          gap: 8,
-          marginBottom: 16,
-        },
-        style,
-      ]}
-      {...props}
-    >
-      {children}
-    </View>
-  )
-);
+const BottomSheetHeader = React.forwardRef<View, BottomSheetHeaderProps>(({ children, style, ...props }, ref) => (
+  <View
+    ref={ref}
+    style={[
+      {
+        flexDirection: "column",
+        gap: 8,
+        marginBottom: 16,
+      },
+      style,
+    ]}
+    {...props}
+  >
+    {children}
+  </View>
+));
 
 BottomSheetHeader.displayName = "BottomSheetHeader";
 
-const BottomSheetFooter = React.forwardRef<View, BottomSheetFooterProps>(
-  ({ children, style, ...props }, ref) => (
-    <View
-      ref={ref}
-      style={[
-        {
-          flexDirection: "column",
-          gap: 8,
-          marginTop: 16,
-          paddingTop: 16,
-          borderTopWidth: 1,
-          borderTopColor: "#e5e7eb",
-        },
-        style,
-      ]}
-      {...props}
-    >
-      {children}
-    </View>
-  )
-);
+const BottomSheetFooter = React.forwardRef<View, BottomSheetFooterProps>(({ children, style, ...props }, ref) => (
+  <View
+    ref={ref}
+    style={[
+      {
+        flexDirection: "column",
+        gap: 8,
+        marginTop: 16,
+        paddingTop: 16,
+        borderTopWidth: 1,
+        borderTopColor: "#e5e7eb",
+      },
+      style,
+    ]}
+    {...props}
+  >
+    {children}
+  </View>
+));
 
 BottomSheetFooter.displayName = "BottomSheetFooter";
 
-const BottomSheetTitle = React.forwardRef<Text, BottomSheetTitleProps>(
-  ({ children, style, ...props }, ref) => (
-    <Text
-      ref={ref}
-      style={[
-        {
-          fontSize: 20,
-          fontWeight: "600",
-          color: "#111827",
-        },
-        style,
-      ]}
-      {...props}
-    >
-      {children}
-    </Text>
-  )
-);
-
-BottomSheetTitle.displayName = "BottomSheetTitle";
-
-const BottomSheetDescription = React.forwardRef<
-  Text,
-  BottomSheetDescriptionProps
->(({ children, style, ...props }, ref) => (
+const BottomSheetTitle = React.forwardRef<Text, BottomSheetTitleProps>(({ children, style, ...props }, ref) => (
   <Text
     ref={ref}
     style={[
       {
-        fontSize: 14,
-        color: "#6b7280",
-        lineHeight: 20,
+        fontSize: 20,
+        fontWeight: "600",
+        color: "#111827",
       },
       style,
     ]}
@@ -573,6 +525,27 @@ const BottomSheetDescription = React.forwardRef<
     {children}
   </Text>
 ));
+
+BottomSheetTitle.displayName = "BottomSheetTitle";
+
+const BottomSheetDescription = React.forwardRef<Text, BottomSheetDescriptionProps>(
+  ({ children, style, ...props }, ref) => (
+    <Text
+      ref={ref}
+      style={[
+        {
+          fontSize: 14,
+          color: "#6b7280",
+          lineHeight: 20,
+        },
+        style,
+      ]}
+      {...props}
+    >
+      {children}
+    </Text>
+  ),
+);
 
 BottomSheetDescription.displayName = "BottomSheetDescription";
 
@@ -609,7 +582,7 @@ export {
   BottomSheetFooter,
   BottomSheetHeader,
   BottomSheetTitle,
-  BottomSheetTrigger
+  BottomSheetTrigger,
 };
 export type {
   BottomSheetCloseProps,
@@ -619,6 +592,5 @@ export type {
   BottomSheetHeaderProps,
   BottomSheetProps,
   BottomSheetTitleProps,
-  BottomSheetTriggerProps
+  BottomSheetTriggerProps,
 };
-

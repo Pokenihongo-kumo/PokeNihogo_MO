@@ -11,20 +11,13 @@ import {
 } from "@components/ui/BottomSheet";
 import ErrorState from "@components/ui/ErrorState";
 import { Skeleton } from "@components/ui/Skeleton";
-import {
-  useInfiniteUserLessons,
-  useLessonCategories,
-} from "@hooks/useLessons";
+import { useInfiniteUserLessons, useLessonCategories } from "@hooks/useLessons";
 import { LessonProgress } from "@models/lesson/lesson.common";
 import { useIsFocused } from "@react-navigation/native";
 import { ROUTES } from "@routes/routes";
 import userProgressService from "@services/user-progres";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  getJLPTLevelColor,
-  getSkillCategoryColor,
-  getSkillCategoryIcon,
-} from "@utils/lesson.utils";
+import { getJLPTLevelColor, getSkillCategoryColor, getSkillCategoryIcon } from "@utils/lesson.utils";
 import { router } from "expo-router";
 import {
   BookOpen,
@@ -37,21 +30,9 @@ import {
   Pencil,
   Type,
 } from "lucide-react-native";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Animated,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Animated, RefreshControl, StyleSheet, TouchableOpacity, View } from "react-native";
 
 // Constants
 const DUO_IMAGES = [
@@ -60,13 +41,7 @@ const DUO_IMAGES = [
   require("@assets/animations/Mystery Gift by Oscar Soronellas.json"),
 ];
 
-const JLPT_LEVEL_ORDER = [
-  "jlpt-n5",
-  "jlpt-n4",
-  "jlpt-n3",
-  "jlpt-n2",
-  "jlpt-n1",
-] as const;
+const JLPT_LEVEL_ORDER = ["jlpt-n5", "jlpt-n4", "jlpt-n3", "jlpt-n2", "jlpt-n1"] as const;
 
 const SKILL_CATEGORY_ROUTE_MAP: Record<string, string> = {
   reading: ROUTES.TABS.READING,
@@ -91,15 +66,7 @@ const JLPTLevelMap = React.memo<{
   levelName: string;
   onLessonPress: (lesson: LessonProgress) => void;
 }>(({ categoryId, levelName, onLessonPress }) => {
-  const {
-    data,
-    isLoading,
-    isError,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    refetch,
-  } = useInfiniteUserLessons({
+  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteUserLessons({
     pageSize: 50,
     lessonCategoryId: parseInt(categoryId, 10),
   });
@@ -150,16 +117,10 @@ const JLPTLevelMap = React.memo<{
         {levelName}
       </ThemedText>
       {allLessons.length > 0 ? (
-        <LessonMap
-          duoImages={DUO_IMAGES}
-          lessons={allLessons}
-          onLessonPress={onLessonPress}
-        />
+        <LessonMap duoImages={DUO_IMAGES} lessons={allLessons} onLessonPress={onLessonPress} />
       ) : (
         <View style={styles.emptyLevelContainer}>
-          <ThemedText style={styles.emptyLevelText}>
-            No lessons available for this level
-          </ThemedText>
+          <ThemedText style={styles.emptyLevelText}>No lessons available for this level</ThemedText>
         </View>
       )}
     </View>
@@ -186,7 +147,7 @@ const SkillCategoryItem = React.memo<{
         },
       ],
     }),
-    [isLoaded, fadeAnim, slideAnim]
+    [isLoaded, fadeAnim, slideAnim],
   );
 
   return (
@@ -197,21 +158,14 @@ const SkillCategoryItem = React.memo<{
         activeOpacity={0.8}
       >
         <View style={styles.skillCategoryHeader}>
-          <View
-            style={[
-              styles.skillCategoryIcon,
-              { backgroundColor: category.color },
-            ]}
-          >
+          <View style={[styles.skillCategoryIcon, { backgroundColor: category.color }]}>
             {renderIcon(category.route)}
           </View>
           <View style={styles.skillCategoryInfo}>
             <ThemedText type="subtitle" style={styles.skillCategoryTitle}>
               {category.name}
             </ThemedText>
-            <ThemedText style={styles.skillCategoryDescription}>
-              {category.description}
-            </ThemedText>
+            <ThemedText style={styles.skillCategoryDescription}>{category.description}</ThemedText>
           </View>
           <View style={styles.skillCategoryArrow}>
             <ChevronRight size={20} color="#6b7280" />
@@ -286,17 +240,17 @@ const CategoriesScreen = () => {
       await Promise.all([
         refetchCategories(),
         // Refetch all user lessons infinite queries (all JLPT levels)
-        queryClient.refetchQueries({ 
+        queryClient.refetchQueries({
           queryKey: ["user-lessons-infinite"],
           exact: false, // Match all queries starting with this key (all categories/levels)
         }),
         // Refetch all user progress infinite queries
-        queryClient.refetchQueries({ 
+        queryClient.refetchQueries({
           queryKey: ["userProgressInfinite"],
           exact: false, // Match all queries starting with this key
         }),
         // Refetch all user progress queries
-        queryClient.refetchQueries({ 
+        queryClient.refetchQueries({
           queryKey: ["userProgress"],
           exact: false, // Match all queries starting with this key
         }),
@@ -318,7 +272,7 @@ const CategoriesScreen = () => {
     // Navigate to lesson detail or start lesson
     router.push({
       pathname: ROUTES.LESSON.DETAIL,
-      params: { 
+      params: {
         id: lesson.lessonId.toString(),
         status: lesson.status || "NOT_STARTED",
       },
@@ -339,7 +293,7 @@ const CategoriesScreen = () => {
   // Memoized level categories - filter by "jlpt-" prefix and sort N5 to N1
   const levelCategories = useMemo(() => {
     if (!lessonCategoriesData?.data.results) return [];
-    
+
     return lessonCategoriesData.data.results
       .filter((category: any) => {
         const slug = category.slug.toLowerCase();
@@ -372,7 +326,7 @@ const CategoriesScreen = () => {
   // Memoized skill categories - non-JLPT categories from API
   const skillCategories = useMemo(() => {
     if (!lessonCategoriesData?.data.results) return [];
-    
+
     return lessonCategoriesData.data.results
       .filter((category: any) => {
         const slug = category.slug.toLowerCase();
@@ -422,11 +376,7 @@ const CategoriesScreen = () => {
   }
 
   return (
-    <HomeLayout
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-      }
-    >
+    <HomeLayout refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
       <View style={styles.contentContainer}>
         {/* Lesson Maps for JLPT Levels (N5, N4, N3) */}
         {jlptLevelsForMap.map((level, index) => (
@@ -438,21 +388,13 @@ const CategoriesScreen = () => {
                 <View style={styles.separatorLine} />
               </View>
             )}
-            <JLPTLevelMap
-              categoryId={level.id}
-              levelName={level.name}
-              onLessonPress={handleLessonPress}
-            />
+            <JLPTLevelMap categoryId={level.id} levelName={level.name} onLessonPress={handleLessonPress} />
           </React.Fragment>
         ))}
 
         {/* Skill Categories - Trigger Button */}
         <View style={styles.categoriesSection}>
-          <BottomSheet
-            open={isBottomSheetOpen}
-            onOpenChange={setIsBottomSheetOpen}
-            closeOnBlur={true}
-          >
+          <BottomSheet open={isBottomSheetOpen} onOpenChange={setIsBottomSheetOpen} closeOnBlur={true}>
             <BottomSheetTrigger>
               <View style={styles.categoriesHeader}>
                 <ThemedText type="subtitle" style={styles.categoriesTitle}>
@@ -466,9 +408,7 @@ const CategoriesScreen = () => {
 
             <BottomSheetContent snapPoints={[0.7]}>
               <BottomSheetHeader>
-                <BottomSheetTitle>
-                  🚀 {t("lessons.skill_categories.title")}
-                </BottomSheetTitle>
+                <BottomSheetTitle>🚀 {t("lessons.skill_categories.title")}</BottomSheetTitle>
               </BottomSheetHeader>
 
               <View style={styles.skillCategoriesContainer}>
@@ -530,7 +470,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
     padding: 16,
-    borderLeftWidth: 4,},
+    borderLeftWidth: 4,
+  },
   skillCategoryHeader: {
     flexDirection: "row",
     alignItems: "center",

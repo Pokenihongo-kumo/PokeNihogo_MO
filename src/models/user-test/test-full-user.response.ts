@@ -58,4 +58,3 @@ export type TestSetQuestion = z.infer<typeof TestSetQuestionSchema>;
 export type TestSet = z.infer<typeof TestSetSchema>;
 export type TestDetail = z.infer<typeof TestDetailSchema>;
 export type TestFullUserResponse = z.infer<typeof TestFullUserResponseSchema>;
-

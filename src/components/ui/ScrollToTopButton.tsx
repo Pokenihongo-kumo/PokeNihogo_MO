@@ -1,12 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
-import {
-    Animated,
-    NativeScrollEvent,
-    NativeSyntheticEvent,
-    StyleSheet,
-    TouchableOpacity,
-} from "react-native";
+import { Animated, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, TouchableOpacity } from "react-native";
 
 interface ScrollToTopButtonProps {
   /**
@@ -50,10 +44,7 @@ interface ScrollToTopButtonProps {
 /**
  * Custom hook to handle scroll to top button logic
  */
-export function useScrollToTop(
-  scrollRef: React.RefObject<any>,
-  threshold: number = 200
-) {
+export function useScrollToTop(scrollRef: React.RefObject<any>, threshold: number = 200) {
   const [showButton, setShowButton] = useState(false);
   const buttonOpacity = useRef(new Animated.Value(0)).current;
 
@@ -134,11 +125,7 @@ export function ScrollToTopButton({
         ]}
         activeOpacity={0.8}
       >
-        <MaterialIcons
-          name="keyboard-arrow-up"
-          size={iconSize}
-          color={iconColor}
-        />
+        <MaterialIcons name="keyboard-arrow-up" size={iconSize} color={iconColor} />
       </TouchableOpacity>
     </Animated.View>
   );
@@ -151,6 +138,6 @@ const styles = StyleSheet.create({
   },
   touchable: {
     justifyContent: "center",
-    alignItems: "center",},
+    alignItems: "center",
+  },
 });
-

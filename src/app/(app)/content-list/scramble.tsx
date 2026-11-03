@@ -6,14 +6,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { ChevronLeft, Heart, RotateCcw, Trophy, X } from "lucide-react-native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-    ActivityIndicator,
-    Animated,
-    Easing,
-    Modal,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { ActivityIndicator, Animated, Easing, Modal, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ScrambleWord {
@@ -26,218 +19,205 @@ interface ScrambleWord {
 }
 
 // Component hiển thị một chữ cái có thể chọn - Optimized với React.memo
-const LetterTile = React.memo(({
-  letter,
-  index,
-  onPress,
-  isSelected,
-  disabled,
-  scaleAnim,
-  opacityAnim,
-}: {
-  letter: string;
-  index: number;
-  onPress: () => void;
-  isSelected: boolean;
-  disabled: boolean;
-  scaleAnim: Animated.Value;
-  opacityAnim: Animated.Value;
-}) => {
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+const LetterTile = React.memo(
+  ({
+    letter,
+    index,
+    onPress,
+    isSelected,
+    disabled,
+    scaleAnim,
+    opacityAnim,
+  }: {
+    letter: string;
+    index: number;
+    onPress: () => void;
+    isSelected: boolean;
+    disabled: boolean;
+    scaleAnim: Animated.Value;
+    opacityAnim: Animated.Value;
+  }) => {
+    const pulseAnim = useRef(new Animated.Value(1)).current;
 
-  useEffect(() => {
-    if (!disabled) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(pulseAnim, {
-            toValue: 1.05,
-            duration: 1000,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: true,
-          }),
-          Animated.timing(pulseAnim, {
-            toValue: 1,
-            duration: 1000,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    }
-  }, [disabled, pulseAnim]);
+    useEffect(() => {
+      if (!disabled) {
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(pulseAnim, {
+              toValue: 1.05,
+              duration: 1000,
+              easing: Easing.inOut(Easing.ease),
+              useNativeDriver: true,
+            }),
+            Animated.timing(pulseAnim, {
+              toValue: 1,
+              duration: 1000,
+              easing: Easing.inOut(Easing.ease),
+              useNativeDriver: true,
+            }),
+          ]),
+        ).start();
+      }
+    }, [disabled, pulseAnim]);
 
-  const combinedScale = Animated.multiply(scaleAnim, pulseAnim);
+    const combinedScale = Animated.multiply(scaleAnim, pulseAnim);
 
-  return (
-    <Animated.View
-      style={{
-        transform: [{ scale: combinedScale }],
-        opacity: opacityAnim,
-      }}
-    >
-      <TouchableOpacity
-        onPress={onPress}
-        disabled={disabled}
-        activeOpacity={0.7}
+    return (
+      <Animated.View
         style={{
-          backgroundColor: isSelected ? "#fef3c7" : "#ffffff",
-          borderRadius: 12,
-          borderWidth: 3,
-          borderColor: isSelected ? "#f59e0b" : "#d1d5db",
-          width: 56,
-          height: 56,
-          justifyContent: "center",
-          alignItems: "center",}}
+          transform: [{ scale: combinedScale }],
+          opacity: opacityAnim,
+        }}
       >
-        <ThemedText
+        <TouchableOpacity
+          onPress={onPress}
+          disabled={disabled}
+          activeOpacity={0.7}
           style={{
-            fontSize: 24,
-            fontWeight: "bold",
-            color: isSelected ? "#92400e" : "#1f2937",
+            backgroundColor: isSelected ? "#fef3c7" : "#ffffff",
+            borderRadius: 12,
+            borderWidth: 3,
+            borderColor: isSelected ? "#f59e0b" : "#d1d5db",
+            width: 56,
+            height: 56,
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          {letter}
-        </ThemedText>
-      </TouchableOpacity>
-    </Animated.View>
-  );
-});
-
-LetterTile.displayName = "LetterTile";
-
-// Component hiển thị chữ cái đã chọn - Optimized với React.memo
-const SelectedLetterSlot = React.memo(({
-  letter,
-  index,
-  onPress,
-  scaleAnim,
-  isCorrect,
-  isWrong,
-}: {
-  letter: string | null;
-  index: number;
-  onPress: () => void;
-  scaleAnim: Animated.Value;
-  isCorrect?: boolean;
-  isWrong?: boolean;
-}) => {
-  const shakeAnim = useRef(new Animated.Value(0)).current;
-  const successAnim = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    if (isWrong) {
-      // Shake animation khi sai
-      Animated.sequence([
-        Animated.timing(shakeAnim, {
-          toValue: 10,
-          duration: 50,
-          useNativeDriver: true,
-        }),
-        Animated.timing(shakeAnim, {
-          toValue: -10,
-          duration: 50,
-          useNativeDriver: true,
-        }),
-        Animated.timing(shakeAnim, {
-          toValue: 10,
-          duration: 50,
-          useNativeDriver: true,
-        }),
-        Animated.timing(shakeAnim, {
-          toValue: 0,
-          duration: 50,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [isWrong, shakeAnim]);
-
-  useEffect(() => {
-    if (isCorrect) {
-      // Success animation khi đúng
-      Animated.sequence([
-        Animated.spring(successAnim, {
-          toValue: 1.2,
-          friction: 3,
-          tension: 40,
-          useNativeDriver: true,
-        }),
-        Animated.spring(successAnim, {
-          toValue: 1,
-          friction: 3,
-          tension: 40,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [isCorrect, successAnim]);
-
-  const combinedScale = Animated.multiply(scaleAnim, successAnim);
-  const translateX = shakeAnim;
-
-  return (
-    <Animated.View
-      style={{
-        transform: [
-          { scale: combinedScale },
-          { translateX },
-        ],
-      }}
-    >
-      <TouchableOpacity
-        onPress={onPress}
-        activeOpacity={0.7}
-        style={{
-          backgroundColor: letter
-            ? isCorrect
-              ? "#d1fae5"
-              : isWrong
-                ? "#fee2e2"
-                : "#e0f2fe"
-            : "#f3f4f6",
-          borderRadius: 12,
-          borderWidth: 3,
-          borderColor: letter
-            ? isCorrect
-              ? "#10b981"
-              : isWrong
-                ? "#ef4444"
-                : "#3b82f6"
-            : "#d1d5db",
-          borderStyle: letter ? "solid" : "dashed",
-          width: 56,
-          height: 56,
-          justifyContent: "center",
-          alignItems: "center",}}
-      >
-        {letter ? (
           <ThemedText
             style={{
               fontSize: 24,
               fontWeight: "bold",
-              color: isCorrect
-                ? "#059669"
-                : isWrong
-                  ? "#dc2626"
-                  : "#1e40af",
+              color: isSelected ? "#92400e" : "#1f2937",
             }}
           >
             {letter}
           </ThemedText>
-        ) : (
-          <View
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: "#9ca3af",
-            }}
-          />
-        )}
-      </TouchableOpacity>
-    </Animated.View>
-  );
-});
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  },
+);
+
+LetterTile.displayName = "LetterTile";
+
+// Component hiển thị chữ cái đã chọn - Optimized với React.memo
+const SelectedLetterSlot = React.memo(
+  ({
+    letter,
+    index,
+    onPress,
+    scaleAnim,
+    isCorrect,
+    isWrong,
+  }: {
+    letter: string | null;
+    index: number;
+    onPress: () => void;
+    scaleAnim: Animated.Value;
+    isCorrect?: boolean;
+    isWrong?: boolean;
+  }) => {
+    const shakeAnim = useRef(new Animated.Value(0)).current;
+    const successAnim = useRef(new Animated.Value(1)).current;
+
+    useEffect(() => {
+      if (isWrong) {
+        // Shake animation khi sai
+        Animated.sequence([
+          Animated.timing(shakeAnim, {
+            toValue: 10,
+            duration: 50,
+            useNativeDriver: true,
+          }),
+          Animated.timing(shakeAnim, {
+            toValue: -10,
+            duration: 50,
+            useNativeDriver: true,
+          }),
+          Animated.timing(shakeAnim, {
+            toValue: 10,
+            duration: 50,
+            useNativeDriver: true,
+          }),
+          Animated.timing(shakeAnim, {
+            toValue: 0,
+            duration: 50,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }
+    }, [isWrong, shakeAnim]);
+
+    useEffect(() => {
+      if (isCorrect) {
+        // Success animation khi đúng
+        Animated.sequence([
+          Animated.spring(successAnim, {
+            toValue: 1.2,
+            friction: 3,
+            tension: 40,
+            useNativeDriver: true,
+          }),
+          Animated.spring(successAnim, {
+            toValue: 1,
+            friction: 3,
+            tension: 40,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }
+    }, [isCorrect, successAnim]);
+
+    const combinedScale = Animated.multiply(scaleAnim, successAnim);
+    const translateX = shakeAnim;
+
+    return (
+      <Animated.View
+        style={{
+          transform: [{ scale: combinedScale }, { translateX }],
+        }}
+      >
+        <TouchableOpacity
+          onPress={onPress}
+          activeOpacity={0.7}
+          style={{
+            backgroundColor: letter ? (isCorrect ? "#d1fae5" : isWrong ? "#fee2e2" : "#e0f2fe") : "#f3f4f6",
+            borderRadius: 12,
+            borderWidth: 3,
+            borderColor: letter ? (isCorrect ? "#10b981" : isWrong ? "#ef4444" : "#3b82f6") : "#d1d5db",
+            borderStyle: letter ? "solid" : "dashed",
+            width: 56,
+            height: 56,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {letter ? (
+            <ThemedText
+              style={{
+                fontSize: 24,
+                fontWeight: "bold",
+                color: isCorrect ? "#059669" : isWrong ? "#dc2626" : "#1e40af",
+              }}
+            >
+              {letter}
+            </ThemedText>
+          ) : (
+            <View
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: "#9ca3af",
+              }}
+            />
+          )}
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  },
+);
 
 SelectedLetterSlot.displayName = "SelectedLetterSlot";
 
@@ -320,19 +300,13 @@ const ScrambleGameScreen = () => {
 
         if (contentType === "kanji") {
           originalWord = item.character || "";
-          meaning =
-            item.meaning?.split("##")[0] ||
-            item.meaning ||
-            t("lessons.no_meaning");
+          meaning = item.meaning?.split("##")[0] || item.meaning || t("lessons.no_meaning");
         } else {
           originalWord = item.wordJp || "";
           const meanings = (item.meanings || [])
-            .map((m: any) =>
-              typeof m === "string" ? m : m.meaning || m.text || ""
-            )
+            .map((m: any) => (typeof m === "string" ? m : m.meaning || m.text || ""))
             .filter(Boolean);
-          meaning =
-            meanings.length > 0 ? meanings[0] : t("lessons.no_meaning");
+          meaning = meanings.length > 0 ? meanings[0] : t("lessons.no_meaning");
         }
 
         if (!originalWord) return null;
@@ -358,10 +332,7 @@ const ScrambleGameScreen = () => {
   useEffect(() => {
     if (words.length > 0 && currentWordIndex < words.length) {
       const currentWord = words[currentWordIndex];
-      const allLetters = [
-        ...currentWord.selectedLetters,
-        ...currentWord.remainingLetters,
-      ];
+      const allLetters = [...currentWord.selectedLetters, ...currentWord.remainingLetters];
 
       allLetters.forEach((letter, idx) => {
         const key = `${currentWordIndex}-${idx}-${letter}`;
@@ -409,21 +380,18 @@ const ScrambleGameScreen = () => {
       tension: 40,
       useNativeDriver: false,
     }).start();
-    
+
     // Update display score
     const listener = scoreAnim.addListener(({ value }) => {
       setDisplayScore(Math.round(value));
     });
-    
+
     return () => {
       scoreAnim.removeListener(listener);
     };
   }, [score, scoreAnim]);
 
-  const currentWord = useMemo(
-    () => words[currentWordIndex] || null,
-    [words, currentWordIndex]
-  );
+  const currentWord = useMemo(() => words[currentWordIndex] || null, [words, currentWordIndex]);
 
   // Animation hint button pulse
   useEffect(() => {
@@ -442,7 +410,7 @@ const ScrambleGameScreen = () => {
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: true,
           }),
-        ])
+        ]),
       ).start();
     } else {
       hintPulseAnim.setValue(1);
@@ -494,218 +462,223 @@ const ScrambleGameScreen = () => {
   }, [words, currentWordIndex, scrambleWord]);
 
   // Kiểm tra đáp án với animation
-  const checkAnswer = useCallback((answer: string) => {
-    const currentWord = words[currentWordIndex];
-    const isCorrect = answer === currentWord.original;
+  const checkAnswer = useCallback(
+    (answer: string) => {
+      const currentWord = words[currentWordIndex];
+      const isCorrect = answer === currentWord.original;
 
-    if (isCorrect) {
-      setAnswerState("correct");
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      if (isCorrect) {
+        setAnswerState("correct");
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-      // Success animation cho tất cả slots
-      currentWord.original.split("").forEach((_, idx) => {
-        const slotKey = `slot-${currentWordIndex}-${idx}`;
-        const slotScale = slotScaleRefs.current[slotKey];
-        if (slotScale) {
-          Animated.sequence([
-            Animated.spring(slotScale, {
-              toValue: 1.05,
-              friction: 4,
-              tension: 50,
-              useNativeDriver: true,
-            }),
-            Animated.spring(slotScale, {
-              toValue: 1,
-              friction: 4,
-              tension: 50,
-              useNativeDriver: true,
-            }),
-          ]).start();
-        }
-      });
+        // Success animation cho tất cả slots
+        currentWord.original.split("").forEach((_, idx) => {
+          const slotKey = `slot-${currentWordIndex}-${idx}`;
+          const slotScale = slotScaleRefs.current[slotKey];
+          if (slotScale) {
+            Animated.sequence([
+              Animated.spring(slotScale, {
+                toValue: 1.05,
+                friction: 4,
+                tension: 50,
+                useNativeDriver: true,
+              }),
+              Animated.spring(slotScale, {
+                toValue: 1,
+                friction: 4,
+                tension: 50,
+                useNativeDriver: true,
+              }),
+            ]).start();
+          }
+        });
 
-      setScore((prev) => prev + 1);
-      setShowHint(false);
+        setScore((prev) => prev + 1);
+        setShowHint(false);
 
-      // Chuyển sang từ tiếp theo
-      setTimeout(() => {
-        if (currentWordIndex < words.length - 1) {
-          setCurrentWordIndex((prev) => prev + 1);
-        } else {
-          setIsGameComplete(true);
-        }
-      }, 1200);
-    } else {
-      setAnswerState("wrong");
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-
-      // Shake animation cho tất cả slots
-      currentWord.original.split("").forEach((_, idx) => {
-        const slotKey = `slot-${currentWordIndex}-${idx}`;
-        const slotScale = slotScaleRefs.current[slotKey];
-        if (slotScale) {
-          Animated.sequence([
-            Animated.timing(slotScale, {
-              toValue: 1.1,
-              duration: 50,
-              useNativeDriver: true,
-            }),
-            Animated.timing(slotScale, {
-              toValue: 0.9,
-              duration: 50,
-              useNativeDriver: true,
-            }),
-            Animated.timing(slotScale, {
-              toValue: 1.1,
-              duration: 50,
-              useNativeDriver: true,
-            }),
-            Animated.timing(slotScale, {
-              toValue: 1,
-              duration: 50,
-              useNativeDriver: true,
-            }),
-          ]).start();
-        }
-      });
-
-      const newLives = lives - 1;
-      setLives(newLives);
-
-      if (newLives <= 0) {
+        // Chuyển sang từ tiếp theo
         setTimeout(() => {
-          setIsGameOver(true);
-        }, 1000);
+          if (currentWordIndex < words.length - 1) {
+            setCurrentWordIndex((prev) => prev + 1);
+          } else {
+            setIsGameComplete(true);
+          }
+        }, 1200);
       } else {
-        setTimeout(() => {
-          resetCurrentWord();
-        }, 1000);
+        setAnswerState("wrong");
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
+        // Shake animation cho tất cả slots
+        currentWord.original.split("").forEach((_, idx) => {
+          const slotKey = `slot-${currentWordIndex}-${idx}`;
+          const slotScale = slotScaleRefs.current[slotKey];
+          if (slotScale) {
+            Animated.sequence([
+              Animated.timing(slotScale, {
+                toValue: 1.1,
+                duration: 50,
+                useNativeDriver: true,
+              }),
+              Animated.timing(slotScale, {
+                toValue: 0.9,
+                duration: 50,
+                useNativeDriver: true,
+              }),
+              Animated.timing(slotScale, {
+                toValue: 1.1,
+                duration: 50,
+                useNativeDriver: true,
+              }),
+              Animated.timing(slotScale, {
+                toValue: 1,
+                duration: 50,
+                useNativeDriver: true,
+              }),
+            ]).start();
+          }
+        });
+
+        const newLives = lives - 1;
+        setLives(newLives);
+
+        if (newLives <= 0) {
+          setTimeout(() => {
+            setIsGameOver(true);
+          }, 1000);
+        } else {
+          setTimeout(() => {
+            resetCurrentWord();
+          }, 1000);
+        }
       }
-    }
-  }, [words, currentWordIndex, lives, resetCurrentWord]);
+    },
+    [words, currentWordIndex, lives, resetCurrentWord],
+  );
 
   // Xử lý chọn chữ cái với animation
-  const handleLetterSelect = useCallback((letterIndex: number) => {
-    const currentWord = words[currentWordIndex];
-    if (!currentWord || currentWord.remainingLetters.length === 0) return;
+  const handleLetterSelect = useCallback(
+    (letterIndex: number) => {
+      const currentWord = words[currentWordIndex];
+      if (!currentWord || currentWord.remainingLetters.length === 0) return;
 
-    const letter = currentWord.remainingLetters[letterIndex];
-    const key = `${currentWordIndex}-${letterIndex}-${letter}`;
-    const scaleAnim = letterScaleRefs.current[key];
-    const opacityAnim = letterOpacityRefs.current[key];
+      const letter = currentWord.remainingLetters[letterIndex];
+      const key = `${currentWordIndex}-${letterIndex}-${letter}`;
+      const scaleAnim = letterScaleRefs.current[key];
+      const opacityAnim = letterOpacityRefs.current[key];
 
-    // Animation khi chọn
-    if (scaleAnim && opacityAnim) {
-      Animated.parallel([
-        Animated.spring(scaleAnim, {
-          toValue: 0.8,
-          friction: 3,
-          tension: 40,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacityAnim, {
-          toValue: 0.5,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
+      // Animation khi chọn
+      if (scaleAnim && opacityAnim) {
         Animated.parallel([
           Animated.spring(scaleAnim, {
-            toValue: 1,
+            toValue: 0.8,
             friction: 3,
             tension: 40,
             useNativeDriver: true,
           }),
           Animated.timing(opacityAnim, {
-            toValue: 1,
+            toValue: 0.5,
             duration: 200,
             useNativeDriver: true,
           }),
+        ]).start(() => {
+          Animated.parallel([
+            Animated.spring(scaleAnim, {
+              toValue: 1,
+              friction: 3,
+              tension: 40,
+              useNativeDriver: true,
+            }),
+            Animated.timing(opacityAnim, {
+              toValue: 1,
+              duration: 200,
+              useNativeDriver: true,
+            }),
+          ]).start();
+        });
+      }
+
+      const newSelected = [...currentWord.selectedLetters, letter];
+      const newRemaining = currentWord.remainingLetters.filter((_, i) => i !== letterIndex);
+
+      const updatedWords = [...words];
+      updatedWords[currentWordIndex] = {
+        ...currentWord,
+        selectedLetters: newSelected,
+        remainingLetters: newRemaining,
+      };
+
+      setWords(updatedWords);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+      // Animation slot khi điền chữ
+      const slotKey = `slot-${currentWordIndex}-${newSelected.length - 1}`;
+      const slotScale = slotScaleRefs.current[slotKey];
+      if (slotScale) {
+        Animated.sequence([
+          Animated.spring(slotScale, {
+            toValue: 1.1,
+            friction: 4,
+            tension: 50,
+            useNativeDriver: true,
+          }),
+          Animated.spring(slotScale, {
+            toValue: 1,
+            friction: 4,
+            tension: 50,
+            useNativeDriver: true,
+          }),
         ]).start();
-      });
-    }
+      }
 
-    const newSelected = [...currentWord.selectedLetters, letter];
-    const newRemaining = currentWord.remainingLetters.filter(
-      (_, i) => i !== letterIndex
-    );
-
-    const updatedWords = [...words];
-    updatedWords[currentWordIndex] = {
-      ...currentWord,
-      selectedLetters: newSelected,
-      remainingLetters: newRemaining,
-    };
-
-    setWords(updatedWords);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-    // Animation slot khi điền chữ
-    const slotKey = `slot-${currentWordIndex}-${newSelected.length - 1}`;
-    const slotScale = slotScaleRefs.current[slotKey];
-    if (slotScale) {
-      Animated.sequence([
-        Animated.spring(slotScale, {
-          toValue: 1.1,
-          friction: 4,
-          tension: 50,
-          useNativeDriver: true,
-        }),
-        Animated.spring(slotScale, {
-          toValue: 1,
-          friction: 4,
-          tension: 50,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-
-    // Kiểm tra nếu đã điền đủ chữ
-    if (newSelected.length === currentWord.original.length) {
-      checkAnswer(newSelected.join(""));
-    }
-  }, [words, currentWordIndex, checkAnswer]);
+      // Kiểm tra nếu đã điền đủ chữ
+      if (newSelected.length === currentWord.original.length) {
+        checkAnswer(newSelected.join(""));
+      }
+    },
+    [words, currentWordIndex, checkAnswer],
+  );
 
   // Xử lý bỏ chọn chữ cái từ slot với animation
-  const handleSlotDeselect = useCallback((slotIndex: number) => {
-    const currentWord = words[currentWordIndex];
-    if (!currentWord || slotIndex >= currentWord.selectedLetters.length) return;
+  const handleSlotDeselect = useCallback(
+    (slotIndex: number) => {
+      const currentWord = words[currentWordIndex];
+      if (!currentWord || slotIndex >= currentWord.selectedLetters.length) return;
 
-    const letter = currentWord.selectedLetters[slotIndex];
-    const newSelected = currentWord.selectedLetters.filter(
-      (_, i) => i !== slotIndex
-    );
-    const newRemaining = [...currentWord.remainingLetters, letter];
+      const letter = currentWord.selectedLetters[slotIndex];
+      const newSelected = currentWord.selectedLetters.filter((_, i) => i !== slotIndex);
+      const newRemaining = [...currentWord.remainingLetters, letter];
 
-    const updatedWords = [...words];
-    updatedWords[currentWordIndex] = {
-      ...currentWord,
-      selectedLetters: newSelected,
-      remainingLetters: newRemaining,
-    };
+      const updatedWords = [...words];
+      updatedWords[currentWordIndex] = {
+        ...currentWord,
+        selectedLetters: newSelected,
+        remainingLetters: newRemaining,
+      };
 
-    setWords(updatedWords);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setWords(updatedWords);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    // Animation khi bỏ chọn
-    const slotKey = `slot-${currentWordIndex}-${slotIndex}`;
-    const slotScale = slotScaleRefs.current[slotKey];
-    if (slotScale) {
-      Animated.spring(slotScale, {
-        toValue: 0.8,
-        friction: 3,
-        tension: 40,
-        useNativeDriver: true,
-      }).start(() => {
+      // Animation khi bỏ chọn
+      const slotKey = `slot-${currentWordIndex}-${slotIndex}`;
+      const slotScale = slotScaleRefs.current[slotKey];
+      if (slotScale) {
         Animated.spring(slotScale, {
-          toValue: 1,
+          toValue: 0.8,
           friction: 3,
           tension: 40,
           useNativeDriver: true,
-        }).start();
-      });
-    }
-  }, [words, currentWordIndex]);
+        }).start(() => {
+          Animated.spring(slotScale, {
+            toValue: 1,
+            friction: 3,
+            tension: 40,
+            useNativeDriver: true,
+          }).start();
+        });
+      }
+    },
+    [words, currentWordIndex],
+  );
 
   // Sử dụng gợi ý
   const useHint = useCallback(() => {
@@ -754,34 +727,25 @@ const ScrambleGameScreen = () => {
   if (contentData.length === 0) {
     return (
       <SafeAreaView className="flex-1 bg-white">
-        <LinearGradient
-          colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
-          style={{ flex: 1 }}
-        >
+        <LinearGradient colors={["#79B4C4", "#85C3C3", "#9BC7B9"]} style={{ flex: 1 }}>
           <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row rounded-b-3xl items-center justify-between">
             <TouchableOpacity onPress={() => router.back()}>
               <ChevronLeft size={24} color="#6b7280" />
             </TouchableOpacity>
             <View style={{ flex: 1, alignItems: "center" }}>
-              <ThemedText
-                style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}
-              >
+              <ThemedText style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}>
                 {t(
                   contentType === "kanji"
                     ? "content_list.activity.scramble.kanji"
                     : "content_list.activity.scramble.vocabulary",
-                  contentType === "kanji"
-                    ? "Scramble kanji"
-                    : "Scramble vocabulary"
+                  contentType === "kanji" ? "Scramble kanji" : "Scramble vocabulary",
                 )}
               </ThemedText>
             </View>
             <View style={{ width: 24 }} />
           </View>
           <View className="flex-1 items-center justify-center p-6">
-            <ThemedText
-              style={{ fontSize: 18, color: "#6b7280", textAlign: "center" }}
-            >
+            <ThemedText style={{ fontSize: 18, color: "#6b7280", textAlign: "center" }}>
               {t("content_list.scramble.no_content", "No content available")}
             </ThemedText>
           </View>
@@ -792,26 +756,19 @@ const ScrambleGameScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
-      <LinearGradient
-        colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
-        style={{ flex: 1 }}
-      >
+      <LinearGradient colors={["#79B4C4", "#85C3C3", "#9BC7B9"]} style={{ flex: 1 }}>
         {/* Header */}
         <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row rounded-b-3xl items-center justify-between">
           <TouchableOpacity onPress={() => router.back()}>
             <ChevronLeft size={24} color="#6b7280" />
           </TouchableOpacity>
           <View style={{ flex: 1, alignItems: "center" }}>
-            <ThemedText
-              style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}
-            >
+            <ThemedText style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}>
               {t(
                 contentType === "kanji"
                   ? "content_list.activity.scramble.kanji"
                   : "content_list.activity.scramble.vocabulary",
-                contentType === "kanji"
-                  ? "Scramble kanji"
-                  : "Scramble vocabulary"
+                contentType === "kanji" ? "Scramble kanji" : "Scramble vocabulary",
               )}
             </ThemedText>
           </View>
@@ -947,8 +904,7 @@ const ScrambleGameScreen = () => {
                         fontWeight: "600",
                       }}
                     >
-                      {t("content_list.scramble.hint_text", "Hint")}:{" "}
-                      {currentWord.original}
+                      {t("content_list.scramble.hint_text", "Hint")}: {currentWord.original}
                     </ThemedText>
                   </Animated.View>
                 )}
@@ -978,8 +934,7 @@ const ScrambleGameScreen = () => {
               >
                 {currentWord.original.split("").map((_, index) => {
                   const key = `slot-${currentWordIndex}-${index}`;
-                  const scaleAnim =
-                    slotScaleRefs.current[key] || new Animated.Value(1);
+                  const scaleAnim = slotScaleRefs.current[key] || new Animated.Value(1);
                   if (!slotScaleRefs.current[key]) {
                     slotScaleRefs.current[key] = scaleAnim;
                   }
@@ -991,14 +946,8 @@ const ScrambleGameScreen = () => {
                       index={index}
                       onPress={() => handleSlotDeselect(index)}
                       scaleAnim={scaleAnim}
-                      isCorrect={
-                        answerState === "correct" &&
-                        currentWord.selectedLetters[index] !== undefined
-                      }
-                      isWrong={
-                        answerState === "wrong" &&
-                        currentWord.selectedLetters[index] !== undefined
-                      }
+                      isCorrect={answerState === "correct" && currentWord.selectedLetters[index] !== undefined}
+                      isWrong={answerState === "wrong" && currentWord.selectedLetters[index] !== undefined}
                     />
                   );
                 })}
@@ -1028,10 +977,8 @@ const ScrambleGameScreen = () => {
               >
                 {currentWord.remainingLetters.map((letter, index) => {
                   const key = `${currentWordIndex}-${index}-${letter}`;
-                  const scaleAnim =
-                    letterScaleRefs.current[key] || new Animated.Value(1);
-                  const opacityAnim =
-                    letterOpacityRefs.current[key] || new Animated.Value(1);
+                  const scaleAnim = letterScaleRefs.current[key] || new Animated.Value(1);
+                  const opacityAnim = letterOpacityRefs.current[key] || new Animated.Value(1);
                   if (!letterScaleRefs.current[key]) {
                     letterScaleRefs.current[key] = scaleAnim;
                     letterOpacityRefs.current[key] = opacityAnim;
@@ -1082,14 +1029,11 @@ const ScrambleGameScreen = () => {
                 padding: 32,
                 alignItems: "center",
                 width: "100%",
-                maxWidth: 400,}}
+                maxWidth: 400,
+              }}
             >
               <LinearGradient
-                colors={
-                  isGameOver
-                    ? ["#ef4444", "#dc2626"]
-                    : ["#fbbf24", "#f59e0b"]
-                }
+                colors={isGameOver ? ["#ef4444", "#dc2626"] : ["#fbbf24", "#f59e0b"]}
                 style={{
                   width: 80,
                   height: 80,
@@ -1099,11 +1043,7 @@ const ScrambleGameScreen = () => {
                   marginBottom: 20,
                 }}
               >
-                {isGameOver ? (
-                  <X size={40} color="#ffffff" />
-                ) : (
-                  <Trophy size={40} color="#ffffff" />
-                )}
+                {isGameOver ? <X size={40} color="#ffffff" /> : <Trophy size={40} color="#ffffff" />}
               </LinearGradient>
 
               <ThemedText

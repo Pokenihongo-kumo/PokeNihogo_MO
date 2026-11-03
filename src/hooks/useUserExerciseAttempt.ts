@@ -1,8 +1,8 @@
 import { ExerciseAttemptStatus } from "@constants/exercise.enum";
 import {
-    ICheckCompletionResponse,
-    IExerciseHistoryListResponse,
-    ISubmitCompletionResponse,
+  ICheckCompletionResponse,
+  IExerciseHistoryListResponse,
+  ISubmitCompletionResponse,
 } from "@models/user-exercise-attempt/user-exercise-attempt.response";
 import userExerciseAttemptService from "@services/user-exercise-attempt";
 import { useGlobalStore } from "@stores/global/global.config";
@@ -12,8 +12,7 @@ export const useUserExerciseAttempt = (lessonId: string) => {
   return useQuery({
     queryKey: ["user-exercise-attempt-latest", lessonId],
     queryFn: async () => {
-      const res =
-        await userExerciseAttemptService.getLatestExerciseAttempt(lessonId);
+      const res = await userExerciseAttemptService.getLatestExerciseAttempt(lessonId);
       return res.data;
     },
     enabled: !!lessonId,
@@ -30,10 +29,7 @@ export const useUserExerciseQuestions = (exerciseAttemptId: string) => {
   return useQuery({
     queryKey: ["user-exercise-questions", exerciseAttemptId, language],
     queryFn: async () => {
-      const res =
-        await userExerciseAttemptService.getExerciseQuestions(
-          exerciseAttemptId
-        );
+      const res = await userExerciseAttemptService.getExerciseQuestions(exerciseAttemptId);
       return res.data;
     },
     enabled: !!exerciseAttemptId,
@@ -46,11 +42,8 @@ export const useUserExerciseQuestions = (exerciseAttemptId: string) => {
 
 export const useCheckCompletion = () => {
   return useMutation({
-    mutationFn: async (
-      exerciseAttemptId: string
-    ): Promise<ICheckCompletionResponse> => {
-      const res =
-        await userExerciseAttemptService.checkCompleted(exerciseAttemptId);
+    mutationFn: async (exerciseAttemptId: string): Promise<ICheckCompletionResponse> => {
+      const res = await userExerciseAttemptService.checkCompleted(exerciseAttemptId);
       return res.data;
     },
   });
@@ -65,10 +58,7 @@ export const useSubmitCompletion = () => {
       exerciseAttemptId: string;
       time: number;
     }): Promise<ISubmitCompletionResponse> => {
-      const res = await userExerciseAttemptService.submitCompletion(
-        exerciseAttemptId,
-        time
-      );
+      const res = await userExerciseAttemptService.submitCompletion(exerciseAttemptId, time);
       return res.data;
     },
   });
@@ -78,8 +68,7 @@ export const useReviewResult = (exerciseAttemptId: string) => {
   return useQuery({
     queryKey: ["review-result", exerciseAttemptId],
     queryFn: async () => {
-      const res =
-        await userExerciseAttemptService.getReviewResult(exerciseAttemptId);
+      const res = await userExerciseAttemptService.getReviewResult(exerciseAttemptId);
       return res.data;
     },
     enabled: !!exerciseAttemptId,
@@ -101,7 +90,7 @@ export const useCheckReviewAccess = () => {
 
 export const useAbandonExercise = () => {
   return useMutation({
-    mutationFn: async ({ exerciseAttemptId, time }: { exerciseAttemptId: string, time: number }) => {
+    mutationFn: async ({ exerciseAttemptId, time }: { exerciseAttemptId: string; time: number }) => {
       const res = await userExerciseAttemptService.abandonExercise(exerciseAttemptId, time);
       return res.data;
     },
@@ -126,11 +115,7 @@ export const useCreateNewExerciseAttempt = () => {
   });
 };
 
-export const useExerciseHistory = (params?: {
-  limit?: number;
-  levelJlpt?: number;
-  exerciseType?: string;
-}) => {
+export const useExerciseHistory = (params?: { limit?: number; levelJlpt?: number; exerciseType?: string }) => {
   return useInfiniteQuery({
     queryKey: ["exercise-history", params],
     queryFn: ({ pageParam = 0 }) =>

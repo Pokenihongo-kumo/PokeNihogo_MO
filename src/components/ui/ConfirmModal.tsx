@@ -1,13 +1,5 @@
-import React from 'react';
-import {
-  Modal,
-  StyleSheet,
-  Text,
-  TextStyle,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from 'react-native';
+import React from "react";
+import { Modal, StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
 
 /**
  * Configuration for a button in the ConfirmModal
@@ -18,7 +10,7 @@ export interface ConfirmModalButton {
   /** Callback function when button is pressed */
   onPress: () => void;
   /** Button style variant */
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: "primary" | "secondary" | "danger";
   /** Whether the button is disabled */
   disabled?: boolean;
   /** Text to show when button is disabled (usually a loading state) */
@@ -48,14 +40,14 @@ export interface ConfirmModalProps {
   /** Additional styles for the message text */
   messageStyle?: TextStyle;
   /** Animation type for modal appearance */
-  animationType?: 'fade' | 'slide' | 'none';
+  animationType?: "fade" | "slide" | "none";
   /** Direction of buttons */
-  buttonDirection?: 'row' | 'column';
+  buttonDirection?: "row" | "column";
 }
 
 /**
  * A reusable confirmation modal component with customizable buttons and styling.
- * 
+ *
  * @example
  * ```tsx
  * <ConfirmModal
@@ -80,44 +72,40 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   contentStyle,
   titleStyle,
   messageStyle,
-  animationType = 'fade',
-  buttonDirection = 'row',
+  animationType = "fade",
+  buttonDirection = "row",
 }) => {
   const defaultButtons: ConfirmModalButton[] = buttons.length
     ? buttons
     : [
-      {
-        label: 'Hủy',
-        onPress: onRequestClose || (() => { }),
-        variant: 'secondary',
-      },
-      {
-        label: 'Xác nhận',
-        onPress: onRequestClose || (() => { }),
-        variant: 'primary',
-      },
-    ];
+        {
+          label: "Hủy",
+          onPress: onRequestClose || (() => {}),
+          variant: "secondary",
+        },
+        {
+          label: "Xác nhận",
+          onPress: onRequestClose || (() => {}),
+          variant: "primary",
+        },
+      ];
 
-  const getButtonStyle = (
-    variant: ConfirmModalButton['variant'] = 'primary'
-  ): ViewStyle[] => {
+  const getButtonStyle = (variant: ConfirmModalButton["variant"] = "primary"): ViewStyle[] => {
     switch (variant) {
-      case 'danger':
+      case "danger":
         return [styles.button, styles.buttonDanger];
-      case 'secondary':
+      case "secondary":
         return [styles.button, styles.buttonSecondary];
       default:
         return [styles.button, styles.buttonPrimary];
     }
   };
 
-  const getButtonTextStyle = (
-    variant: ConfirmModalButton['variant'] = 'primary'
-  ): TextStyle[] => {
+  const getButtonTextStyle = (variant: ConfirmModalButton["variant"] = "primary"): TextStyle[] => {
     switch (variant) {
-      case 'danger':
+      case "danger":
         return [styles.buttonText, styles.buttonDangerText];
-      case 'secondary':
+      case "secondary":
         return [styles.buttonText, styles.buttonSecondaryText];
       default:
         return [styles.buttonText, styles.buttonPrimaryText];
@@ -125,19 +113,12 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType={animationType}
-      onRequestClose={onRequestClose}
-    >
+    <Modal visible={visible} transparent animationType={animationType} onRequestClose={onRequestClose}>
       <View style={[styles.overlay, { backgroundColor: `rgba(0, 0, 0, ${overlayOpacity})` }]}>
         <View style={[styles.content, contentStyle]}>
           <Text style={[styles.title, titleStyle]}>{title}</Text>
 
-          {message && (
-            <Text style={[styles.message, messageStyle]}>{message}</Text>
-          )}
+          {message && <Text style={[styles.message, messageStyle]}>{message}</Text>}
 
           <View style={[styles.buttons, { flexDirection: buttonDirection }]}>
             {defaultButtons.map((button, index) => (
@@ -146,16 +127,14 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 style={[
                   ...getButtonStyle(button.variant),
                   button.disabled && styles.buttonDisabled,
-                  buttonDirection === 'column' && { width: '100%', flex: 0 },
+                  buttonDirection === "column" && { width: "100%", flex: 0 },
                 ]}
                 onPress={button.onPress}
                 activeOpacity={0.8}
                 disabled={button.disabled}
               >
                 <Text style={getButtonTextStyle(button.variant)}>
-                  {button.disabled && button.loadingText
-                    ? button.loadingText
-                    : button.label}
+                  {button.disabled && button.loadingText ? button.loadingText : button.label}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -169,66 +148,66 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 16,
     padding: 24,
-    width: '85%',
+    width: "85%",
     maxWidth: 400,
   },
   title: {
     fontSize: 22,
-    fontWeight: '700',
-    color: '#111827',
-    textAlign: 'center',
+    fontWeight: "700",
+    color: "#111827",
+    textAlign: "center",
     marginBottom: 12,
   },
   message: {
     fontSize: 16,
-    color: '#6b7280',
-    textAlign: 'center',
+    color: "#6b7280",
+    textAlign: "center",
     marginBottom: 24,
     lineHeight: 24,
   },
   buttons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
   },
   button: {
     flex: 1,
     paddingVertical: 14,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonPrimary: {
-    backgroundColor: '#0ea5e9',
+    backgroundColor: "#0ea5e9",
   },
   buttonSecondary: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: "#f3f4f6",
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
   },
   buttonDanger: {
-    backgroundColor: '#ef4444',
+    backgroundColor: "#ef4444",
   },
   buttonDisabled: {
     opacity: 0.5,
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   buttonPrimaryText: {
-    color: '#ffffff',
+    color: "#ffffff",
   },
   buttonSecondaryText: {
-    color: '#374151',
+    color: "#374151",
   },
   buttonDangerText: {
-    color: '#ffffff',
+    color: "#ffffff",
   },
 });

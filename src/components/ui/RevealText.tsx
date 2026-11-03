@@ -44,7 +44,7 @@ export const RevealText: React.FC<RevealTextProps> = ({
           easing: Easing.linear,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
     loopAnim.start();
     return () => loopAnim.stop();
@@ -73,21 +73,14 @@ export const RevealText: React.FC<RevealTextProps> = ({
     };
   }, [started, visibleCount, text.length, speedMs, delayMs, onComplete]);
 
-  const shown = React.useMemo(
-    () => text.slice(0, visibleCount),
-    [text, visibleCount]
-  );
+  const shown = React.useMemo(() => text.slice(0, visibleCount), [text, visibleCount]);
   const isDone = visibleCount >= text.length;
 
   return (
     <View style={containerStyle}>
       <ThemedText style={textStyle}>
         {shown}
-        {showCursor && !isDone ? (
-          <Animated.Text style={{ opacity: cursorOpacity }}>
-            {cursorChar}
-          </Animated.Text>
-        ) : null}
+        {showCursor && !isDone ? <Animated.Text style={{ opacity: cursorOpacity }}>{cursorChar}</Animated.Text> : null}
       </ThemedText>
     </View>
   );

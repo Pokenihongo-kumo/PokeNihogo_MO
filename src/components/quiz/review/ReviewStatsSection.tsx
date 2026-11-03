@@ -31,11 +31,11 @@ export function ReviewStatsSection({
 }: ReviewStatsSectionProps) {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
   // Animation values
   const heightAnim = useRef(new Animated.Value(isCollapsed ? 0 : 1)).current;
   const opacityAnim = useRef(new Animated.Value(isCollapsed ? 0 : 1)).current;
-  
+
   // Animate when collapsed state changes
   useEffect(() => {
     Animated.parallel([
@@ -62,10 +62,7 @@ export function ReviewStatsSection({
   };
 
   const isFailedStatus = useMemo(() => {
-    return (
-      stats.status === ExerciseAttemptStatus.FAIL ||
-      stats.status === ExerciseAttemptStatus.FAILED
-    );
+    return stats.status === ExerciseAttemptStatus.FAIL || stats.status === ExerciseAttemptStatus.FAILED;
   }, [stats.status]);
 
   // Determine progress color based on status
@@ -91,12 +88,8 @@ export function ReviewStatsSection({
     <View style={styles.statsSection}>
       {/* Collapsed View - Compact version with animation */}
       {isCollapsed && (
-        <TouchableOpacity
-          onPress={onToggleCollapse}
-          activeOpacity={0.7}
-          style={styles.collapsedTouchableContainer}
-        >
-          <Animated.View 
+        <TouchableOpacity onPress={onToggleCollapse} activeOpacity={0.7} style={styles.collapsedTouchableContainer}>
+          <Animated.View
             style={[
               styles.statsSectionCollapsed,
               {
@@ -120,14 +113,7 @@ export function ReviewStatsSection({
               <View style={styles.circularProgressContainerSmall}>
                 <Svg width={50} height={50} style={styles.circularSvg}>
                   {/* Background circle */}
-                  <Circle
-                    cx="25"
-                    cy="25"
-                    r="22"
-                    stroke="#e5e7eb"
-                    strokeWidth="4"
-                    fill="none"
-                  />
+                  <Circle cx="25" cy="25" r="22" stroke="#e5e7eb" strokeWidth="4" fill="none" />
                   {/* Progress circle */}
                   <Circle
                     cx="25"
@@ -143,9 +129,7 @@ export function ReviewStatsSection({
                   />
                 </Svg>
                 <View style={styles.circularTextContainerSmall}>
-                  <Text style={[styles.circularTextSmall, { color: textColor }]}>
-                    {stats.answeredCorrect}
-                  </Text>
+                  <Text style={[styles.circularTextSmall, { color: textColor }]}>{stats.answeredCorrect}</Text>
                 </View>
               </View>
 
@@ -155,9 +139,7 @@ export function ReviewStatsSection({
                   <Text style={styles.collapsedStatsText}>
                     {stats.answeredCorrect}/{stats.totalQuestions} đúng
                   </Text>
-                  <Text style={styles.collapsedTimeText}>
-                    ⏱ {formatTime(stats.time)}
-                  </Text>
+                  <Text style={styles.collapsedTimeText}>⏱ {formatTime(stats.time)}</Text>
                 </View>
               )}
             </View>
@@ -183,24 +165,13 @@ export function ReviewStatsSection({
             },
           ]}
         >
-          <TouchableOpacity
-            onPress={onToggleCollapse}
-            activeOpacity={0.7}
-            style={styles.statsHeaderTouchable}
-          >
+          <TouchableOpacity onPress={onToggleCollapse} activeOpacity={0.7} style={styles.statsHeaderTouchable}>
             <View style={styles.statsHeader}>
               {/* Circular Progress */}
               <View style={styles.circularProgressContainer}>
                 <Svg width={100} height={100} style={styles.circularSvg}>
                   {/* Background circle */}
-                  <Circle
-                    cx="50"
-                    cy="50"
-                    r="45"
-                    stroke="#e5e7eb"
-                    strokeWidth="8"
-                    fill="none"
-                  />
+                  <Circle cx="50" cy="50" r="45" stroke="#e5e7eb" strokeWidth="8" fill="none" />
                   {/* Progress circle based on status */}
                   <Circle
                     cx="50"
@@ -216,48 +187,28 @@ export function ReviewStatsSection({
                   />
                 </Svg>
                 <View style={styles.circularTextContainer}>
-                  <Text style={[styles.circularText, { color: textColor }]}>
-                    {stats.answeredCorrect}
-                  </Text>
+                  <Text style={[styles.circularText, { color: textColor }]}>{stats.answeredCorrect}</Text>
                 </View>
               </View>
 
               {/* Stats List */}
               <View style={styles.statsList}>
                 <View style={styles.statRow}>
-                  <Text style={styles.statLabel}>
-                    {t("review_stats.correct_count", "Số câu đúng:")}
-                  </Text>
+                  <Text style={styles.statLabel}>{t("review_stats.correct_count", "Số câu đúng:")}</Text>
                   <Text style={styles.statValue}>{stats.answeredCorrect}</Text>
                 </View>
                 <View style={styles.statRow}>
-                  <Text style={styles.statLabel}>
-                    {t("review_stats.unanswered_count", "Số câu không làm:")}
-                  </Text>
+                  <Text style={styles.statLabel}>{t("review_stats.unanswered_count", "Số câu không làm:")}</Text>
                   <Text style={styles.statValue}>{stats.unansweredQuestions}</Text>
                 </View>
                 <View style={styles.statRow}>
-                  <Text style={styles.statLabel}>
-                    {t("review_stats.incorrect_count", "Số câu sai:")}
-                  </Text>
+                  <Text style={styles.statLabel}>{t("review_stats.incorrect_count", "Số câu sai:")}</Text>
                   <Text style={styles.statValue}>{stats.answeredInCorrect}</Text>
                 </View>
                 <View style={styles.statRow}>
-                  <Text style={styles.statLabel}>
-                    {t("review_stats.status_label", "Trạng thái:")}
-                  </Text>
-                  <View
-                    style={[
-                      styles.statusBadge,
-                      isFailedStatus && styles.statusBadgeFail,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.statusText,
-                        isFailedStatus && styles.statusTextFail,
-                      ]}
-                    >
+                  <Text style={styles.statLabel}>{t("review_stats.status_label", "Trạng thái:")}</Text>
+                  <View style={[styles.statusBadge, isFailedStatus && styles.statusBadgeFail]}>
+                    <Text style={[styles.statusText, isFailedStatus && styles.statusTextFail]}>
                       {isFailedStatus
                         ? t("review_stats.status_failed", "Không đạt")
                         : t("review_stats.status_passed", "Đạt")}
@@ -282,13 +233,9 @@ export function ReviewStatsSection({
                 activeOpacity={0.7}
               >
                 <Text style={styles.expandText}>
-                  {isExpanded
-                    ? t("review_stats.collapse", "Thu gọn")
-                    : t("review_stats.expand", "Mở rộng")}
+                  {isExpanded ? t("review_stats.collapse", "Thu gọn") : t("review_stats.expand", "Mở rộng")}
                 </Text>
-                <Text style={styles.expandChevron}>
-                  {isExpanded ? "▴" : "▾"}
-                </Text>
+                <Text style={styles.expandChevron}>{isExpanded ? "▴" : "▾"}</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -308,11 +255,7 @@ export function ReviewStatsSection({
                         }
                       }}
                       activeOpacity={0.85}
-                      style={[
-                        styles.numCell,
-                        isCorrect && styles.numCellCorrect,
-                        isWrong && styles.numCellWrong,
-                      ]}
+                      style={[styles.numCell, isCorrect && styles.numCellCorrect, isWrong && styles.numCellWrong]}
                     >
                       <Text
                         style={[
@@ -341,7 +284,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginHorizontal: 10,
     marginTop: 10,
-    marginBottom: 10,zIndex: 10,
+    marginBottom: 10,
+    zIndex: 10,
     overflow: "hidden",
   },
   collapsedTouchableContainer: {

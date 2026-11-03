@@ -12,7 +12,7 @@ type ReviewResultOptions = {
 export const useReviewResultUnified = (
   sessionId: string | undefined,
   type: ReviewType,
-  options?: ReviewResultOptions
+  options?: ReviewResultOptions,
 ) => {
   const { initialData, testType } = options || {};
 
@@ -24,9 +24,10 @@ export const useReviewResultUnified = (
         const upperTestType = (testType || "").toUpperCase();
         const isLessonTest = upperTestType === "LESSON_TEST";
         const isLessonReview = upperTestType === "LESSON_REVIEW";
-        const res = isLessonTest || isLessonReview
-          ? await userTestService.getLessonTestReview(sessionId)
-          : await userTestService.getReviewResult(sessionId);
+        const res =
+          isLessonTest || isLessonReview
+            ? await userTestService.getLessonTestReview(sessionId)
+            : await userTestService.getReviewResult(sessionId);
         return res.data;
       }
       const res = await userExerciseAttemptService.getReviewResult(String(sessionId));
@@ -42,4 +43,3 @@ export const useReviewResultUnified = (
 };
 
 export type { ReviewType };
-

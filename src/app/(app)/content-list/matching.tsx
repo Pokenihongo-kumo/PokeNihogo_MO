@@ -6,14 +6,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { ChevronLeft, RotateCcw, Trophy } from "lucide-react-native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ActivityIndicator,
-  Animated,
-  Dimensions,
-  Modal,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Animated, Dimensions, Modal, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
@@ -30,91 +23,89 @@ interface MatchingCard {
 }
 
 // Card component with animations
-const MatchingCardComponent = React.memo(({
-  card,
-  index,
-  isSelected,
-  cardSize,
-  cardHeight,
-  contentType,
-  scaleRef,
-  opacityRef,
-  selectionScaleRef,
-  onPress,
-  disabled,
-}: {
-  card: MatchingCard;
-  index: number;
-  isSelected: boolean;
-  cardSize: number;
-  cardHeight: number;
-  contentType?: string;
-  scaleRef: Animated.Value;
-  opacityRef: Animated.Value;
-  selectionScaleRef: Animated.Value;
-  onPress: () => void;
-  disabled: boolean;
-}) => {
-  const isWordCard = card.type === "word";
-  
-  // Animate selection scale
-  useEffect(() => {
-    Animated.spring(selectionScaleRef, {
-      toValue: isSelected ? 1.05 : 1,
-      tension: 100,
-      friction: 7,
-      useNativeDriver: true,
-    }).start();
-  }, [isSelected, selectionScaleRef]);
-  
-  // Combine base scale with selection scale
-  const combinedScale = Animated.multiply(scaleRef, selectionScaleRef);
-  
-  return (
-    <Animated.View
-      style={{
-        width: "100%",
-        height: cardHeight,
-        transform: [{ scale: combinedScale }],
-        opacity: opacityRef,
-      }}
-      pointerEvents={disabled ? "none" : "auto"}
-    >
-      <TouchableOpacity
-        onPress={onPress}
-        activeOpacity={0.8}
-        disabled={disabled}
+const MatchingCardComponent = React.memo(
+  ({
+    card,
+    index,
+    isSelected,
+    cardSize,
+    cardHeight,
+    contentType,
+    scaleRef,
+    opacityRef,
+    selectionScaleRef,
+    onPress,
+    disabled,
+  }: {
+    card: MatchingCard;
+    index: number;
+    isSelected: boolean;
+    cardSize: number;
+    cardHeight: number;
+    contentType?: string;
+    scaleRef: Animated.Value;
+    opacityRef: Animated.Value;
+    selectionScaleRef: Animated.Value;
+    onPress: () => void;
+    disabled: boolean;
+  }) => {
+    const isWordCard = card.type === "word";
+
+    // Animate selection scale
+    useEffect(() => {
+      Animated.spring(selectionScaleRef, {
+        toValue: isSelected ? 1.05 : 1,
+        tension: 100,
+        friction: 7,
+        useNativeDriver: true,
+      }).start();
+    }, [isSelected, selectionScaleRef]);
+
+    // Combine base scale with selection scale
+    const combinedScale = Animated.multiply(scaleRef, selectionScaleRef);
+
+    return (
+      <Animated.View
         style={{
           width: "100%",
-          height: "100%",
-          backgroundColor: isSelected ? "#fef3c7" : "#ffffff",
-          borderRadius: 16,
-          borderWidth: 3,
-          borderColor: isSelected ? "#f59e0b" : "#d1d5db",
-          padding: 12,
-          justifyContent: "center",
-          alignItems: "center",
+          height: cardHeight,
+          transform: [{ scale: combinedScale }],
+          opacity: opacityRef,
         }}
+        pointerEvents={disabled ? "none" : "auto"}
       >
-        <ThemedText
+        <TouchableOpacity
+          onPress={onPress}
+          activeOpacity={0.8}
+          disabled={disabled}
           style={{
-            fontSize: isWordCard
-              ? contentType === "kanji"
-                ? 32
-                : 20
-              : 16,
-            fontWeight: "bold",
-            color: "#000000",
-            textAlign: "center",
+            width: "100%",
+            height: "100%",
+            backgroundColor: isSelected ? "#fef3c7" : "#ffffff",
+            borderRadius: 16,
+            borderWidth: 3,
+            borderColor: isSelected ? "#f59e0b" : "#d1d5db",
+            padding: 12,
+            justifyContent: "center",
+            alignItems: "center",
           }}
-          numberOfLines={isWordCard ? 2 : 3}
         >
-          {card.content}
-        </ThemedText>
-      </TouchableOpacity>
-    </Animated.View>
-  );
-});
+          <ThemedText
+            style={{
+              fontSize: isWordCard ? (contentType === "kanji" ? 32 : 20) : 16,
+              fontWeight: "bold",
+              color: "#000000",
+              textAlign: "center",
+            }}
+            numberOfLines={isWordCard ? 2 : 3}
+          >
+            {card.content}
+          </ThemedText>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  },
+);
 
 MatchingCardComponent.displayName = "MatchingCardComponent";
 
@@ -139,12 +130,12 @@ const MatchingGameScreen = () => {
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [nextCardIndex, setNextCardIndex] = useState<number>(0); // Index to get next cards from pool
   const MAX_DISPLAYED_CARDS = 12; // 3x4 = 12 cards (6 pairs)
-  
+
   // Animation refs for each card
   const cardScaleRefs = useRef<{ [key: string]: Animated.Value }>({});
   const cardOpacityRefs = useRef<{ [key: string]: Animated.Value }>({});
   const cardSelectionScaleRefs = useRef<{ [key: string]: Animated.Value }>({});
-  
+
   // Initialize animation refs for a card
   const initCardAnimation = useCallback((cardId: string, isNewCard = false) => {
     if (!cardScaleRefs.current[cardId]) {
@@ -154,17 +145,17 @@ const MatchingGameScreen = () => {
       cardOpacityRefs.current[cardId] = new Animated.Value(isNewCard ? 0 : 1);
     }
   }, []);
-  
+
   // Animate card match out (zoom in -> zoom out -> fade out)
   const animateCardMatchOut = useCallback((cardId: string, callback?: () => void) => {
     const scaleAnim = cardScaleRefs.current[cardId];
     const opacityAnim = cardOpacityRefs.current[cardId];
-    
+
     if (!scaleAnim || !opacityAnim) {
       callback?.();
       return;
     }
-    
+
     Animated.sequence([
       // Zoom in
       Animated.timing(scaleAnim, {
@@ -193,18 +184,18 @@ const MatchingGameScreen = () => {
       ]),
     ]).start(callback);
   }, []);
-  
+
   // Animate card in (zoom in from 0)
   const animateCardIn = useCallback((cardId: string) => {
     const scaleAnim = cardScaleRefs.current[cardId];
     const opacityAnim = cardOpacityRefs.current[cardId];
-    
+
     if (!scaleAnim || !opacityAnim) return;
-    
+
     // Start from 0
     scaleAnim.setValue(0);
     opacityAnim.setValue(0);
-    
+
     // Animate to 1
     Animated.parallel([
       Animated.spring(scaleAnim, {
@@ -244,8 +235,7 @@ const MatchingGameScreen = () => {
 
       if (contentType === "kanji") {
         // Kanji cards
-        const meaning =
-          item.meaning?.split("##")[0] || item.meaning || t("lessons.no_meaning");
+        const meaning = item.meaning?.split("##")[0] || item.meaning || t("lessons.no_meaning");
 
         // Word card: Kanji character
         allCards.push({
@@ -270,9 +260,7 @@ const MatchingGameScreen = () => {
         // Vocabulary cards
         const wordJp = item.wordJp || "";
         const meanings = (item.meanings || [])
-          .map((m: any) =>
-            typeof m === "string" ? m : m.meaning || m.text || ""
-          )
+          .map((m: any) => (typeof m === "string" ? m : m.meaning || m.text || ""))
           .filter(Boolean);
 
         const meaning = meanings.length > 0 ? meanings[0] : t("lessons.no_meaning");
@@ -309,20 +297,23 @@ const MatchingGameScreen = () => {
   }, [contentData, contentType, t]);
 
   // Helper function to initialize displayed cards from pool
-  const initializeDisplayedCards = useCallback((allCards: MatchingCard[]) => {
-    // Simply take first 12 cards from shuffled pool - they are already randomly shuffled
-    // This ensures true randomness, cards are not grouped by pairs
-    const initialDisplayed = allCards.slice(0, MAX_DISPLAYED_CARDS);
-    
-    // Initialize animation refs for displayed cards
-    initialDisplayed.forEach((card) => {
-      initCardAnimation(card.id);
-    });
-    
-    setCards(initialDisplayed);
-    // Start from index 12 (after displayed cards)
-    setNextCardIndex(MAX_DISPLAYED_CARDS);
-  }, [initCardAnimation]);
+  const initializeDisplayedCards = useCallback(
+    (allCards: MatchingCard[]) => {
+      // Simply take first 12 cards from shuffled pool - they are already randomly shuffled
+      // This ensures true randomness, cards are not grouped by pairs
+      const initialDisplayed = allCards.slice(0, MAX_DISPLAYED_CARDS);
+
+      // Initialize animation refs for displayed cards
+      initialDisplayed.forEach((card) => {
+        initCardAnimation(card.id);
+      });
+
+      setCards(initialDisplayed);
+      // Start from index 12 (after displayed cards)
+      setNextCardIndex(MAX_DISPLAYED_CARDS);
+    },
+    [initCardAnimation],
+  );
 
   // Initialize game on mount and when data changes
   useEffect(() => {
@@ -376,19 +367,19 @@ const MatchingGameScreen = () => {
     setTimeRemaining(600); // Reset to 10 minutes
     setIsTimeUp(false);
     setNextCardIndex(0);
-    
+
     // Clear animation refs
     cardScaleRefs.current = {};
     cardOpacityRefs.current = {};
     cardSelectionScaleRefs.current = {};
-    
+
     // Initialize new cards pool and display immediately
     const allCards = initializeCards();
-    
+
     // Set new pool and initialize displayed cards directly (don't clear first)
     setAllCardsPool(allCards);
     initializeDisplayedCards(allCards);
-    
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   }, [initializeCards, initializeDisplayedCards]);
 
@@ -431,34 +422,28 @@ const MatchingGameScreen = () => {
     const secondCard = cards[secondIndex];
 
     setTimeout(() => {
-      if (
-        firstCard.pairId === secondCard.pairId &&
-        firstCard.type !== secondCard.type
-      ) {
+      if (firstCard.pairId === secondCard.pairId && firstCard.type !== secondCard.type) {
         // Match found!
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
         // Initialize animation refs for matched cards
         initCardAnimation(firstCard.id);
         initCardAnimation(secondCard.id);
-        
+
         // Take next 2 cards from pool (truly random, not looking for complete pairs)
         let newNextIndex = nextCardIndex;
         let nextPairCards: MatchingCard[] = [];
-        
+
         // Just take the next 2 cards from the pool sequentially
         if (newNextIndex + 1 < allCardsPool.length) {
-          nextPairCards = [
-            allCardsPool[newNextIndex],
-            allCardsPool[newNextIndex + 1]
-          ];
+          nextPairCards = [allCardsPool[newNextIndex], allCardsPool[newNextIndex + 1]];
           newNextIndex = newNextIndex + 2;
         } else if (newNextIndex < allCardsPool.length) {
           // Only 1 card left
           nextPairCards = [allCardsPool[newNextIndex]];
           newNextIndex = newNextIndex + 1;
         }
-        
+
         // Animate matched cards out (zoom in -> zoom out -> fade out)
         let animationCompleteCount = 0;
         const onAnimationComplete = () => {
@@ -466,18 +451,18 @@ const MatchingGameScreen = () => {
           if (animationCompleteCount === 2) {
             // Both animations complete, now replace cards at the same positions
             const newCards = [...cards];
-            
+
             // Replace cards at the same positions (firstIndex and secondIndex)
             if (nextPairCards.length >= 2) {
               // Initialize animation refs for new cards
               nextPairCards.forEach((card) => {
                 initCardAnimation(card.id, true);
               });
-              
+
               // Replace at the same positions
               newCards[firstIndex] = nextPairCards[0];
               newCards[secondIndex] = nextPairCards[1];
-              
+
               setNextCardIndex(newNextIndex);
             } else if (nextPairCards.length === 1) {
               // Only 1 card left, replace first position only
@@ -490,9 +475,9 @@ const MatchingGameScreen = () => {
               newCards[firstIndex] = { ...firstCard, isMatched: true };
               newCards[secondIndex] = { ...secondCard, isMatched: true };
             }
-            
+
             setCards(newCards);
-            
+
             // Animate new cards in after a short delay
             if (nextPairCards.length > 0) {
               setTimeout(() => {
@@ -501,14 +486,14 @@ const MatchingGameScreen = () => {
                 });
               }, 50);
             }
-            
+
             // Check if game is complete after updating cards
             setMatchedPairs((prev) => {
               const newCount = prev + 1;
               const totalPairsInPool = allCardsPool.length / 2;
               const remainingCardsInPool = allCardsPool.length - newNextIndex;
               const remainingDisplayedCards = newCards.filter((c) => !c.isMatched).length;
-              
+
               // Game complete if: all pairs matched OR no more cards in pool and display
               if (newCount >= totalPairsInPool || (remainingCardsInPool === 0 && remainingDisplayedCards === 0)) {
                 setTimeout(() => {
@@ -521,7 +506,7 @@ const MatchingGameScreen = () => {
             });
           }
         };
-        
+
         // Start animations for both matched cards
         animateCardMatchOut(firstCard.id, onAnimationComplete);
         animateCardMatchOut(secondCard.id, onAnimationComplete);
@@ -542,36 +527,36 @@ const MatchingGameScreen = () => {
     const headerHeight = 120; // Approximate header + stats height
     const instructionsHeight = 50;
     const bottomPadding = 100;
-    
+
     const availableWidth = width - padding * 2;
     const availableHeight = height - headerHeight - instructionsHeight - bottomPadding;
-    
+
     // Fixed 3 columns layout (3x4 = 12 cards max)
     const optimalColumns = 3;
     const cardCount = Math.min(cards.length, MAX_DISPLAYED_CARDS);
     const rows = Math.ceil(cardCount / optimalColumns);
-    
+
     // Calculate card width to ensure exactly 3 columns fit
     // Total spacing between 3 cards = 2 * spacing (between card 1-2 and card 2-3)
     const totalSpacing = spacing * (optimalColumns - 1);
     const cardWidth = (availableWidth - totalSpacing) / optimalColumns;
-    
+
     const cardH = Math.min(
       (availableHeight - spacing * (rows - 1)) / rows,
-      160 // Max card height
+      160, // Max card height
     );
-    
+
     // Ensure card size is calculated precisely to fit 3 columns
     const optimalCardSize = Math.floor(cardWidth); // Use floor to ensure it fits
     const optimalCardHeight = Math.max(90, Math.min(160, Math.floor(cardH)));
-    
+
     return {
       cardSize: optimalCardSize,
       cardHeight: optimalCardHeight,
       cardSpacing: spacing,
     };
   }, [cards.length]);
-  
+
   const padding = 24;
 
   if (isLoading) {
@@ -587,22 +572,17 @@ const MatchingGameScreen = () => {
   if (contentData.length === 0) {
     return (
       <SafeAreaView className="flex-1 bg-white">
-        <LinearGradient
-          colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
-          style={{ flex: 1 }}
-        >
+        <LinearGradient colors={["#79B4C4", "#85C3C3", "#9BC7B9"]} style={{ flex: 1 }}>
           <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row rounded-b-3xl items-center justify-between">
             <TouchableOpacity onPress={() => router.back()}>
               <ChevronLeft size={24} color="#6b7280" />
             </TouchableOpacity>
             <View style={{ flex: 1, alignItems: "center" }}>
-              <ThemedText
-                style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}
-              >
+              <ThemedText style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}>
                 {t(
                   contentType === "kanji"
                     ? "content_list.activity.match.kanji"
-                    : "content_list.activity.match.vocabulary"
+                    : "content_list.activity.match.vocabulary",
                 )}
               </ThemedText>
             </View>
@@ -620,23 +600,18 @@ const MatchingGameScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
-      <LinearGradient
-        colors={["#79B4C4", "#85C3C3", "#9BC7B9"]}
-        style={{ flex: 1 }}
-      >
+      <LinearGradient colors={["#79B4C4", "#85C3C3", "#9BC7B9"]} style={{ flex: 1 }}>
         {/* Header */}
         <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row rounded-b-3xl items-center justify-between">
           <TouchableOpacity onPress={() => router.back()}>
             <ChevronLeft size={24} color="#6b7280" />
           </TouchableOpacity>
           <View style={{ flex: 1, alignItems: "center" }}>
-            <ThemedText
-              style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}
-            >
+            <ThemedText style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}>
               {t(
                 contentType === "kanji"
                   ? "content_list.activity.match.kanji"
-                  : "content_list.activity.match.vocabulary"
+                  : "content_list.activity.match.vocabulary",
               )}
             </ThemedText>
           </View>
@@ -675,12 +650,7 @@ const MatchingGameScreen = () => {
                 height: "100%",
                 width: `${(timeRemaining / 600) * 100}%`,
                 borderRadius: 4,
-                backgroundColor:
-                  timeRemaining <= 60
-                    ? "#ef4444"
-                    : timeRemaining <= 180
-                      ? "#f59e0b"
-                      : "#10b981",
+                backgroundColor: timeRemaining <= 60 ? "#ef4444" : timeRemaining <= 180 ? "#f59e0b" : "#10b981",
               }}
             />
           </View>
@@ -693,7 +663,6 @@ const MatchingGameScreen = () => {
             padding: padding,
           }}
         >
-
           {/* Grid Layout - All cards shuffled together */}
           <View
             style={{
@@ -704,7 +673,7 @@ const MatchingGameScreen = () => {
           >
             {cards.map((card, index) => {
               const isSelected = selectedIndices.includes(index);
-              
+
               // Get or create animation refs
               if (!cardScaleRefs.current[card.id]) {
                 cardScaleRefs.current[card.id] = new Animated.Value(1);
@@ -775,14 +744,11 @@ const MatchingGameScreen = () => {
                 padding: 32,
                 alignItems: "center",
                 width: "100%",
-                maxWidth: 400,}}
+                maxWidth: 400,
+              }}
             >
               <LinearGradient
-                colors={
-                  isTimeUp
-                    ? ["#ef4444", "#dc2626"]
-                    : ["#fbbf24", "#f59e0b"]
-                }
+                colors={isTimeUp ? ["#ef4444", "#dc2626"] : ["#fbbf24", "#f59e0b"]}
                 style={{
                   width: 80,
                   height: 80,
@@ -792,11 +758,7 @@ const MatchingGameScreen = () => {
                   marginBottom: 20,
                 }}
               >
-                {isTimeUp ? (
-                  <ThemedText style={{ fontSize: 40 }}>⏰</ThemedText>
-                ) : (
-                  <Trophy size={40} color="#ffffff" />
-                )}
+                {isTimeUp ? <ThemedText style={{ fontSize: 40 }}>⏰</ThemedText> : <Trophy size={40} color="#ffffff" />}
               </LinearGradient>
 
               <ThemedText
@@ -808,9 +770,7 @@ const MatchingGameScreen = () => {
                   textAlign: "center",
                 }}
               >
-                {isTimeUp
-                  ? t("content_list.matching.time_up")
-                  : t("content_list.matching.complete")}
+                {isTimeUp ? t("content_list.matching.time_up") : t("content_list.matching.complete")}
               </ThemedText>
 
               <ThemedText
@@ -902,4 +862,3 @@ const MatchingGameScreen = () => {
 };
 
 export default MatchingGameScreen;
-

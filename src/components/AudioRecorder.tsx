@@ -1,11 +1,11 @@
-import { ThemedText } from '@components/ThemedText';
-import { IconSymbol } from '@components/ui/IconSymbol';
-import { useMicrophonePermission } from '@hooks/useMicrophonePermission';
-import { Audio } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Animated, PanResponder, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import { ThemedText } from "@components/ThemedText";
+import { IconSymbol } from "@components/ui/IconSymbol";
+import { useMicrophonePermission } from "@hooks/useMicrophonePermission";
+import { Audio } from "expo-av";
+import * as FileSystem from "expo-file-system";
+import React, { useEffect, useRef, useState } from "react";
+import { Alert, Animated, PanResponder, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface AudioRecorderProps {
   onRecordingComplete?: (uri: string, duration: number) => void;
@@ -43,7 +43,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
   const [playbackPosition, setPlaybackPosition] = useState(0);
   const [playbackDuration, setPlaybackDuration] = useState(0);
   const [isSeeking, setIsSeeking] = useState(false);
-  
+
   // Animation values for smooth progress
   const recordingProgressAnim = useRef(new Animated.Value(0)).current;
   const playbackProgressAnim = useRef(new Animated.Value(0)).current;
@@ -51,21 +51,21 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
   const playbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recordingAnimationRef = useRef<number | null>(null);
   const playbackAnimationRef = useRef<number | null>(null);
-  
+
   const { hasPermission, requestMicrophonePermission } = useMicrophonePermission();
 
   // Function to delete file from device
   const deleteFileFromDevice = async (uri: string) => {
     try {
-      if (uri && uri.startsWith('file://')) {
+      if (uri && uri.startsWith("file://")) {
         const fileExists = await FileSystem.getInfoAsync(uri);
         if (fileExists.exists) {
           await FileSystem.deleteAsync(uri);
-          console.log('File deleted from device:', uri);
+          console.log("File deleted from device:", uri);
         }
       }
     } catch (error) {
-      console.error('Failed to delete file from device:', error);
+      console.error("Failed to delete file from device:", error);
     }
   };
 
@@ -73,7 +73,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
   const createCustomSavePath = () => {
     if (customSavePath) {
       // Ensure directory exists
-      const dirPath = customSavePath.endsWith('/') ? customSavePath : `${customSavePath}/`;
+      const dirPath = customSavePath.endsWith("/") ? customSavePath : `${customSavePath}/`;
       return `${dirPath}recording_${Date.now()}.m4a`;
     }
     return null;
@@ -85,7 +85,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
     const playbackTimer = playbackTimerRef.current;
     const recordingAnimation = recordingAnimationRef.current;
     const playbackAnimation = playbackAnimationRef.current;
-    
+
     return () => {
       // Cleanup on unmount
       if (recording) {
@@ -131,7 +131,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
       });
 
       // Create recording options with custom path if provided
-      const recordingOptions = customSavePath 
+      const recordingOptions = customSavePath
         ? {
             ...Audio.RecordingOptionsPresets.HIGH_QUALITY,
             uri: createCustomSavePath(),
@@ -151,7 +151,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
       const updateRecording = () => {
         const elapsed = (Date.now() - startTime) / 1000;
         setRecordingDuration(elapsed);
-        
+
         // Update progress bar smoothly with direct value setting
         const progress = Math.min((elapsed / maxDuration) * 100, 100);
         recordingProgressAnim.setValue(progress);
@@ -166,15 +166,11 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
           recordingAnimationRef.current = requestAnimationFrame(updateRecording);
         }
       };
-      
-      recordingAnimationRef.current = requestAnimationFrame(updateRecording);
 
+      recordingAnimationRef.current = requestAnimationFrame(updateRecording);
     } catch (error) {
-      console.error('Failed to start recording:', error);
-      Alert.alert(
-        t('audio_recorder.error_title'),
-        t('audio_recorder.start_recording_error')
-      );
+      console.error("Failed to start recording:", error);
+      Alert.alert(t("audio_recorder.error_title"), t("audio_recorder.start_recording_error"));
     }
   };
 
@@ -183,40 +179,37 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
     try {
       setIsRecording(false);
-      
+
       // Clear recording animation
       if (recordingAnimationRef.current) {
         cancelAnimationFrame(recordingAnimationRef.current);
         recordingAnimationRef.current = null;
       }
-      
+
       await recording.stopAndUnloadAsync();
-      
+
       const uri = recording.getURI();
       const duration = recordingDuration;
-      
+
       setRecording(null);
       setRecordingDuration(0);
       setRecordedUri(uri);
       setRecordedDuration(duration);
       recordingProgressAnim.setValue(0);
       onRecordingStop?.();
-      
+
       if (uri) {
         onRecordingComplete?.(uri, duration);
       }
     } catch (error) {
-      console.error('Failed to stop recording:', error);
-      Alert.alert(
-        t('audio_recorder.error_title'),
-        t('audio_recorder.stop_recording_error')
-      );
+      console.error("Failed to stop recording:", error);
+      Alert.alert(t("audio_recorder.error_title"), t("audio_recorder.stop_recording_error"));
     }
   };
 
   const playRecording = async () => {
     if (!recordedUri) return;
-    
+
     try {
       if (sound) {
         await sound.unloadAsync();
@@ -238,7 +231,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
           } else if (status.positionMillis !== undefined && status.durationMillis !== undefined) {
             setPlaybackPosition(status.positionMillis / 1000);
             setPlaybackDuration(status.durationMillis / 1000);
-            
+
             // Update progress animation based on actual position
             const progress = (status.positionMillis / status.durationMillis) * 100;
             playbackProgressAnim.setValue(progress);
@@ -248,11 +241,8 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
       await newSound.playAsync();
     } catch (error) {
-      console.error('Failed to play recording:', error);
-      Alert.alert(
-        t('audio_recorder.error_title'),
-        t('audio_recorder.playback_error')
-      );
+      console.error("Failed to play recording:", error);
+      Alert.alert(t("audio_recorder.error_title"), t("audio_recorder.playback_error"));
     }
   };
 
@@ -271,13 +261,13 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
     if (recordedUri) {
       await deleteFileFromDevice(recordedUri);
     }
-    
+
     setRecordedUri(null);
     setRecordedDuration(0);
     setPlaybackPosition(0);
     setPlaybackDuration(0);
     playbackProgressAnim.setValue(0);
-    
+
     if (sound) {
       sound.unloadAsync();
       setSound(null);
@@ -289,13 +279,15 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     const millis = Math.floor((seconds % 1) * 1000); // Get milliseconds (0-999)
-    return `${mins}:${secs.toString().padStart(2, '0')}:${Math.floor(millis / 10).toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}:${Math.floor(millis / 10)
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   const formatDurationSimple = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   const seekToPosition = async (position: number) => {
@@ -303,12 +295,12 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
       try {
         const seekPosition = (position / 100) * playbackDuration * 1000; // Convert to milliseconds
         await sound.setPositionAsync(seekPosition);
-        setPlaybackPosition(position / 100 * playbackDuration);
-        
+        setPlaybackPosition((position / 100) * playbackDuration);
+
         // Update animation value directly
         playbackProgressAnim.setValue(position);
       } catch (error) {
-        console.error('Failed to seek:', error);
+        console.error("Failed to seek:", error);
       }
     }
   };
@@ -324,7 +316,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
         const progressBarWidth = 300; // Approximate width of progress bar
         const percentage = Math.max(0, Math.min(100, (gestureState.moveX / progressBarWidth) * 100));
         setPlaybackPosition((percentage / 100) * playbackDuration);
-        
+
         // Update animation value immediately for smooth seeking
         playbackProgressAnim.setValue(percentage);
       }
@@ -348,9 +340,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
           disabled={disabled}
         >
           <IconSymbol name="mic.slash" size={24} color="#6b7280" />
-          <ThemedText style={styles.buttonText}>
-            Cấp quyền microphone
-          </ThemedText>
+          <ThemedText style={styles.buttonText}>Cấp quyền microphone</ThemedText>
         </TouchableOpacity>
       </View>
     );
@@ -358,31 +348,18 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
   return (
     <View style={styles.container}>
-      <ThemedText style={styles.exerciseTitle}>
-        {exerciseTitle || t('speaking.default_exercise')}
-      </ThemedText>
-      
+      <ThemedText style={styles.exerciseTitle}>{exerciseTitle || t("speaking.default_exercise")}</ThemedText>
+
       <View style={styles.controls}>
         {!isRecording ? (
-          <TouchableOpacity
-            style={[styles.button, styles.recordButton]}
-            onPress={startRecording}
-            disabled={disabled}
-          >
+          <TouchableOpacity style={[styles.button, styles.recordButton]} onPress={startRecording} disabled={disabled}>
             <IconSymbol name="mic.fill" size={24} color="#ffffff" />
-            <ThemedText style={[styles.buttonText, styles.recordButtonText]}>
-              Bắt đầu ghi âm
-            </ThemedText>
+            <ThemedText style={[styles.buttonText, styles.recordButtonText]}>Bắt đầu ghi âm</ThemedText>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
-            style={[styles.button, styles.stopButton]}
-            onPress={stopRecording}
-          >
+          <TouchableOpacity style={[styles.button, styles.stopButton]} onPress={stopRecording}>
             <IconSymbol name="stop.fill" size={24} color="#ffffff" />
-            <ThemedText style={[styles.buttonText, styles.stopButtonText]}>
-              Dừng ghi âm
-            </ThemedText>
+            <ThemedText style={[styles.buttonText, styles.stopButtonText]}>Dừng ghi âm</ThemedText>
           </TouchableOpacity>
         )}
       </View>
@@ -390,27 +367,23 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
       {isRecording && (
         <View style={styles.recordingProgressContainer}>
           <View style={styles.durationContainer}>
-            <ThemedText style={styles.durationText}>
-              {formatDuration(recordingDuration)}
-            </ThemedText>
-            <ThemedText style={styles.maxDurationText}>
-              / {formatDurationSimple(maxDuration)}
-            </ThemedText>
+            <ThemedText style={styles.durationText}>{formatDuration(recordingDuration)}</ThemedText>
+            <ThemedText style={styles.maxDurationText}>/ {formatDurationSimple(maxDuration)}</ThemedText>
           </View>
           <View style={styles.progressBarContainer}>
             <View style={styles.progressBar}>
-              <Animated.View 
+              <Animated.View
                 style={[
-                  styles.progressFill, 
-                  { 
+                  styles.progressFill,
+                  {
                     width: recordingProgressAnim.interpolate({
                       inputRange: [0, 100],
-                      outputRange: ['0%', '100%'],
-                      extrapolate: 'clamp',
+                      outputRange: ["0%", "100%"],
+                      extrapolate: "clamp",
                     }),
-                    backgroundColor: '#ef4444'
-                  }
-                ]} 
+                    backgroundColor: "#ef4444",
+                  },
+                ]}
               />
             </View>
           </View>
@@ -423,67 +396,50 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
           <ThemedText style={styles.playbackTitle}>
             🎵 Bản ghi âm của bạn ({formatDurationSimple(recordedDuration)})
           </ThemedText>
-          
+
           {/* Playback Progress */}
           <View style={styles.playbackProgressContainer}>
             <View style={styles.playbackTimeContainer}>
-              <ThemedText style={styles.playbackTimeText}>
-                {formatDuration(playbackPosition)}
-              </ThemedText>
+              <ThemedText style={styles.playbackTimeText}>{formatDuration(playbackPosition)}</ThemedText>
               <ThemedText style={styles.playbackTimeText}>
                 {formatDurationSimple(playbackDuration || recordedDuration)}
               </ThemedText>
             </View>
             <View style={styles.progressBarContainer} {...panResponder.panHandlers}>
               <View style={styles.progressBar}>
-                <Animated.View 
+                <Animated.View
                   style={[
-                    styles.progressFill, 
-                    { 
+                    styles.progressFill,
+                    {
                       width: playbackProgressAnim.interpolate({
                         inputRange: [0, 100],
-                        outputRange: ['0%', '100%'],
-                        extrapolate: 'clamp',
+                        outputRange: ["0%", "100%"],
+                        extrapolate: "clamp",
                       }),
-                      backgroundColor: isSeeking ? '#f59e0b' : '#10b981'
-                    }
-                  ]} 
+                      backgroundColor: isSeeking ? "#f59e0b" : "#10b981",
+                    },
+                  ]}
                 />
               </View>
             </View>
           </View>
-          
+
           <View style={styles.playbackControls}>
             {!isPlaying ? (
-              <TouchableOpacity
-                style={[styles.button, styles.playButton]}
-                onPress={playRecording}
-              >
+              <TouchableOpacity style={[styles.button, styles.playButton]} onPress={playRecording}>
                 <IconSymbol name="play.fill" size={20} color="#ffffff" />
-                <ThemedText style={[styles.buttonText, styles.playButtonText]}>
-                  Phát lại
-                </ThemedText>
+                <ThemedText style={[styles.buttonText, styles.playButtonText]}>Phát lại</ThemedText>
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                style={[styles.button, styles.stopPlayButton]}
-                onPress={stopPlayback}
-              >
+              <TouchableOpacity style={[styles.button, styles.stopPlayButton]} onPress={stopPlayback}>
                 <IconSymbol name="stop.fill" size={20} color="#ffffff" />
-                <ThemedText style={[styles.buttonText, styles.stopPlayButtonText]}>
-                  Dừng
-                </ThemedText>
+                <ThemedText style={[styles.buttonText, styles.stopPlayButtonText]}>Dừng</ThemedText>
               </TouchableOpacity>
             )}
-            
-            <TouchableOpacity
-              style={[styles.button, styles.deleteButton]}
-              onPress={deleteRecording}
-            >
+
+            <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={deleteRecording}>
               <IconSymbol name="trash" size={20} color="#ffffff" />
-              <ThemedText style={[styles.buttonText, styles.deleteButtonText]}>
-                Xóa
-              </ThemedText>
+              <ThemedText style={[styles.buttonText, styles.deleteButtonText]}>Xóa</ThemedText>
             </TouchableOpacity>
           </View>
         </View>
@@ -494,144 +450,144 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: 16,
   },
   controls: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 16,
   },
   button: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 25,
     gap: 8,
   },
   recordButton: {
-    backgroundColor: '#ef4444',
+    backgroundColor: "#ef4444",
   },
   stopButton: {
-    backgroundColor: '#6b7280',
+    backgroundColor: "#6b7280",
   },
   disabledButton: {
-    backgroundColor: '#e5e7eb',
+    backgroundColor: "#e5e7eb",
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   recordButtonText: {
-    color: '#ffffff',
+    color: "#ffffff",
   },
   stopButtonText: {
-    color: '#ffffff',
+    color: "#ffffff",
   },
   recordingProgressContainer: {
     marginTop: 12,
-    width: '100%',
+    width: "100%",
   },
   durationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 8,
   },
   durationText: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ef4444',
+    fontWeight: "bold",
+    color: "#ef4444",
   },
   maxDurationText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: "#6b7280",
   },
   progressBarContainer: {
-    width: '100%',
+    width: "100%",
     height: 8,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: "#e5e7eb",
     borderRadius: 4,
-    overflow: 'hidden',
-    position: 'relative',
+    overflow: "hidden",
+    position: "relative",
   },
   progressBar: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#e5e7eb',
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#e5e7eb",
     borderRadius: 4,
   },
   progressFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 4,
   },
   exerciseTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1f2937',
+    fontWeight: "600",
+    color: "#1f2937",
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   playbackContainer: {
     marginTop: 20,
     padding: 16,
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    backgroundColor: "rgba(59, 130, 246, 0.1)",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.3)',
-    width: '100%',
+    borderColor: "rgba(59, 130, 246, 0.3)",
+    width: "100%",
   },
   playbackTitle: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#3b82f6',
+    fontWeight: "600",
+    color: "#3b82f6",
     marginBottom: 12,
-    textAlign: 'center',
+    textAlign: "center",
   },
   playbackProgressContainer: {
     marginBottom: 16,
   },
   playbackTimeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 8,
   },
   playbackTimeText: {
     fontSize: 12,
-    color: '#6b7280',
-    fontWeight: '500',
+    color: "#6b7280",
+    fontWeight: "500",
   },
   playbackControls: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: 12,
   },
   playButton: {
-    backgroundColor: '#10b981',
+    backgroundColor: "#10b981",
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
   stopPlayButton: {
-    backgroundColor: '#6b7280',
+    backgroundColor: "#6b7280",
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
   deleteButton: {
-    backgroundColor: '#ef4444',
+    backgroundColor: "#ef4444",
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
   playButtonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 14,
   },
   stopPlayButtonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 14,
   },
   deleteButtonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 14,
   },
 });

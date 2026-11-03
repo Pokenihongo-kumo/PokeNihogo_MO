@@ -18,26 +18,13 @@ export const FloatingNotificationButton = () => {
   };
 
   return (
-    <View style={[styles.container, { bottom: Platform.OS === 'ios' ? 100 : 80 }]}>
-      <TouchableOpacity
-        onPress={handlePress}
-        activeOpacity={0.8}
-        style={styles.button}
-      >
-        <Bell
-          size={24}
-          color={unreadCount > 0 ? "#2563eb" : "#4b5563"}
-          strokeWidth={2.5}
-        />
-        
+    <View style={[styles.container, { bottom: Platform.OS === "ios" ? 100 : 80 }]}>
+      <TouchableOpacity onPress={handlePress} activeOpacity={0.8} style={styles.button}>
+        <Bell size={24} color={unreadCount > 0 ? "#2563eb" : "#4b5563"} strokeWidth={2.5} />
+
         {unreadCount > 0 && (
-          <Animated.View 
-            entering={ZoomIn.springify()}
-            style={styles.badge}
-          >
-            <ThemedText style={styles.badgeText}>
-              {unreadCount > 9 ? "9+" : unreadCount}
-            </ThemedText>
+          <Animated.View entering={ZoomIn.springify()} style={styles.badge}>
+            <ThemedText style={styles.badgeText}>{unreadCount > 9 ? "9+" : unreadCount}</ThemedText>
           </Animated.View>
         )}
       </TouchableOpacity>
@@ -84,4 +71,3 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
 });
-

@@ -56,18 +56,10 @@ export const ReviewAnswerOption: React.FC<ReviewAnswerOptionWithExplanation> = (
       <TouchableOpacity disabled activeOpacity={1} style={optionStyle}>
         <View style={styles.optionContent}>
           <View style={circleStyle}>
-            <Text style={styles.optionLabel}>
-              {String.fromCharCode(65 + index)}
-            </Text>
+            <Text style={styles.optionLabel}>{String.fromCharCode(65 + index)}</Text>
           </View>
           <Text style={styles.optionText}>{answer}</Text>
-          {isCorrectAnswer && (
-            <MaterialCommunityIcons
-              name="check-circle"
-              size={18}
-              color="#10b981"
-            />
-          )}
+          {isCorrectAnswer && <MaterialCommunityIcons name="check-circle" size={18} color="#10b981" />}
         </View>
 
         {/* Show explanation inline if available */}
@@ -75,31 +67,19 @@ export const ReviewAnswerOption: React.FC<ReviewAnswerOptionWithExplanation> = (
           <View
             style={[
               styles.explanationContainer,
-              isCorrectAnswer
-                ? styles.explanationCorrect
-                : undefined,
-              isUserSelected && !isCorrectAnswer
-                ? styles.explanationWrong
-                : undefined,
+              isCorrectAnswer ? styles.explanationCorrect : undefined,
+              isUserSelected && !isCorrectAnswer ? styles.explanationWrong : undefined,
             ]}
           >
             {isCorrectAnswer && (
               <View style={styles.explanationHeader}>
-                <MaterialCommunityIcons
-                  name="check-circle"
-                  size={16}
-                  color="#10b981"
-                />
-                <Text style={styles.explanationLabel}>
-                  Câu trả lời chính xác
-                </Text>
+                <MaterialCommunityIcons name="check-circle" size={16} color="#10b981" />
+                <Text style={styles.explanationLabel}>Câu trả lời chính xác</Text>
               </View>
             )}
             {explanation && (
               <View style={styles.explanationContent}>
-                <Text style={styles.explanationText}>
-                  {explanation.en}
-                </Text>
+                <Text style={styles.explanationText}>{explanation.en}</Text>
               </View>
             )}
           </View>

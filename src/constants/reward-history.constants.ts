@@ -24,4 +24,3 @@ export const REWARD_HISTORY_SHADOW_STYLES = {
   card: {},
   statsCard: {},
 } as const;
-

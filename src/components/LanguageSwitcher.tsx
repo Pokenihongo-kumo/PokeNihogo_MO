@@ -9,10 +9,7 @@ interface LanguageSwitcherProps {
   compact?: boolean;
 }
 
-const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
-  showTitle = true,
-  compact = false,
-}) => {
+const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ showTitle = true, compact = false }) => {
   const { changeLanguage, isEnglish, isVietnamese, isJapanese } = useLanguage();
   const { t } = useTranslation();
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -20,7 +17,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
   const handleLanguageChange = async (language: "en" | "vi" | "ja") => {
     // Haptic feedback
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
+
     // Scale animation
     Animated.sequence([
       Animated.timing(scaleAnim, {
@@ -34,7 +31,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
         useNativeDriver: true,
       }),
     ]).start();
-    
+
     changeLanguage(language);
   };
 
@@ -43,66 +40,36 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
       <Animated.View style={[styles.compactContainer, { transform: [{ scale: scaleAnim }] }]}>
         <View style={styles.compactBackground}>
           <TouchableOpacity
-            style={[
-              styles.compactButton,
-              isEnglish && styles.activeCompactButton,
-            ]}
+            style={[styles.compactButton, isEnglish && styles.activeCompactButton]}
             onPress={() => handleLanguageChange("en")}
             activeOpacity={0.7}
           >
             <View style={styles.compactFlagContainer}>
               <Text style={styles.compactFlag}>🇺🇸</Text>
             </View>
-            <Text
-              style={[
-                styles.compactButtonText,
-                isEnglish && styles.activeCompactButtonText,
-              ]}
-            >
-              EN
-            </Text>
+            <Text style={[styles.compactButtonText, isEnglish && styles.activeCompactButtonText]}>EN</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
-              styles.compactButton,
-              isVietnamese && styles.activeCompactButton,
-            ]}
+            style={[styles.compactButton, isVietnamese && styles.activeCompactButton]}
             onPress={() => handleLanguageChange("vi")}
             activeOpacity={0.7}
           >
             <View style={styles.compactFlagContainer}>
               <Text style={styles.compactFlag}>🇻🇳</Text>
             </View>
-            <Text
-              style={[
-                styles.compactButtonText,
-                isVietnamese && styles.activeCompactButtonText,
-              ]}
-            >
-              VI
-            </Text>
+            <Text style={[styles.compactButtonText, isVietnamese && styles.activeCompactButtonText]}>VI</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
-              styles.compactButton,
-              isJapanese && styles.activeCompactButton,
-            ]}
+            style={[styles.compactButton, isJapanese && styles.activeCompactButton]}
             onPress={() => handleLanguageChange("ja")}
             activeOpacity={0.7}
           >
             <View style={styles.compactFlagContainer}>
               <Text style={styles.compactFlag}>🇯🇵</Text>
             </View>
-            <Text
-              style={[
-                styles.compactButtonText,
-                isJapanese && styles.activeCompactButtonText,
-              ]}
-            >
-              JA
-            </Text>
+            <Text style={[styles.compactButtonText, isJapanese && styles.activeCompactButtonText]}>JA</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>
@@ -128,16 +95,8 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
               <Text style={styles.flag}>🇺🇸</Text>
             </View>
             <View style={styles.textContainer}>
-              <Text
-                style={[styles.buttonText, isEnglish && styles.activeButtonText]}
-              >
-                English
-              </Text>
-              <Text
-                style={[styles.subText, isEnglish && styles.activeSubText]}
-              >
-                United States
-              </Text>
+              <Text style={[styles.buttonText, isEnglish && styles.activeButtonText]}>English</Text>
+              <Text style={[styles.subText, isEnglish && styles.activeSubText]}>United States</Text>
             </View>
           </View>
           {isEnglish && (
@@ -157,16 +116,8 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
               <Text style={styles.flag}>🇻🇳</Text>
             </View>
             <View style={styles.textContainer}>
-              <Text
-                style={[styles.buttonText, isVietnamese && styles.activeButtonText]}
-              >
-                Tiếng Việt
-              </Text>
-              <Text
-                style={[styles.subText, isVietnamese && styles.activeSubText]}
-              >
-                Vietnam
-              </Text>
+              <Text style={[styles.buttonText, isVietnamese && styles.activeButtonText]}>Tiếng Việt</Text>
+              <Text style={[styles.subText, isVietnamese && styles.activeSubText]}>Vietnam</Text>
             </View>
           </View>
           {isVietnamese && (
@@ -186,16 +137,8 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
               <Text style={styles.flag}>🇯🇵</Text>
             </View>
             <View style={styles.textContainer}>
-              <Text
-                style={[styles.buttonText, isJapanese && styles.activeButtonText]}
-              >
-                日本語
-              </Text>
-              <Text
-                style={[styles.subText, isJapanese && styles.activeSubText]}
-              >
-                Japan
-              </Text>
+              <Text style={[styles.buttonText, isJapanese && styles.activeButtonText]}>日本語</Text>
+              <Text style={[styles.subText, isJapanese && styles.activeSubText]}>Japan</Text>
             </View>
           </View>
           {isJapanese && (
@@ -215,7 +158,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginHorizontal: 20,
     marginVertical: 12,
-    padding: 20,},
+    padding: 20,
+  },
   titleContainer: {
     alignItems: "center",
     marginBottom: 20,
@@ -315,7 +259,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#ffffff",
     borderRadius: 20,
-    padding: 4,borderWidth: 1,
+    padding: 4,
+    borderWidth: 1,
     borderColor: "#e5e7eb",
   },
   compactButton: {

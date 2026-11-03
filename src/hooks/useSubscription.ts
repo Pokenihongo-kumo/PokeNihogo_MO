@@ -10,13 +10,13 @@ import { useEffect } from "react";
  * @returns Query object with packages data
  */
 export const useSubscriptionMarketplacePackages = () => {
-    const { accessToken } = useAuthStore();
+  const { accessToken } = useAuthStore();
 
-    return useQuery({
-        queryKey: ['subscription-marketplace-packages', accessToken],
-        queryFn: () => subscriptionService.getMarketplacePackages(),
-        enabled: !!accessToken, // Only fetch when user is authenticated
-    });
+  return useQuery({
+    queryKey: ["subscription-marketplace-packages", accessToken],
+    queryFn: () => subscriptionService.getMarketplacePackages(),
+    enabled: !!accessToken, // Only fetch when user is authenticated
+  });
 };
 //----------------------End----------------------//
 
@@ -25,10 +25,10 @@ export const useSubscriptionMarketplacePackages = () => {
  * @returns Query object with subscription data
  */
 export const useUserSubscription = (qs: string, currentPage: number, pageSize: number) => {
-    return useQuery({
-        queryKey: ['user-subscription', qs, currentPage, pageSize],
-        queryFn: () => subscriptionService.getUserSubscription(qs, currentPage, pageSize),
-    });
+  return useQuery({
+    queryKey: ["user-subscription", qs, currentPage, pageSize],
+    queryFn: () => subscriptionService.getUserSubscription(qs, currentPage, pageSize),
+  });
 };
 //----------------------End----------------------//
 
@@ -38,22 +38,22 @@ export const useUserSubscription = (qs: string, currentPage: number, pageSize: n
  * @returns Infinite query object with subscription history data
  */
 export const useInfiniteUserSubscription = (pageSize: number = 10) => {
-    return useInfiniteQuery({
-        queryKey: ['user-subscription-infinite', pageSize],
-        queryFn: async ({ pageParam = 1 }) => {
-            const response = await subscriptionService.getUserSubscription('', pageParam as number, pageSize);
-            return response;
-        },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage: any) => {
-            const pagination = lastPage?.data?.pagination;
-            if (!pagination) return undefined;
-            if (pagination.current < pagination.totalPage) {
-                return pagination.current + 1;
-            }
-            return undefined;
-        },
-    });
+  return useInfiniteQuery({
+    queryKey: ["user-subscription-infinite", pageSize],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await subscriptionService.getUserSubscription("", pageParam as number, pageSize);
+      return response;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any) => {
+      const pagination = lastPage?.data?.pagination;
+      if (!pagination) return undefined;
+      if (pagination.current < pagination.totalPage) {
+        return pagination.current + 1;
+      }
+      return undefined;
+    },
+  });
 };
 //----------------------End----------------------//
 
@@ -63,30 +63,30 @@ export const useInfiniteUserSubscription = (pageSize: number = 10) => {
  * @returns Query object with subscription features data
  */
 export const useUserSubscriptionFeatures = () => {
-    const { accessToken } = useAuthStore();
-    const { setSubscriptionFeatures, clearSubscriptionFeatures } = useGlobalStore();
+  const { accessToken } = useAuthStore();
+  const { setSubscriptionFeatures, clearSubscriptionFeatures } = useGlobalStore();
 
-    const query = useQuery({
-        queryKey: ['user-subscription-features', accessToken],
-        queryFn: async (): Promise<{ features: IUserSubscriptionFeatureDetail[] }> => {
-            const response = await subscriptionService.getUserFeatures();
-            return response;
-        },
-        enabled: !!accessToken, // Only fetch when user is authenticated
-        staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-        gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
-    });
+  const query = useQuery({
+    queryKey: ["user-subscription-features", accessToken],
+    queryFn: async (): Promise<{ features: IUserSubscriptionFeatureDetail[] }> => {
+      const response = await subscriptionService.getUserFeatures();
+      return response;
+    },
+    enabled: !!accessToken, // Only fetch when user is authenticated
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+  });
 
-    // Sync subscription keys to global state when data changes
-    useEffect(() => {
-        const data = query.data as { features: IUserSubscriptionFeatureDetail[] } | undefined;
-        if (data?.features) {
-            setSubscriptionFeatures(data.features);
-        } else if (!accessToken) {
-            // Clear subscription keys when user logs out
-            clearSubscriptionFeatures();
-        }
-    }, [query.data, accessToken, setSubscriptionFeatures, clearSubscriptionFeatures]);
+  // Sync subscription keys to global state when data changes
+  useEffect(() => {
+    const data = query.data as { features: IUserSubscriptionFeatureDetail[] } | undefined;
+    if (data?.features) {
+      setSubscriptionFeatures(data.features);
+    } else if (!accessToken) {
+      // Clear subscription keys when user logs out
+      clearSubscriptionFeatures();
+    }
+  }, [query.data, accessToken, setSubscriptionFeatures, clearSubscriptionFeatures]);
 
-    return query;
+  return query;
 };

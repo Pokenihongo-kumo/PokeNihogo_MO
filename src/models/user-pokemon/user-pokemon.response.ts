@@ -17,28 +17,28 @@ export type IUserPokemonListResponse = z.infer<typeof UserPokemonListResponseSch
  * User Pokemon list response pagination schema
  */
 export const UserPokemonResponseSchema = z.object({
-    id: z.number(),
-    pokedex_number: z.number(),
-    nameJp: z.string(),
-    nameTranslations: z.object({
-        en: z.string(),
-        ja: z.string(),
-        vi: z.string(),
-    }),
-    description: z.string(),
-    conditionLevel: z.number(),
-    isStarted: z.boolean(),
-    imageUrl: z.string().url(),
-    rarity: z.string(),
-    createdById: z.null(),
-    updatedById: z.null(),
-    deletedById: z.null(),
-    deletedAt: z.null(),
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
-    types: z.array(PokemonTypeSchema),
-    weaknesses: z.array(z.unknown()),
-    userPokemon: z.boolean(),
+  id: z.number(),
+  pokedex_number: z.number(),
+  nameJp: z.string(),
+  nameTranslations: z.object({
+    en: z.string(),
+    ja: z.string(),
+    vi: z.string(),
+  }),
+  description: z.string(),
+  conditionLevel: z.number(),
+  isStarted: z.boolean(),
+  imageUrl: z.string().url(),
+  rarity: z.string(),
+  createdById: z.null(),
+  updatedById: z.null(),
+  deletedById: z.null(),
+  deletedAt: z.null(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  types: z.array(PokemonTypeSchema),
+  weaknesses: z.array(z.unknown()),
+  userPokemon: z.boolean(),
 });
 
 export const UserPokemonResponsePaginationSchema = BackendResponsePaginationModel(UserPokemonResponseSchema);
@@ -50,9 +50,9 @@ export type IUserPokemonResponsePagination = z.infer<typeof UserPokemonResponseP
  * User Pokemon stats response schema
  */
 export const UserPokemonStatsDataSchema = z.object({
-    ownershipPercentage: z.number(),
-    userPokemonsCount: z.number(),
-    totalPokemons: z.number(),
+  ownershipPercentage: z.number(),
+  userPokemonsCount: z.number(),
+  totalPokemons: z.number(),
 });
 export const UserPokemonStatsResponseSchema = BackendResponseModel(UserPokemonStatsDataSchema);
 export type IUserPokemonStatsData = z.infer<typeof UserPokemonStatsDataSchema>;

@@ -27,14 +27,7 @@ type Starter = { id: string; name: string; type: string[]; image: string };
  * Confetti colors for celebration effect
  * Constants to avoid creating new objects on each render
  */
-const CONFETTI_COLORS = [
-  "#3b82f6",
-  "#10b981",
-  "#f59e0b",
-  "#ef4444",
-  "#8b5cf6",
-  "#06b6d4",
-];
+const CONFETTI_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
 
 /**
  * Confetti configuration object
@@ -116,11 +109,7 @@ const CongratsScreen = React.memo(() => {
         </View>
 
         {/* Starter Image */}
-        <Image
-          source={{ uri: selectedPokemon.image }}
-          style={imageStyle}
-          resizeMode="contain"
-        />
+        <Image source={{ uri: selectedPokemon.image }} style={imageStyle} resizeMode="contain" />
 
         {/* Welcome Message */}
         <ThemedText type="title" style={styles.title}>
@@ -128,9 +117,7 @@ const CongratsScreen = React.memo(() => {
         </ThemedText>
 
         {/* Success Message */}
-        <ThemedText style={styles.successMessage}>
-          {t("auth.congrats.profile_created")}
-        </ThemedText>
+        <ThemedText style={styles.successMessage}>{t("auth.congrats.profile_created")}</ThemedText>
 
         {/* Starter Name */}
         <ThemedText style={styles.starterName}>
@@ -140,12 +127,7 @@ const CongratsScreen = React.memo(() => {
 
       {/* Action Button Section */}
       <View style={buttonContainerStyle}>
-        <BounceButton
-          size="full"
-          variant="solid"
-          withHaptics
-          onPress={handleGoHome}
-        >
+        <BounceButton size="full" variant="solid" withHaptics onPress={handleGoHome}>
           {t("auth.congrats.continue_to_home")}
         </BounceButton>
       </View>
@@ -177,7 +159,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 8,
     paddingHorizontal: 14,
-    marginBottom: 12,},
+    marginBottom: 12,
+  },
   pokemonImage: {
     width: POKEMON_IMAGE_SIZE,
     height: POKEMON_IMAGE_SIZE,

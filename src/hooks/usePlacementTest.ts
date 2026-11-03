@@ -27,10 +27,7 @@ function shuffle<T>(array: T[]): T[] {
   return arr;
 }
 
-function computeRecommendation(
-  questions: PlacementUiQuestion[],
-  answers: number[]
-): Difficulty {
+function computeRecommendation(questions: PlacementUiQuestion[], answers: number[]): Difficulty {
   let correct = 0;
   let correctN3 = 0;
   let correctN4 = 0;
@@ -63,11 +60,11 @@ export function usePlacementTest(testId: number | string = 1) {
   const current = useMemo(() => questions[currentIndex], [questions, currentIndex]);
   const isLast = useMemo(
     () => questions.length > 0 && currentIndex === questions.length - 1,
-    [questions.length, currentIndex]
+    [questions.length, currentIndex],
   );
   const progress = useMemo(
     () => (questions.length ? (currentIndex + 1) / questions.length : 0),
-    [currentIndex, questions.length]
+    [currentIndex, questions.length],
   );
 
   const fetchQuestions = useCallback(async () => {
@@ -162,11 +159,11 @@ export function usePlacementTest(testId: number | string = 1) {
             const totalCorrect = responseData.totalCorrect;
             const totalQuestions = responseData.totalQuestions;
             const percentage = responseData.percentage;
-            
+
             if (levelN) {
               const recommended: Difficulty = `N${levelN}` as Difficulty;
-              return { 
-                finished: true as const, 
+              return {
+                finished: true as const,
                 recommended,
                 levelN,
                 levelId,
@@ -212,4 +209,3 @@ export function usePlacementTest(testId: number | string = 1) {
 }
 
 export default usePlacementTest;
-

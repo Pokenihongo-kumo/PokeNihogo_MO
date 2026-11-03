@@ -29,9 +29,7 @@ const userHistoryService = {
       queryParams.append("pageSize", params.pageSize.toString());
     }
     const queryString = queryParams.toString();
-    return axiosPrivate.get(
-      `/user-history/history-exercises${queryString ? `?${queryString}` : ""}`
-    );
+    return axiosPrivate.get(`/user-history/history-exercises${queryString ? `?${queryString}` : ""}`);
   },
 
   /**
@@ -47,9 +45,7 @@ const userHistoryService = {
       queryParams.append("pageSize", params.pageSize.toString());
     }
     const queryString = queryParams.toString();
-    return axiosPrivate.get(
-      `/user-history/history-tests${queryString ? `?${queryString}` : ""}`
-    );
+    return axiosPrivate.get(`/user-history/history-tests${queryString ? `?${queryString}` : ""}`);
   },
 
   /**
@@ -65,11 +61,8 @@ const userHistoryService = {
       queryParams.append("pageSize", params.pageSize.toString());
     }
     const queryString = queryParams.toString();
-    return axiosPrivate.get(
-      `/user-history/recent-exercises${queryString ? `?${queryString}` : ""}`
-    );
+    return axiosPrivate.get(`/user-history/recent-exercises${queryString ? `?${queryString}` : ""}`);
   },
 };
 
 export default userHistoryService;
-

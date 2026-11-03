@@ -5,10 +5,7 @@ import { Award, Gift, Sparkles } from "lucide-react-native";
 /**
  * Format date to relative time or absolute date
  */
-export const formatRewardDate = (
-  dateString: string,
-  t: TFunction
-): string => {
+export const formatRewardDate = (dateString: string, t: TFunction): string => {
   const date = new Date(dateString);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
@@ -120,4 +117,3 @@ export const REWARD_MONTH_NAMES = [
  * Week day abbreviations
  */
 export const REWARD_WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-

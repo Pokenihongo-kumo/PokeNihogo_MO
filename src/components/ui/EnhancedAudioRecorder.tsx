@@ -2,13 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useMicrophonePermission } from "@hooks/useMicrophonePermission";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import * as FileSystem from "expo-file-system";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
@@ -27,24 +21,17 @@ const { width } = Dimensions.get("window");
 // Centralized color tiers for feedback
 const getFeedbackColors = (score?: number, correct?: boolean) => {
   if (typeof score === "number" && correct === false) {
-    if (score >= 80)
-      return { fg: "#92400e", bg: "rgba(251,191,36,0.22)", br: "#f59e0b" };
-    if (score >= 50)
-      return { fg: "#b45309", bg: "rgba(245,158,11,0.20)", br: "#f59e0b" };
+    if (score >= 80) return { fg: "#92400e", bg: "rgba(251,191,36,0.22)", br: "#f59e0b" };
+    if (score >= 50) return { fg: "#b45309", bg: "rgba(245,158,11,0.20)", br: "#f59e0b" };
     return { fg: "#991b1b", bg: "rgba(239,68,68,0.20)", br: "#ef4444" };
   }
 
   if (typeof score === "number") {
-    if (score >= 90)
-      return { fg: "#065f46", bg: "rgba(16,185,129,0.18)", br: "#10b981" };
-    if (score >= 80)
-      return { fg: "#047857", bg: "rgba(52,211,153,0.16)", br: "#34d399" };
-    if (score >= 70)
-      return { fg: "#15803d", bg: "rgba(74,222,128,0.16)", br: "#4ade80" };
-    if (score >= 50)
-      return { fg: "#92400e", bg: "rgba(251,191,36,0.20)", br: "#f59e0b" };
-    if (score >= 30)
-      return { fg: "#b45309", bg: "rgba(245,158,11,0.20)", br: "#f59e0b" };
+    if (score >= 90) return { fg: "#065f46", bg: "rgba(16,185,129,0.18)", br: "#10b981" };
+    if (score >= 80) return { fg: "#047857", bg: "rgba(52,211,153,0.16)", br: "#34d399" };
+    if (score >= 70) return { fg: "#15803d", bg: "rgba(74,222,128,0.16)", br: "#4ade80" };
+    if (score >= 50) return { fg: "#92400e", bg: "rgba(251,191,36,0.20)", br: "#f59e0b" };
+    if (score >= 30) return { fg: "#b45309", bg: "rgba(245,158,11,0.20)", br: "#f59e0b" };
     return { fg: "#991b1b", bg: "rgba(239,68,68,0.20)", br: "#ef4444" };
   }
 
@@ -109,8 +96,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   const [playbackDuration, setPlaybackDuration] = useState(0);
   const [playbackPosition, setPlaybackPosition] = useState(0);
 
-  const { hasPermission, requestMicrophonePermission } =
-    useMicrophonePermission();
+  const { hasPermission, requestMicrophonePermission } = useMicrophonePermission();
   const { t } = useTranslation();
 
   // Metering values for real-time audio visualization
@@ -138,9 +124,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   const lastNonSilentTimestampRef = useRef<number | null>(null);
 
   // Timer ref for maxDuration auto-stop
-  const maxDurationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null
-  );
+  const maxDurationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Ref to store stopRecording function for use in effect
   const stopRecordingRef = useRef<(() => Promise<void>) | undefined>(undefined);
 
@@ -171,9 +155,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   const createCustomSavePath = () => {
     if (customSavePath) {
       // Ensure directory exists
-      const dirPath = customSavePath.endsWith("/")
-        ? customSavePath
-        : `${customSavePath}/`;
+      const dirPath = customSavePath.endsWith("/") ? customSavePath : `${customSavePath}/`;
       return `${dirPath}recording_${Date.now()}.m4a`;
     }
     return null;
@@ -235,23 +217,20 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   }, [meteringValues.length, isRecording, getAnimationValue]);
 
   // Throttled scroll function - giảm throttle time để mượt hơn
-  const performScroll = useCallback(
-    (index: number, animated: boolean = true) => {
-      const now = Date.now();
-      // Giảm throttle time xuống 30ms để scroll mượt hơn
-      if (now - lastScrollTimeRef.current < 30) {
-        return;
-      }
-      lastScrollTimeRef.current = now;
+  const performScroll = useCallback((index: number, animated: boolean = true) => {
+    const now = Date.now();
+    // Giảm throttle time xuống 30ms để scroll mượt hơn
+    if (now - lastScrollTimeRef.current < 30) {
+      return;
+    }
+    lastScrollTimeRef.current = now;
 
-      const scrollPosition = index * (barWidth + barSpacing) - width / 2 + 50;
-      scrollViewRef.current?.scrollTo({
-        x: Math.max(0, scrollPosition),
-        animated,
-      });
-    },
-    []
-  );
+    const scrollPosition = index * (barWidth + barSpacing) - width / 2 + 50;
+    scrollViewRef.current?.scrollTo({
+      x: Math.max(0, scrollPosition),
+      animated,
+    });
+  }, []);
 
   // Auto-scroll during recording - throttled
   useEffect(() => {
@@ -266,10 +245,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   const playbackIndex = useRef(0);
   useEffect(() => {
     if (isPlaying && playbackPosition > 0 && playbackDuration > 0) {
-      const newIndex = Math.floor(
-        (playbackPosition / playbackDuration) *
-          meteringHistoryRef.current.length
-      );
+      const newIndex = Math.floor((playbackPosition / playbackDuration) * meteringHistoryRef.current.length);
       if (newIndex !== playbackIndex.current) {
         playbackIndex.current = newIndex;
         playbackIndexRef.current = newIndex;
@@ -335,22 +311,13 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
     }
 
     // Nếu chưa có playbackDuration (chưa load audio), dùng recordingDuration
-    const totalDuration =
-      playbackDuration > 0 ? playbackDuration : recordingDuration;
+    const totalDuration = playbackDuration > 0 ? playbackDuration : recordingDuration;
 
     // Nếu đang phát, dùng playbackPosition; nếu không (chưa phát hoặc dừng), hiển thị 00:00
-    const currentPosition =
-      isPlaying && playbackPosition >= 0 ? playbackPosition : 0;
+    const currentPosition = isPlaying && playbackPosition >= 0 ? playbackPosition : 0;
 
     return `${formatTime(currentPosition)} / ${formatTime(totalDuration)}`;
-  }, [
-    recordingUri,
-    playbackPosition,
-    playbackDuration,
-    recordingDuration,
-    isPlaying,
-    formatTime,
-  ]);
+  }, [recordingUri, playbackPosition, playbackDuration, recordingDuration, isPlaying, formatTime]);
 
   // Delete recording function - moved before stopRecording to avoid dependency issues
   const deleteRecording = useCallback(async () => {
@@ -464,8 +431,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
                 } else {
                   if (
                     lastNonSilentTimestampRef.current !== null &&
-                    nowTs - lastNonSilentTimestampRef.current >=
-                      silenceDurationSeconds * 1000
+                    nowTs - lastNonSilentTimestampRef.current >= silenceDurationSeconds * 1000
                   ) {
                     // Prevent repeated calls using ref to avoid stale state
                     if (isRecordingRef.current) {
@@ -478,7 +444,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
             }
           }
         },
-        100 // Update interval in milliseconds
+        100, // Update interval in milliseconds
       );
 
       setRecording(newRecording);
@@ -501,10 +467,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       setIsRecordingLoading(false);
     } catch (err) {
       console.error("Failed to start recording", err);
-      Alert.alert(
-        t("audio_recorder.error_title"),
-        t("audio_recorder.start_recording_error")
-      );
+      Alert.alert(t("audio_recorder.error_title"), t("audio_recorder.start_recording_error"));
       setIsRecordingLoading(false);
     }
   };
@@ -548,10 +511,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       // Load audio ngay để lấy duration chính xác (không phát)
       if (uri && showPlayback) {
         try {
-          const { sound: previewSound } = await Audio.Sound.createAsync(
-            { uri },
-            { shouldPlay: false }
-          );
+          const { sound: previewSound } = await Audio.Sound.createAsync({ uri }, { shouldPlay: false });
           const status = await previewSound.getStatusAsync();
           if (status.isLoaded && status.durationMillis) {
             setPlaybackDuration(status.durationMillis);
@@ -590,10 +550,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       isRecordingRef.current = false;
     } catch (err) {
       console.error("Failed to stop recording", err);
-      Alert.alert(
-        t("audio_recorder.error_title"),
-        t("audio_recorder.stop_recording_error")
-      );
+      Alert.alert(t("audio_recorder.error_title"), t("audio_recorder.stop_recording_error"));
     }
   }, [
     recording,
@@ -623,7 +580,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
 
       const { sound: newSound } = await Audio.Sound.createAsync(
         { uri: recordingUri },
-        { shouldPlay: true, progressUpdateIntervalMillis: 50 }
+        { shouldPlay: true, progressUpdateIntervalMillis: 50 },
       );
 
       setSound(newSound);
@@ -641,9 +598,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
           // Calculate smooth progress
           if (duration > 0) {
             playbackProgressRef.current = position / duration;
-            const newIndex = Math.floor(
-              playbackProgressRef.current * meteringHistoryRef.current.length
-            );
+            const newIndex = Math.floor(playbackProgressRef.current * meteringHistoryRef.current.length);
 
             // Chỉ update index nếu thay đổi đáng kể để giảm re-renders
             if (Math.abs(newIndex - playbackIndexRef.current) > 2) {
@@ -668,10 +623,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       setIsPlayLoading(false);
     } catch (err) {
       console.error("Failed to play sound", err);
-      Alert.alert(
-        t("audio_recorder.error_title"),
-        t("audio_recorder.playback_error")
-      );
+      Alert.alert(t("audio_recorder.error_title"), t("audio_recorder.playback_error"));
       setIsPlayLoading(false);
     }
   };
@@ -697,9 +649,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
           >
             <Ionicons name="mic-off" size={26} color="#fff" />
           </TouchableOpacity>
-          <Text style={styles.recordLabel}>
-            {t("audio_recorder.grant_permission")}
-          </Text>
+          <Text style={styles.recordLabel}>{t("audio_recorder.grant_permission")}</Text>
         </View>
       </View>
     );
@@ -763,9 +713,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
           typeof exerciseTitle === "string" ? (
             <Text style={styles.exerciseTitle}>{exerciseTitle}</Text>
           ) : (
-            <View style={{ marginBottom: 8, alignItems: "center" }}>
-              {exerciseTitle}
-            </View>
+            <View style={{ marginBottom: 8, alignItems: "center" }}>{exerciseTitle}</View>
           )
         ) : null}
 
@@ -802,20 +750,14 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
                   totalBars > 1
                     ? Math.min(
                         maxSpacing,
-                        Math.max(
-                          minSpacing,
-                          (waveContainerWidth - totalBars * targetBarWidth) /
-                            (totalBars - 1)
-                        )
+                        Math.max(minSpacing, (waveContainerWidth - totalBars * targetBarWidth) / (totalBars - 1)),
                       )
                     : 0;
                 const calculatedBarWidth = targetBarWidth;
 
                 // Determine if this bar is in the played section during playback
-                const isPlayed =
-                  recordingUri && index <= playbackIndexRef.current;
-                const isCurrentBar =
-                  recordingUri && index === playbackIndexRef.current;
+                const isPlayed = recordingUri && index <= playbackIndexRef.current;
+                const isCurrentBar = recordingUri && index === playbackIndexRef.current;
 
                 return (
                   <Animated.View
@@ -829,18 +771,8 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
                           inputRange: [0, 1],
                           outputRange: [baseHeight, maxHeight],
                         }),
-                        backgroundColor: isPlayed
-                          ? "#007AFF"
-                          : isRecording
-                            ? "#007AFF"
-                            : "#C7C7CC",
-                        opacity: isCurrentBar
-                          ? 1
-                          : isPlayed
-                            ? 0.9
-                            : isRecording
-                              ? 0.6
-                              : 0.4,
+                        backgroundColor: isPlayed ? "#007AFF" : isRecording ? "#007AFF" : "#C7C7CC",
+                        opacity: isCurrentBar ? 1 : isPlayed ? 0.9 : isRecording ? 0.6 : 0.4,
                         transform: [
                           {
                             scaleY: isCurrentBar ? 1.1 : 1,
@@ -917,11 +849,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
                 {isPlayLoading ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Ionicons
-                    name={isPlaying ? "pause" : "play"}
-                    size={26}
-                    color="#fff"
-                  />
+                  <Ionicons name={isPlaying ? "pause" : "play"} size={26} color="#fff" />
                 )}
               </TouchableOpacity>
 
@@ -935,11 +863,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
                   activeOpacity={0.7}
                   disabled={disabled}
                 >
-                  <Ionicons
-                    name="checkmark-circle-outline"
-                    size={24}
-                    color="#34C759"
-                  />
+                  <Ionicons name="checkmark-circle-outline" size={24} color="#34C759" />
                 </TouchableOpacity>
               )}
             </View>

@@ -32,19 +32,14 @@ export const ReviewStatsSection: React.FC<ReviewStatsSectionProps> = ({
   const unansweredQuestions = totalQuestions - answeredCorrect - answeredInCorrect;
 
   const isFailedStatus = useMemo(() => {
-    return (
-      status === ExerciseAttemptStatus.FAIL ||
-      status === ExerciseAttemptStatus.FAILED
-    );
+    return status === ExerciseAttemptStatus.FAIL || status === ExerciseAttemptStatus.FAILED;
   }, [status]);
 
   const formatTime = (seconds: number): string => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${hrs.toString().padStart(2, "0")}:${mins
-      .toString()
-      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    return `${hrs.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   const circularProgress = useMemo(() => {
@@ -60,14 +55,7 @@ export const ReviewStatsSection: React.FC<ReviewStatsSectionProps> = ({
         <View style={styles.circularProgressContainer}>
           <Svg width={100} height={100} style={styles.circularSvg}>
             {/* Background circle */}
-            <Circle
-              cx="50"
-              cy="50"
-              r="45"
-              stroke="#e5e7eb"
-              strokeWidth="8"
-              fill="none"
-            />
+            <Circle cx="50" cy="50" r="45" stroke="#e5e7eb" strokeWidth="8" fill="none" />
             {/* Incorrect segment */}
             {circularProgress.incorrect > 0 && (
               <Circle
@@ -107,42 +95,22 @@ export const ReviewStatsSection: React.FC<ReviewStatsSectionProps> = ({
         {/* Stats List */}
         <View style={styles.statsList}>
           <View style={styles.statRow}>
-            <Text style={styles.statLabel}>
-              {t("review_stats.correct_count", "Số câu đúng:")}
-            </Text>
+            <Text style={styles.statLabel}>{t("review_stats.correct_count", "Số câu đúng:")}</Text>
             <Text style={styles.statValue}>{answeredCorrect}</Text>
           </View>
           <View style={styles.statRow}>
-            <Text style={styles.statLabel}>
-              {t("review_stats.unanswered_count", "Số câu không làm:")}
-            </Text>
+            <Text style={styles.statLabel}>{t("review_stats.unanswered_count", "Số câu không làm:")}</Text>
             <Text style={styles.statValue}>{unansweredQuestions}</Text>
           </View>
           <View style={styles.statRow}>
-            <Text style={styles.statLabel}>
-              {t("review_stats.incorrect_count", "Số câu sai:")}
-            </Text>
+            <Text style={styles.statLabel}>{t("review_stats.incorrect_count", "Số câu sai:")}</Text>
             <Text style={styles.statValue}>{answeredInCorrect}</Text>
           </View>
           <View style={styles.statRow}>
-            <Text style={styles.statLabel}>
-              {t("review_stats.status_label", "Trạng thái:")}
-            </Text>
-            <View
-              style={[
-                styles.statusBadge,
-                isFailedStatus && styles.statusBadgeFail,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.statusText,
-                  isFailedStatus && styles.statusTextFail,
-                ]}
-              >
-                {isFailedStatus
-                  ? t("review_stats.status_failed", "Không đạt")
-                  : t("review_stats.status_passed", "Đạt")}
+            <Text style={styles.statLabel}>{t("review_stats.status_label", "Trạng thái:")}</Text>
+            <View style={[styles.statusBadge, isFailedStatus && styles.statusBadgeFail]}>
+              <Text style={[styles.statusText, isFailedStatus && styles.statusTextFail]}>
+                {isFailedStatus ? t("review_stats.status_failed", "Không đạt") : t("review_stats.status_passed", "Đạt")}
               </Text>
             </View>
           </View>
@@ -153,29 +121,17 @@ export const ReviewStatsSection: React.FC<ReviewStatsSectionProps> = ({
       <View style={styles.timeExpandRow}>
         {time > 0 && (
           <View style={styles.timeContainer}>
-          <MaterialCommunityIcons
-            name="timer-outline"
-            size={20}
-            color="#14b8a6"
-          />
+            <MaterialCommunityIcons name="timer-outline" size={20} color="#14b8a6" />
             <Text style={styles.timeText}>{formatTime(time)}</Text>
           </View>
         )}
 
         {questions.length > 0 && (
-          <TouchableOpacity
-            style={styles.expandButton}
-            onPress={() => setIsExpanded(!isExpanded)}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity style={styles.expandButton} onPress={() => setIsExpanded(!isExpanded)} activeOpacity={0.7}>
             <Text style={styles.expandText}>
-              {isExpanded
-                ? t("review_stats.collapse", "Thu gọn")
-                : t("review_stats.expand", "Mở rộng")}
+              {isExpanded ? t("review_stats.collapse", "Thu gọn") : t("review_stats.expand", "Mở rộng")}
             </Text>
-            <Text style={styles.expandChevron}>
-              {isExpanded ? "▴" : "▾"}
-            </Text>
+            <Text style={styles.expandChevron}>{isExpanded ? "▴" : "▾"}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -200,11 +156,7 @@ export const ReviewStatsSection: React.FC<ReviewStatsSectionProps> = ({
                     }
                   }}
                   activeOpacity={0.85}
-                  style={[
-                    styles.numCell,
-                    isCorrect && styles.numCellCorrect,
-                    isWrong && styles.numCellWrong,
-                  ]}
+                  style={[styles.numCell, isCorrect && styles.numCellCorrect, isWrong && styles.numCellWrong]}
                 >
                   <Text
                     style={[
@@ -232,7 +184,8 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 10,
     marginTop: 10,
-    marginBottom: 10,zIndex: 10,
+    marginBottom: 10,
+    zIndex: 10,
   },
   statsHeader: {
     flexDirection: "row",

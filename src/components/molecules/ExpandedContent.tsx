@@ -7,13 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface ExpandedContentProps {
   user: IUserEntity;
@@ -21,11 +15,7 @@ interface ExpandedContentProps {
   style?: any;
 }
 
-export default function ExpandedContent({
-  user,
-  onClose,
-  style,
-}: ExpandedContentProps) {
+export default function ExpandedContent({ user, onClose, style }: ExpandedContentProps) {
   const { t } = useTranslation();
 
   const handleAvatarPress = () => {
@@ -68,24 +58,16 @@ export default function ExpandedContent({
           <Text style={styles.userName}>{user.name}</Text>
 
           {/* Level Badge Large */}
-          <LevelBadge
-            level={user.level.levelNumber}
-            size="large"
-            style={styles.levelBadge}
-          />
+          <LevelBadge level={user.level.levelNumber} size="large" style={styles.levelBadge} />
 
           {/* Stats Grid */}
           <View style={styles.statsGrid}>
             <View style={styles.statCard}>
-              <Text style={styles.statValue}>
-                {user.exp.toLocaleString()}
-              </Text>
+              <Text style={styles.statValue}>{user.exp.toLocaleString()}</Text>
               <Text style={styles.statLabel}>{t("profile.current_xp")}</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={styles.statValue}>
-                {user.level.levelNumber + 1}
-              </Text>
+              <Text style={styles.statValue}>{user.level.levelNumber + 1}</Text>
               <Text style={styles.statLabel}>{t("profile.next_level")}</Text>
             </View>
           </View>
@@ -115,7 +97,8 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 24,
-    padding: 24,},
+    padding: 24,
+  },
   closeButton: {
     position: "absolute",
     top: 16,

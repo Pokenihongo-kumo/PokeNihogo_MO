@@ -10,11 +10,7 @@ interface ReviewHeaderProps {
 export const ReviewHeader: React.FC<ReviewHeaderProps> = ({ onBackPress }) => {
   return (
     <View style={styles.topHeader}>
-      <TouchableOpacity
-        onPress={onBackPress}
-        activeOpacity={0.8}
-        style={styles.backButton}
-      >
+      <TouchableOpacity onPress={onBackPress} activeOpacity={0.8} style={styles.backButton}>
         <ChevronLeft size={22} color="#111827" />
       </TouchableOpacity>
       <Text style={styles.headerTitle} numberOfLines={1}>

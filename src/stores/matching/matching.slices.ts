@@ -7,8 +7,7 @@ export const createMatchingSlice = (set: any) => ({
 
   // Current active match ID (for battle screens)
   currentMatchId: null as string | null,
-  setCurrentMatchId: (matchId: string | null) =>
-    set({ currentMatchId: matchId }),
+  setCurrentMatchId: (matchId: string | null) => set({ currentMatchId: matchId }),
 
   // Last match result payload to show on result screen
   lastMatchResult: null as any,
@@ -28,12 +27,14 @@ export const createMatchingSlice = (set: any) => ({
     delaySeconds: number;
     message: string;
   } | null,
-  setRoundStartingData: (data: {
-    matchId: number;
-    roundNumber: string;
-    delaySeconds: number;
-    message: string;
-  } | null) => set({ roundStartingData: data }),
+  setRoundStartingData: (
+    data: {
+      matchId: number;
+      roundNumber: string;
+      delaySeconds: number;
+      message: string;
+    } | null,
+  ) => set({ roundStartingData: data }),
   // ---------------------------------------
 
   // Match found modal (reuse ModalBattleAccept)

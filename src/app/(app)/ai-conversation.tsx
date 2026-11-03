@@ -33,11 +33,7 @@ import { useMinimalAlert } from "@hooks/useMinimalAlert";
 import { useSubscriptionMarketplacePackages } from "@hooks/useSubscription";
 import { useCheckFeature } from "@hooks/useSubscriptionFeatures";
 import { ROUTES } from "@routes/routes";
-import {
-  ConversationRoom,
-  GetConversationRoomsResponse,
-  previewVoice,
-} from "@services/conversation";
+import { ConversationRoom, GetConversationRoomsResponse, previewVoice } from "@services/conversation";
 import { useAuthStore } from "@stores/auth/auth.config";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -92,8 +88,7 @@ type RoomUpdatePayload = Partial<Omit<ConversationRoom, "conversationId">> & {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const devLog = (..._args: unknown[]) => {};
 
-const base64Characters =
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+const base64Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 const buildBase64Lookup = () => {
   const lookup = new Uint8Array(256);
@@ -129,10 +124,7 @@ const base64Decode = (base64: string): Uint8Array => {
   return bytes;
 };
 
-const saveBase64ToFile = async (
-  base64Data: string,
-  extension: string
-): Promise<string> => {
+const saveBase64ToFile = async (base64Data: string, extension: string): Promise<string> => {
   const ext = extension || "mp3";
   const fileUri = `${FileSystem.cacheDirectory}kaiwa-${Date.now()}.${ext}`;
   await FileSystem.writeAsStringAsync(fileUri, base64Data, {
@@ -143,10 +135,7 @@ const saveBase64ToFile = async (
 
 const playAudioFromUri = async (audioUrl: string) => {
   try {
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: audioUrl },
-      { shouldPlay: true }
-    );
+    const { sound } = await Audio.Sound.createAsync({ uri: audioUrl }, { shouldPlay: true });
     sound.setOnPlaybackStatusUpdate((status: any) => {
       if (status.isLoaded && status.didJustFinish) {
         sound.unloadAsync();
@@ -158,11 +147,7 @@ const playAudioFromUri = async (audioUrl: string) => {
 };
 
 const AnimatedDots = () => {
-  const dotAnimsRef = useRef<Animated.Value[]>([
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]);
+  const dotAnimsRef = useRef<Animated.Value[]>([new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)]);
   const loopsRef = useRef<Animated.CompositeAnimation[]>([]);
 
   useEffect(() => {
@@ -182,12 +167,10 @@ const AnimatedDots = () => {
             easing: Easing.inOut(Easing.sin),
             useNativeDriver: true,
           }),
-        ])
+        ]),
       );
 
-    const loops = dotAnimsRef.current.map((anim, idx) =>
-      createBounce(anim, idx * 150)
-    );
+    const loops = dotAnimsRef.current.map((anim, idx) => createBounce(anim, idx * 150));
     loops.forEach((loop) => loop.start());
     loopsRef.current = loops;
 
@@ -234,13 +217,7 @@ const AnimatedDots = () => {
 };
 
 // Helper component for user avatar with error handling
-const UserAvatarWithFallback = ({
-  avatar,
-  name,
-}: {
-  avatar?: string;
-  name: string;
-}) => {
+const UserAvatarWithFallback = ({ avatar, name }: { avatar?: string; name: string }) => {
   const [imageError, setImageError] = useState(false);
 
   return (
@@ -289,20 +266,16 @@ const UserAvatarWithFallback = ({
 
 export default function AiConversationScreen() {
   const { t } = useTranslation();
-  const { topicId, conversationId: initialConversationId } =
-    useLocalSearchParams<{
-      topicId?: string;
-      conversationId?: string;
-    }>();
+  const { topicId, conversationId: initialConversationId } = useLocalSearchParams<{
+    topicId?: string;
+    conversationId?: string;
+  }>();
   const accessToken = useAuthStore((s) => s.accessToken);
   const { user } = useAuth();
   const { showAlert } = useMinimalAlert();
   const hasAIKaiwa = useCheckFeature(SubscriptionFeatureKey.AI_KAIWA);
   // const hasAIKaiwa = true;
-  const {
-    data: marketplaceResponse,
-    isLoading: isMarketplaceLoading,
-  } = useSubscriptionMarketplacePackages();
+  const { data: marketplaceResponse, isLoading: isMarketplaceLoading } = useSubscriptionMarketplacePackages();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -311,9 +284,7 @@ export default function AiConversationScreen() {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [conversationTitle, setConversationTitle] = useState<string | null>(null);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
-  const [processingStatus, setProcessingStatus] = useState<
-    string | undefined
-  >();
+  const [processingStatus, setProcessingStatus] = useState<string | undefined>();
   const [isListSheetOpen, setIsListSheetOpen] = useState(false);
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [selectedVoiceName, setSelectedVoiceName] = useState<string | null>(null);
@@ -329,9 +300,7 @@ export default function AiConversationScreen() {
   // Update conversation title when conversationId changes
   useEffect(() => {
     if (conversationId && conversationRoomsData?.results) {
-      const room = conversationRoomsData.results.find(
-        (r) => r.conversationId === conversationId
-      );
+      const room = conversationRoomsData.results.find((r) => r.conversationId === conversationId);
       if (room?.title) {
         setConversationTitle(room.title);
       } else {
@@ -349,9 +318,7 @@ export default function AiConversationScreen() {
       setConversationId(initialConversationId);
       // Try to find title from cache
       if (conversationRoomsData?.results) {
-        const room = conversationRoomsData.results.find(
-          (r) => r.conversationId === initialConversationId
-        );
+        const room = conversationRoomsData.results.find((r) => r.conversationId === initialConversationId);
         if (room?.title) {
           setConversationTitle(room.title);
         }
@@ -417,9 +384,7 @@ export default function AiConversationScreen() {
             return old;
           }
 
-          const existingIndex = old.data.results.findIndex(
-            (room) => room.conversationId === roomUpdate.conversationId
-          );
+          const existingIndex = old.data.results.findIndex((room) => room.conversationId === roomUpdate.conversationId);
 
           const nextRoom: ConversationRoom =
             existingIndex >= 0
@@ -437,9 +402,7 @@ export default function AiConversationScreen() {
 
           const nextResults =
             existingIndex >= 0
-              ? old.data.results.map((room, index) =>
-                  index === existingIndex ? nextRoom : room
-                )
+              ? old.data.results.map((room, index) => (index === existingIndex ? nextRoom : room))
               : [nextRoom, ...old.data.results];
 
           return {
@@ -449,19 +412,17 @@ export default function AiConversationScreen() {
               results: nextResults,
             },
           };
-        }
+        },
       );
     },
-    [queryClient]
+    [queryClient],
   );
   const listRef = useRef<FlatList<Message>>(null);
 
   // Control when translation should appear: wait until AI text "typing" ends
   const aiTypingEndsAtRef = useRef<number | null>(null);
   const pendingTranslationRef = useRef<string | null>(null);
-  const translationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null
-  );
+  const translationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   // Track preview audio so we can stop it when leaving the screen
   const previewSoundRef = useRef<Audio.Sound | null>(null);
@@ -496,27 +457,23 @@ export default function AiConversationScreen() {
     });
   }, []);
 
-  const updateMessageById = useCallback(
-    (messageId: string | number, updater: MessageUpdate) => {
-      setMessages((prev) => {
-        // Compare messageIds (handle both string and number)
-        const index = prev.findIndex((msg) => {
-          if (msg.messageId === undefined || messageId === undefined)
-            return false;
-          return String(msg.messageId) === String(messageId);
-        });
-        if (index === -1) return prev;
-        const nextMessage = updater(prev[index]);
-        if (nextMessage === prev[index]) {
-          return prev;
-        }
-        const next = [...prev];
-        next[index] = nextMessage;
-        return next;
+  const updateMessageById = useCallback((messageId: string | number, updater: MessageUpdate) => {
+    setMessages((prev) => {
+      // Compare messageIds (handle both string and number)
+      const index = prev.findIndex((msg) => {
+        if (msg.messageId === undefined || messageId === undefined) return false;
+        return String(msg.messageId) === String(messageId);
       });
-    },
-    []
-  );
+      if (index === -1) return prev;
+      const nextMessage = updater(prev[index]);
+      if (nextMessage === prev[index]) {
+        return prev;
+      }
+      const next = [...prev];
+      next[index] = nextMessage;
+      return next;
+    });
+  }, []);
 
   const scheduleApplyPendingTranslation = useCallback(() => {
     clearTranslationTimer();
@@ -610,7 +567,7 @@ export default function AiConversationScreen() {
         }
       }, 40);
     },
-    [updateLastAiMessage]
+    [updateLastAiMessage],
   );
 
   const marketplacePackages: MarketplacePackage[] | undefined = useMemo(() => {
@@ -622,9 +579,7 @@ export default function AiConversationScreen() {
       return undefined;
     }
     return marketplacePackages.find(
-      (pkg) =>
-        pkg.tagName?.toUpperCase() === "ULTRA" ||
-        pkg.nameTranslation?.toLowerCase().includes("ultra")
+      (pkg) => pkg.tagName?.toUpperCase() === "ULTRA" || pkg.nameTranslation?.toLowerCase().includes("ultra"),
     );
   }, [marketplacePackages]);
 
@@ -634,10 +589,7 @@ export default function AiConversationScreen() {
         ?.map((feature) => {
           const name = feature.feature?.nameTranslation;
           if (!name) return null;
-          const valueSuffix =
-            feature.value && feature.value !== "null"
-              ? ` (x${feature.value})`
-              : "";
+          const valueSuffix = feature.value && feature.value !== "null" ? ` (x${feature.value})` : "";
           return `${name}${valueSuffix}`;
         })
         ?.filter((item): item is string => Boolean(item)) ?? []
@@ -667,8 +619,7 @@ export default function AiConversationScreen() {
       const lower = feature.toLowerCase();
       return priorityKeywords.some((keyword) => lower.includes(keyword));
     });
-    const highlightSource =
-      prioritized.length > 0 ? prioritized : ultraFeatures;
+    const highlightSource = prioritized.length > 0 ? prioritized : ultraFeatures;
     return highlightSource
       .slice(0, 2)
       .map((feature) => feature.replace(/\(x[0-9.]+\)/i, "").trim())
@@ -681,7 +632,7 @@ export default function AiConversationScreen() {
       title: t("home.ai.conversation.hero_title"),
       subtitle: t("home.ai.conversation.hero_subtitle"),
     }),
-    [t]
+    [t],
   );
 
   const heroStats = useMemo(
@@ -699,7 +650,7 @@ export default function AiConversationScreen() {
         label: t("home.ai.conversation.hero_stats_consistency_label"),
       },
     ],
-    [t]
+    [t],
   );
 
   const featureHighlights = useMemo(() => {
@@ -713,17 +664,14 @@ export default function AiConversationScreen() {
     ];
   }, [ultraFeatures, t]);
 
-  const socialProofText = useMemo(
-    () => t("home.ai.conversation.social_proof"),
-    [t]
-  );
+  const socialProofText = useMemo(() => t("home.ai.conversation.social_proof"), [t]);
 
   const guaranteeCopy = useMemo(
     () => ({
       title: t("home.ai.conversation.guarantee_title"),
       subtitle: t("home.ai.conversation.guarantee_subtitle"),
     }),
-    [t]
+    [t],
   );
 
   useEffect(() => {
@@ -823,17 +771,13 @@ export default function AiConversationScreen() {
                 onPlayEnd={() => {
                   // Reset if this was the currently playing message
                   // Don't reset if it's the special stop-all value
-                  if (
-                    currentlyPlayingMessageId === item.id &&
-                    currentlyPlayingMessageId !== "__STOP_ALL__"
-                  ) {
+                  if (currentlyPlayingMessageId === item.id && currentlyPlayingMessageId !== "__STOP_ALL__") {
                     setCurrentlyPlayingMessageId(null);
                   }
                 }}
                 shouldStop={
                   currentlyPlayingMessageId === "__STOP_ALL__" ||
-                  (currentlyPlayingMessageId !== null &&
-                    currentlyPlayingMessageId !== item.id)
+                  (currentlyPlayingMessageId !== null && currentlyPlayingMessageId !== item.id)
                 }
               />
             </View>
@@ -846,7 +790,7 @@ export default function AiConversationScreen() {
         </View>
       );
     },
-    [user, currentlyPlayingMessageId]
+    [user, currentlyPlayingMessageId],
   );
 
   const keyExtractor = useCallback((item: Message) => item.id, []);
@@ -861,12 +805,10 @@ export default function AiConversationScreen() {
           paddingTop: 48,
         }}
       >
-        <ThemedText style={{ opacity: 0.6 }}>
-          {t("home.ai.conversation.empty_message")}
-        </ThemedText>
+        <ThemedText style={{ opacity: 0.6 }}>{t("home.ai.conversation.empty_message")}</ThemedText>
       </View>
     ),
-    [t]
+    [t],
   );
 
   // Initialize WebSocket connection
@@ -941,22 +883,20 @@ export default function AiConversationScreen() {
         }[];
       }) => {
         if (data.messages && data.messages.length > 0) {
-          const historyMessages: Message[] = data.messages.map(
-            (msg, index) => ({
-              id:
-                msg.messageId !== undefined && msg.messageId !== null
-                  ? String(msg.messageId)
-                  : `${msg.role}-${Date.now()}-${index}-${Math.random()}`,
-              role: msg.role === "USER" ? "user" : "ai",
-              text: msg.message,
-              translation: msg.translation,
-              audioUrl: msg.audioUrl,
-              messageId: msg.messageId,
-            })
-          );
+          const historyMessages: Message[] = data.messages.map((msg, index) => ({
+            id:
+              msg.messageId !== undefined && msg.messageId !== null
+                ? String(msg.messageId)
+                : `${msg.role}-${Date.now()}-${index}-${Math.random()}`,
+            role: msg.role === "USER" ? "user" : "ai",
+            text: msg.message,
+            translation: msg.translation,
+            audioUrl: msg.audioUrl,
+            messageId: msg.messageId,
+          }));
           setMessages(historyMessages);
         }
-      }
+      },
     );
 
     // Listen for room-updated event (refresh room list when conversation is updated)
@@ -968,23 +908,20 @@ export default function AiConversationScreen() {
           | {
               conversationId?: string;
               room?: RoomUpdatePayload;
-            }
+            },
       ) => {
         const normalized: RoomUpdatePayload | undefined = (() => {
           if (!data) return undefined;
           if ("room" in data && data.room) {
             return {
               ...data.room,
-              conversationId:
-                data.room.conversationId ?? data.conversationId ?? "",
+              conversationId: data.room.conversationId ?? data.conversationId ?? "",
             };
           }
           return {
             ...(data as RoomUpdatePayload),
             conversationId:
-              (data as RoomUpdatePayload).conversationId ??
-              (data as { conversationId?: string }).conversationId ??
-              "",
+              (data as RoomUpdatePayload).conversationId ?? (data as { conversationId?: string }).conversationId ?? "",
           };
         })();
         if (normalized?.conversationId) {
@@ -994,7 +931,7 @@ export default function AiConversationScreen() {
             setConversationTitle(normalized.title);
           }
         }
-      }
+      },
     );
 
     socket.on("disconnect", () => {
@@ -1021,61 +958,47 @@ export default function AiConversationScreen() {
     });
 
     // Listen for transcription (user's speech to text)
-    socket.on(
-      "transcription",
-      (data: {
-        text?: string;
-        messageId?: string | number;
-        audioUrl?: string;
-      }) => {
-        if (data.text) {
-          appendMessage({
-            id: `user-${Date.now()}`,
-            role: "user",
-            text: data.text,
-            messageId: data.messageId,
-            // If audioUrl is already available in transcription event, use it
-            audioUrl: data.audioUrl,
-          });
-        }
-        setProcessingStatus(undefined);
+    socket.on("transcription", (data: { text?: string; messageId?: string | number; audioUrl?: string }) => {
+      if (data.text) {
+        appendMessage({
+          id: `user-${Date.now()}`,
+          role: "user",
+          text: data.text,
+          messageId: data.messageId,
+          // If audioUrl is already available in transcription event, use it
+          audioUrl: data.audioUrl,
+        });
       }
-    );
+      setProcessingStatus(undefined);
+    });
 
     // Listen for AI text response
-    socket.on(
-      "text-response",
-      (data: {
-        text?: string;
-        translation?: string;
-        messageId?: string | number;
-      }) => {
-        if (data.text || data.translation) {
-          const messageId = `ai-${Date.now()}`;
-          appendMessage({
-            id: messageId,
-            role: "ai",
-            // Start empty to animate typing
-            text: "",
-            // Translation will be delayed if typing is ongoing
-            translation: undefined,
-            messageId: data.messageId,
-          });
-          // Kick off client-side typing animation
-          startTypingAnimation(data.text);
+    socket.on("text-response", (data: { text?: string; translation?: string; messageId?: string | number }) => {
+      if (data.text || data.translation) {
+        const messageId = `ai-${Date.now()}`;
+        appendMessage({
+          id: messageId,
+          role: "ai",
+          // Start empty to animate typing
+          text: "",
+          // Translation will be delayed if typing is ongoing
+          translation: undefined,
+          messageId: data.messageId,
+        });
+        // Kick off client-side typing animation
+        startTypingAnimation(data.text);
 
-          // If server already sent a translation, buffer it until typing ends
-          if (data.translation) {
-            pendingTranslationRef.current = data.translation;
-            scheduleApplyPendingTranslation();
-          } else {
-            // Ensure timer cleared if no pending translation
-            clearTranslationTimer();
-          }
+        // If server already sent a translation, buffer it until typing ends
+        if (data.translation) {
+          pendingTranslationRef.current = data.translation;
+          scheduleApplyPendingTranslation();
+        } else {
+          // Ensure timer cleared if no pending translation
+          clearTranslationTimer();
         }
-        setProcessingStatus(undefined);
       }
-    );
+      setProcessingStatus(undefined);
+    });
 
     // Listen for text response update (translation update)
     socket.on("text-response-update", (data: { translation?: string }) => {
@@ -1097,43 +1020,36 @@ export default function AiConversationScreen() {
     });
 
     // Listen for AI audio response
-    socket.on(
-      "audio-response",
-      (data: { audio?: string; audioFormat?: string }) => {
-        if (data.audio) {
-          const ext = data.audioFormat || "mp3";
-          // Save to cache file to avoid heavy data URI playback on JS thread
-          saveBase64ToFile(data.audio, ext)
-            .then((fileUri) => {
-              // Schedule playback after current interactions to avoid jank
-              InteractionManager.runAfterInteractions(() => {
-                playAudioFromUri(fileUri);
-              });
-              // Attach file URI to last AI message
-              updateLastAiMessage((message) => ({
-                ...message,
-                audioUrl: fileUri,
-              }));
-            })
-            .catch((err) => {
-              console.error("[AUDIO] Failed to write audio file:", err);
+    socket.on("audio-response", (data: { audio?: string; audioFormat?: string }) => {
+      if (data.audio) {
+        const ext = data.audioFormat || "mp3";
+        // Save to cache file to avoid heavy data URI playback on JS thread
+        saveBase64ToFile(data.audio, ext)
+          .then((fileUri) => {
+            // Schedule playback after current interactions to avoid jank
+            InteractionManager.runAfterInteractions(() => {
+              playAudioFromUri(fileUri);
             });
-        }
-        setProcessingStatus(undefined);
-        setIsSubmitting(false);
-        // Do not interfere with typing animation; let it finish naturally.
-        // Translation will be flushed when typing completes or by scheduled timer.
+            // Attach file URI to last AI message
+            updateLastAiMessage((message) => ({
+              ...message,
+              audioUrl: fileUri,
+            }));
+          })
+          .catch((err) => {
+            console.error("[AUDIO] Failed to write audio file:", err);
+          });
       }
-    );
+      setProcessingStatus(undefined);
+      setIsSubmitting(false);
+      // Do not interfere with typing animation; let it finish naturally.
+      // Translation will be flushed when typing completes or by scheduled timer.
+    });
 
     // Listen for message-audio-updated event (update audio URL for existing message)
     socket.on(
       "message-audio-updated",
-      (data: {
-        messageId?: string | number;
-        role?: "USER" | "AI";
-        audioUrl?: string;
-      }) => {
+      (data: { messageId?: string | number; role?: "USER" | "AI"; audioUrl?: string }) => {
         if (!data.audioUrl) {
           return;
         }
@@ -1147,7 +1063,7 @@ export default function AiConversationScreen() {
         // Helper function to compare messageIds (handle both string and number)
         const compareMessageId = (
           msgId1: string | number | undefined,
-          msgId2: string | number | undefined
+          msgId2: string | number | undefined,
         ): boolean => {
           if (msgId1 === undefined || msgId2 === undefined) return false;
           // Convert both to string for comparison
@@ -1158,9 +1074,7 @@ export default function AiConversationScreen() {
         if (data.messageId !== undefined && data.messageId !== null) {
           setMessages((prev) => {
             // First, try to find by messageId
-            const index = prev.findIndex((msg) =>
-              compareMessageId(msg.messageId, data.messageId)
-            );
+            const index = prev.findIndex((msg) => compareMessageId(msg.messageId, data.messageId));
             if (index !== -1) {
               // Verify role matches
               if (prev[index].role === role) {
@@ -1195,22 +1109,20 @@ export default function AiConversationScreen() {
             return prev;
           });
         }
-      }
+      },
     );
 
     // Listen for errors
     socket.on("error", (error: { message?: string; suggestion?: string }) => {
       setProcessingStatus(undefined);
       setIsSubmitting(false);
-      
+
       // Extract error message
       const errorMessage = error?.message || t("home.ai.conversation.error_default");
       const suggestion = error?.suggestion;
-      
+
       // Show alert to user using MinimalAlert
-      const fullMessage = suggestion 
-        ? `${errorMessage}\n\n${suggestion}`
-        : errorMessage;
+      const fullMessage = suggestion ? `${errorMessage}\n\n${suggestion}` : errorMessage;
       showAlert(fullMessage, "error");
     });
 
@@ -1273,11 +1185,7 @@ export default function AiConversationScreen() {
       // Socket.IO can handle ArrayBuffer natively
       socketRef.current.emit("user-audio-chunk", audioBytes.buffer);
 
-      console.log(
-        "[SOCKET] Audio sent, size:",
-        audioBytes.buffer.byteLength,
-        "bytes"
-      );
+      console.log("[SOCKET] Audio sent, size:", audioBytes.buffer.byteLength, "bytes");
     } catch (error) {
       console.error("[SOCKET] Error preparing audio:", error);
       throw error;
@@ -1293,12 +1201,10 @@ export default function AiConversationScreen() {
 
       try {
         // Ưu tiên conversationId trong state, nếu chưa có thì dùng initialConversationId từ params.
-        const effectiveConversationId =
-          conversationId ?? (initialConversationId || null);
+        const effectiveConversationId = conversationId ?? (initialConversationId || null);
 
         const info = await FileSystem.getInfoAsync(uri);
-        const isLikelySilent =
-          !info.exists || (info.size ?? 0) < 2000 || (durationSec ?? 0) < 0.5;
+        const isLikelySilent = !info.exists || (info.size ?? 0) < 2000 || (durationSec ?? 0) < 0.5;
 
         if (isLikelySilent) {
           setProcessingStatus(t("home.ai.conversation.no_audio_detected"));
@@ -1319,7 +1225,7 @@ export default function AiConversationScreen() {
             setIsVoiceModalOpen(true);
             return;
           }
-          
+
           // Nếu đã chọn voice, tạo room với voiceName đã chọn
           // Đây là lúc tạo room khi user bấm nút nói sau khi đã chọn voice
           pendingNewRoomRef.current = true;
@@ -1342,9 +1248,7 @@ export default function AiConversationScreen() {
         } else {
           console.warn("[SOCKET] Not connected, cannot send audio");
           setIsSubmitting(false);
-          setProcessingStatus(
-            t("home.ai.conversation.server_connection_error")
-          );
+          setProcessingStatus(t("home.ai.conversation.server_connection_error"));
         }
       } catch (error) {
         console.error("[RECORDING] Error:", error);
@@ -1352,7 +1256,7 @@ export default function AiConversationScreen() {
         setProcessingStatus(t("home.ai.conversation.audio_send_error"));
       }
     },
-    [hasAIKaiwa, conversationId, initialConversationId, selectedVoiceName, voices, t]
+    [hasAIKaiwa, conversationId, initialConversationId, selectedVoiceName, voices, t],
   );
 
   // Preview voice with sample text
@@ -1372,10 +1276,7 @@ export default function AiConversationScreen() {
           // Stop any existing preview sound before starting a new one
           await stopPreviewSound();
 
-          const { sound } = await Audio.Sound.createAsync(
-            { uri: fileUri },
-            { shouldPlay: true }
-          );
+          const { sound } = await Audio.Sound.createAsync({ uri: fileUri }, { shouldPlay: true });
           previewSoundRef.current = sound;
           sound.setOnPlaybackStatusUpdate((status: any) => {
             if (status.isLoaded && status.didJustFinish) {
@@ -1386,26 +1287,20 @@ export default function AiConversationScreen() {
         }
       } catch (error) {
         console.error("[VOICE] Error previewing voice:", error);
-        showAlert(
-          t("home.ai.conversation.preview_voice_error", "Không thể nghe thử voice"),
-          "error"
-        );
+        showAlert(t("home.ai.conversation.preview_voice_error", "Không thể nghe thử voice"), "error");
       }
     },
-    [t, showAlert, stopPreviewSound]
+    [t, showAlert, stopPreviewSound],
   );
 
   // Handle voice selection - chỉ lưu voice, không tạo room
   // Room sẽ được tạo khi user bấm nút nói lần đầu
-  const handleVoiceSelected = useCallback(
-    (voiceName: string) => {
-      setSelectedVoiceName(voiceName);
-      setIsVoiceModalOpen(false);
-      // Không tạo room ở đây, chỉ lưu voice selection
-      // Room sẽ được tạo khi user bấm nút recording lần đầu
-    },
-    []
-  );
+  const handleVoiceSelected = useCallback((voiceName: string) => {
+    setSelectedVoiceName(voiceName);
+    setIsVoiceModalOpen(false);
+    // Không tạo room ở đây, chỉ lưu voice selection
+    // Room sẽ được tạo khi user bấm nút recording lần đầu
+  }, []);
 
   // Handle cancel voice selection - quay lại màn hình trước nếu chưa có conversation
   const handleVoiceCancel = useCallback(() => {
@@ -1446,10 +1341,7 @@ export default function AiConversationScreen() {
           {conversationTitle || t("home.ai.conversation.title")}
         </ThemedText>
         {hasAIKaiwa && (
-          <TouchableOpacity
-            onPress={() => setIsListSheetOpen(true)}
-            style={{ padding: 8, marginLeft: "auto" }}
-          >
+          <TouchableOpacity onPress={() => setIsListSheetOpen(true)} style={{ padding: 8, marginLeft: "auto" }}>
             <Menu size={20} color="#1f2937" />
           </TouchableOpacity>
         )}
@@ -1488,11 +1380,7 @@ export default function AiConversationScreen() {
               }}
             >
               <Sparkles size={14} color="#fef9c3" style={{ marginRight: 6 }} />
-              <ThemedText
-                style={{ color: "#fffbea", fontSize: 13, fontWeight: "600" }}
-              >
-                {heroContent.badge}
-              </ThemedText>
+              <ThemedText style={{ color: "#fffbea", fontSize: 13, fontWeight: "600" }}>{heroContent.badge}</ThemedText>
             </View>
 
             <ThemedText
@@ -1579,11 +1467,7 @@ export default function AiConversationScreen() {
                   alignItems: index === 1 ? "center" : index === 2 ? "flex-end" : "flex-start",
                 }}
               >
-                <ThemedText
-                  style={{ fontSize: 20, fontWeight: "800", color: "#5b21b6" }}
-                >
-                  {stat.value}
-                </ThemedText>
+                <ThemedText style={{ fontSize: 20, fontWeight: "800", color: "#5b21b6" }}>{stat.value}</ThemedText>
                 <ThemedText
                   style={{
                     marginTop: 4,
@@ -1616,8 +1500,7 @@ export default function AiConversationScreen() {
                 marginBottom: 6,
               }}
             >
-              {ultraPackage?.nameTranslation ||
-                t("home.ai.conversation.locked_title")}
+              {ultraPackage?.nameTranslation || t("home.ai.conversation.locked_title")}
             </ThemedText>
             <ThemedText
               style={{
@@ -1627,8 +1510,7 @@ export default function AiConversationScreen() {
                 lineHeight: 22,
               }}
             >
-              {ultraPackage?.descriptionTranslation ||
-                t("home.ai.conversation.locked_description")}
+              {ultraPackage?.descriptionTranslation || t("home.ai.conversation.locked_description")}
             </ThemedText>
 
             {formattedUltraPrice ? (
@@ -1744,7 +1626,8 @@ export default function AiConversationScreen() {
               paddingVertical: 16,
               borderRadius: 16,
               marginBottom: 14,
-              alignItems: "center",}}
+              alignItems: "center",
+            }}
           >
             <ThemedText
               style={{
@@ -1814,9 +1697,7 @@ export default function AiConversationScreen() {
               <ShieldCheck color="#1d4ed8" size={22} />
             </View>
             <View style={{ flex: 1 }}>
-              <ThemedText
-                style={{ fontSize: 16, fontWeight: "700", color: "#111827" }}
-              >
+              <ThemedText style={{ fontSize: 16, fontWeight: "700", color: "#111827" }}>
                 {guaranteeCopy.title}
               </ThemedText>
               <ThemedText
@@ -1843,23 +1724,15 @@ export default function AiConversationScreen() {
           </ThemedText>
         </ScrollView>
       ) : isLoading || isConnecting ? (
-        <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
           <ActivityIndicator />
           <ThemedText style={{ marginTop: 12, opacity: 0.7 }}>
-            {isConnecting
-              ? t("home.ai.conversation.connecting")
-              : t("home.ai.conversation.loading")}
+            {isConnecting ? t("home.ai.conversation.connecting") : t("home.ai.conversation.loading")}
           </ThemedText>
         </View>
       ) : !isSocketConnected && !topicId ? (
-        <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <ThemedText style={{ opacity: 0.7 }}>
-            {t("home.ai.conversation.connection_error")}
-          </ThemedText>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <ThemedText style={{ opacity: 0.7 }}>{t("home.ai.conversation.connection_error")}</ThemedText>
         </View>
       ) : (
         <>
@@ -1909,9 +1782,7 @@ export default function AiConversationScreen() {
                   paddingHorizontal: 16,
                 }}
               >
-                <ThemedText
-                  style={{ fontSize: 12, opacity: 0.6, textAlign: "center" }}
-                >
+                <ThemedText style={{ fontSize: 12, opacity: 0.6, textAlign: "center" }}>
                   {t("home.ai.conversation.connecting_to_ai")}
                 </ThemedText>
               </View>
@@ -1943,31 +1814,29 @@ export default function AiConversationScreen() {
           currentConversationId={conversationId}
           onSelectConversation={(convId) => {
             setIsListSheetOpen(false);
-            
+
             if (!convId || convId === "") {
               // New conversation: navigate to clean route to reset all state
               // This ensures complete reset, same as clicking + button from list screen
               router.replace(ROUTES.APP.AI_CONVERSATION);
               return;
             }
-            
+
             // Switch to existing conversation
             // Clear current messages before switching
             setMessages([]);
             pendingNewRoomRef.current = false;
             setIsLoading(true);
             setConversationId(convId);
-            
+
             // Find and set title from conversation rooms
-            const room = conversationRoomsData?.results?.find(
-              (r) => r.conversationId === convId
-            );
+            const room = conversationRoomsData?.results?.find((r) => r.conversationId === convId);
             if (room?.title) {
               setConversationTitle(room.title);
             } else {
               setConversationTitle(null);
             }
-            
+
             if (socketRef.current?.connected) {
               socketRef.current.emit("join-kaiwa-room", {
                 conversationId: convId,

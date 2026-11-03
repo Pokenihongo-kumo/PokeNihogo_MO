@@ -1,14 +1,7 @@
 import { QuizCompletionStatus } from "@constants/quiz.enum";
 import { ICheckCompletionData } from "@models/user-exercise-attempt/user-exercise-attempt.response";
 import React, { useEffect, useMemo, useRef } from "react";
-import {
-  Animated,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Animated, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
 interface QuizCompletionModalProps {
@@ -21,13 +14,7 @@ interface QuizCompletionModalProps {
   // For quiz: questions only have id (which is bankId converted to string)
 }
 
-export function QuizCompletionModal({
-  visible,
-  onClose,
-  onSubmit,
-  data,
-  questions,
-}: QuizCompletionModalProps) {
+export function QuizCompletionModal({ visible, onClose, onSubmit, data, questions }: QuizCompletionModalProps) {
   const { t } = useTranslation();
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -35,7 +22,7 @@ export function QuizCompletionModal({
   // Map unanswered question IDs (bankId numbers) to question numbers (index + 1)
   const unansweredQuestionNumbers = useMemo(() => {
     if (!data?.unansweredQuestionIds || !questions.length) return [];
-    
+
     return data.unansweredQuestionIds
       .map((bankId) => {
         // Find question by bankId or id
@@ -97,12 +84,7 @@ export function QuizCompletionModal({
   if (!visible || !data) return null;
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="none"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       <Animated.View
         style={[
           styles.overlay,
@@ -111,11 +93,7 @@ export function QuizCompletionModal({
           },
         ]}
       >
-        <TouchableOpacity
-          style={styles.overlayTouchable}
-          activeOpacity={1}
-          onPress={onClose}
-        >
+        <TouchableOpacity style={styles.overlayTouchable} activeOpacity={1} onPress={onClose}>
           <Animated.View
             style={[
               styles.modalContent,
@@ -127,45 +105,30 @@ export function QuizCompletionModal({
             <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
               {/* Header */}
               <View style={styles.header}>
-                <Text style={styles.title}>
-                  {t("quiz_completion.title", "Thông tin bài làm")}
-                </Text>
+                <Text style={styles.title}>{t("quiz_completion.title", "Thông tin bài làm")}</Text>
               </View>
 
               {/* Content */}
               <View style={styles.content}>
                 <View style={styles.infoRow}>
-                  <Text style={styles.label}>
-                    {t("quiz_completion.labels.total_questions", "Tổng số câu hỏi:")}
-                  </Text>
+                  <Text style={styles.label}>{t("quiz_completion.labels.total_questions", "Tổng số câu hỏi:")}</Text>
                   <Text style={styles.value}>{data.totalQuestions}</Text>
                 </View>
 
                 <View style={styles.infoRow}>
-                  <Text style={styles.label}>
-                    {t("quiz_completion.labels.answered", "Đã trả lời:")}
-                  </Text>
-                  <Text style={[styles.value, styles.answeredValue]}>
-                    {data.answeredQuestions}
-                  </Text>
+                  <Text style={styles.label}>{t("quiz_completion.labels.answered", "Đã trả lời:")}</Text>
+                  <Text style={[styles.value, styles.answeredValue]}>{data.answeredQuestions}</Text>
                 </View>
 
                 <View style={styles.infoRow}>
-                  <Text style={styles.label}>
-                    {t("quiz_completion.labels.unanswered", "Chưa trả lời:")}
-                  </Text>
-                  <Text style={[styles.value, styles.unansweredValue]}>
-                    {data.unansweredQuestions}
-                  </Text>
+                  <Text style={styles.label}>{t("quiz_completion.labels.unanswered", "Chưa trả lời:")}</Text>
+                  <Text style={[styles.value, styles.unansweredValue]}>{data.unansweredQuestions}</Text>
                 </View>
 
                 {data.unansweredQuestions > 0 && (
                   <View style={styles.unansweredSection}>
                     <Text style={styles.unansweredTitle}>
-                      {t(
-                        "quiz_completion.labels.unanswered_list",
-                        "Câu hỏi chưa trả lời:"
-                      )}
+                      {t("quiz_completion.labels.unanswered_list", "Câu hỏi chưa trả lời:")}
                     </Text>
                     <View style={styles.unansweredList}>
                       <Text style={styles.unansweredText}>
@@ -174,7 +137,7 @@ export function QuizCompletionModal({
                             t("quiz_completion.labels.question_number", {
                               number: num,
                               defaultValue: `Câu ${num}`,
-                            })
+                            }),
                           )
                           .join(", ")}
                       </Text>
@@ -183,23 +146,14 @@ export function QuizCompletionModal({
                 )}
 
                 <View style={styles.statusRow}>
-                  <Text style={styles.label}>
-                    {t("quiz_completion.labels.status", "Trạng thái:")}
-                  </Text>
+                  <Text style={styles.label}>{t("quiz_completion.labels.status", "Trạng thái:")}</Text>
                   <View
-                    style={[
-                      styles.statusBadge,
-                      data.isCompleted
-                        ? styles.statusCompleted
-                        : styles.statusInProgress,
-                    ]}
+                    style={[styles.statusBadge, data.isCompleted ? styles.statusCompleted : styles.statusInProgress]}
                   >
                     <Text
                       style={[
                         styles.statusText,
-                        data.isCompleted
-                          ? styles.statusTextCompleted
-                          : styles.statusTextInProgress,
+                        data.isCompleted ? styles.statusTextCompleted : styles.statusTextInProgress,
                       ]}
                     >
                       {statusLabel}
@@ -210,24 +164,12 @@ export function QuizCompletionModal({
 
               {/* Footer */}
               <View style={styles.footer}>
-                <TouchableOpacity
-                  style={[styles.button, styles.cancelButton]}
-                  onPress={onClose}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.cancelButtonText}>
-                    {t("quiz_completion.buttons.continue", "Làm tiếp")}
-                  </Text>
+                <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={onClose} activeOpacity={0.8}>
+                  <Text style={styles.cancelButtonText}>{t("quiz_completion.buttons.continue", "Làm tiếp")}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={[styles.button, styles.submitButton]}
-                  onPress={onSubmit}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.submitButtonText}>
-                    {t("quiz_completion.buttons.submit", "Nộp bài")}
-                  </Text>
+                <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={onSubmit} activeOpacity={0.8}>
+                  <Text style={styles.submitButtonText}>{t("quiz_completion.buttons.submit", "Nộp bài")}</Text>
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
@@ -256,7 +198,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 24,
     width: "90%",
-    maxWidth: 400,},
+    maxWidth: 400,
+  },
   header: {
     marginBottom: 20,
   },
@@ -375,4 +318,3 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
 });
-

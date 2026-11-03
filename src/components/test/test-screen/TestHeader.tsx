@@ -11,32 +11,17 @@ interface TestHeaderProps {
   onSubmitPress: () => void;
 }
 
-export const TestHeader: React.FC<TestHeaderProps> = ({
-  title,
-  icon,
-  iconColor,
-  onBackPress,
-  onSubmitPress,
-}) => {
+export const TestHeader: React.FC<TestHeaderProps> = ({ title, icon, iconColor, onBackPress, onSubmitPress }) => {
   return (
     <View style={styles.topHeader}>
-      <TouchableOpacity
-        onPress={onBackPress}
-        activeOpacity={0.8}
-        style={styles.backButton}
-      >
+      <TouchableOpacity onPress={onBackPress} activeOpacity={0.8} style={styles.backButton}>
         <ChevronLeft size={22} color="#111827" />
       </TouchableOpacity>
       <Text style={styles.headerTitle} numberOfLines={1}>
         {title}
       </Text>
       <View style={styles.submitIconButton}>
-        <MaterialCommunityIcons
-          name={icon as any}
-          size={26}
-          color={iconColor}
-          onPress={onSubmitPress}
-        />
+        <MaterialCommunityIcons name={icon as any} size={26} color={iconColor} onPress={onSubmitPress} />
       </View>
     </View>
   );

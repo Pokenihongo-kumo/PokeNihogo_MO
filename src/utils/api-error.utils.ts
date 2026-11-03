@@ -71,9 +71,7 @@ export const toApiError = (error: unknown): ApiError => {
 export const getApiErrorMessage = (error: unknown, fallback: string): string => {
   const apiError = toApiError(error);
   if (apiError.fieldErrors.length > 0) {
-    const details = apiError.fieldErrors
-      .map((e) => (e.field ? `${e.field}: ${e.message}` : e.message))
-      .join(", ");
+    const details = apiError.fieldErrors.map((e) => (e.field ? `${e.field}: ${e.message}` : e.message)).join(", ");
     return `${apiError.message || fallback}: ${details}`;
   }
   return apiError.message || fallback;

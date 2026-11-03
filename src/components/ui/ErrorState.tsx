@@ -38,35 +38,26 @@ const ErrorState: React.FC<ErrorStateProps> = ({
   errorStyle,
 }) => {
   const { t } = useTranslation();
-  
+
   const defaultTitle = title || t("error_state.default_title");
   const defaultDescription = description || t("error_state.default_description");
   const defaultRetryText = retryText || t("error_state.default_retry");
   return (
     <View style={[styles.container, pokemonTheme && styles.pokemonContainer, style]}>
       <View style={[styles.iconContainer, pokemonTheme && styles.pokemonIconContainer]}>
-        <MaterialIcons
-          name={icon as any}
-          size={iconSize}
-          color={iconColor}
-        />
+        <MaterialIcons name={icon as any} size={iconSize} color={iconColor} />
         {pokemonTheme && (
           <View style={styles.warningContainer}>
             <MaterialIcons name="error" size={16} color="#fbbf24" />
           </View>
         )}
       </View>
-      
-      <ThemedText 
-        type="subtitle" 
-        style={[styles.title, pokemonTheme && styles.pokemonTitle, titleStyle]}
-      >
+
+      <ThemedText type="subtitle" style={[styles.title, pokemonTheme && styles.pokemonTitle, titleStyle]}>
         {defaultTitle}
       </ThemedText>
-      
-      <ThemedText 
-        style={[styles.description, pokemonTheme && styles.pokemonDescription, descriptionStyle]}
-      >
+
+      <ThemedText style={[styles.description, pokemonTheme && styles.pokemonDescription, descriptionStyle]}>
         {defaultDescription}
       </ThemedText>
 
@@ -93,9 +84,7 @@ const ErrorState: React.FC<ErrorStateProps> = ({
 
       {pokemonTheme && (
         <View style={styles.pokemonFooter}>
-          <ThemedText style={styles.pokemonFooterText}>
-            {t("error_state.pokemon_footer")}
-          </ThemedText>
+          <ThemedText style={styles.pokemonFooterText}>{t("error_state.pokemon_footer")}</ThemedText>
         </View>
       )}
     </View>
@@ -110,12 +99,14 @@ const styles = StyleSheet.create({
     padding: 40,
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
-    marginVertical: 16,},
+    marginVertical: 16,
+  },
   pokemonContainer: {
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: "#ef4444",},
+    borderColor: "#ef4444",
+  },
   iconContainer: {
     marginBottom: 16,
     position: "relative",
@@ -133,7 +124,8 @@ const styles = StyleSheet.create({
     right: -8,
     backgroundColor: "#ffffff",
     borderRadius: 12,
-    padding: 4,},
+    padding: 4,
+  },
   title: {
     fontSize: 18,
     fontWeight: "600",
@@ -195,7 +187,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#ef4444",
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,},
+    borderRadius: 8,
+  },
   pokemonRetryButton: {
     backgroundColor: "#dc2626",
     paddingHorizontal: 28,
@@ -203,7 +196,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,},
+    gap: 8,
+  },
   retryText: {
     color: "#ffffff",
     fontSize: 14,

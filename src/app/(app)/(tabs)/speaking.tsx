@@ -7,13 +7,7 @@ import { router } from "expo-router";
 import { Mic } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Animated,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Animated, RefreshControl, StyleSheet, TouchableOpacity, View } from "react-native";
 
 type UserTestItem = {
   id: number;
@@ -49,18 +43,14 @@ const SpeakingCard: React.FC<{
           <ThemedText type="subtitle" style={styles.exerciseTitle}>
             {item.test?.name}
           </ThemedText>
-          <ThemedText style={styles.exerciseDescription}>
-            {item.test?.description}
-          </ThemedText>
+          <ThemedText style={styles.exerciseDescription}>{item.test?.description}</ThemedText>
         </View>
       </View>
 
       <View style={styles.cardFooter}>
         <View style={styles.metaInfo}>
           <View style={styles.levelBadge}>
-            <ThemedText style={styles.levelText}>
-              N{item.test?.levelN}
-            </ThemedText>
+            <ThemedText style={styles.levelText}>N{item.test?.levelN}</ThemedText>
           </View>
           <ThemedText style={styles.timeText}>
             {item.limit} / {item.test?.limit}
@@ -89,8 +79,7 @@ export default function SpeakingScreen() {
     pageSize: 10,
   });
 
-  const items: UserTestItem[] =
-    (userTestsData as any)?.data?.data?.results ?? [];
+  const items: UserTestItem[] = (userTestsData as any)?.data?.data?.results ?? [];
   const refreshing = isRefetching;
 
   const handleRefresh = React.useCallback(async () => {
@@ -123,45 +112,30 @@ export default function SpeakingScreen() {
       params: { topicId: String(materialId) },
     });
   };
-  
+
   return (
-    <HomeLayout
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-      }
-    >
+    <HomeLayout refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
       <ThemedText type="title" style={styles.title}>
         🎤 {t("speaking.title")}
       </ThemedText>
       <ThemedText style={styles.subtitle}>{t("speaking.subtitle")}</ThemedText>
 
-      <Animated.View
-        style={[
-          styles.statsCard,
-          { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
-        ]}
-      >
+      <Animated.View style={[styles.statsCard, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
         <ThemedText type="subtitle" style={styles.statsTitle}>
           📊 {t("speaking.progress_title")}
         </ThemedText>
         <View style={styles.statsGrid}>
           <View style={styles.statItem}>
             <ThemedText style={styles.statNumber}>8</ThemedText>
-            <ThemedText style={styles.statLabel}>
-              {t("reading.articles_read")}
-            </ThemedText>
+            <ThemedText style={styles.statLabel}>{t("reading.articles_read")}</ThemedText>
           </View>
           <View style={styles.statItem}>
             <ThemedText style={styles.statNumber}>245</ThemedText>
-            <ThemedText style={styles.statLabel}>
-              {t("reading.words_learned")}
-            </ThemedText>
+            <ThemedText style={styles.statLabel}>{t("reading.words_learned")}</ThemedText>
           </View>
           <View style={styles.statItem}>
             <ThemedText style={styles.statNumber}>92%</ThemedText>
-            <ThemedText style={styles.statLabel}>
-              {t("reading.comprehension")}
-            </ThemedText>
+            <ThemedText style={styles.statLabel}>{t("reading.comprehension")}</ThemedText>
           </View>
         </View>
       </Animated.View>
@@ -171,9 +145,7 @@ export default function SpeakingScreen() {
       </ThemedText>
 
       <View style={styles.exercisesContainer}>
-        {isLoading && (
-          <ThemedText style={{ textAlign: "center" }}>Loading...</ThemedText>
-        )}
+        {isLoading && <ThemedText style={{ textAlign: "center" }}>Loading...</ThemedText>}
         {!!error && (
           <ThemedText style={{ textAlign: "center", color: "#ef4444" }}>
             {error instanceof Error ? error.message : "Error"}
@@ -189,10 +161,7 @@ export default function SpeakingScreen() {
                 transform: [{ translateY: slideAnim }],
               }}
             >
-              <SpeakingCard
-                item={item}
-                onPress={() => handleSpeakingPress(item.test?.id)}
-              />
+              <SpeakingCard item={item} onPress={() => handleSpeakingPress(item.test?.id)} />
             </Animated.View>
           ))}
       </View>
@@ -228,7 +197,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
     padding: 16,
-    borderLeftWidth: 4,},
+    borderLeftWidth: 4,
+  },
   cardHeader: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -283,7 +253,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
     padding: 20,
-    marginBottom: 16,},
+    marginBottom: 16,
+  },
   statsTitle: {
     fontSize: 18,
     fontWeight: "600",
@@ -312,7 +283,8 @@ const styles = StyleSheet.create({
   tipsCard: {
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
-    padding: 20,},
+    padding: 20,
+  },
   tipsTitle: {
     fontSize: 18,
     fontWeight: "600",
@@ -330,7 +302,8 @@ const styles = StyleSheet.create({
   controlsCard: {
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
-    padding: 20,},
+    padding: 20,
+  },
   controlsTitle: {
     fontSize: 18,
     fontWeight: "600",
@@ -361,7 +334,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
     padding: 20,
-    marginTop: 20,},
+    marginTop: 20,
+  },
   recorderTitle: {
     fontSize: 18,
     fontWeight: "600",

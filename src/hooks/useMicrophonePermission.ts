@@ -1,6 +1,6 @@
-import { Audio } from 'expo-av';
-import { useCallback, useEffect, useState } from 'react';
-import { Alert, Platform } from 'react-native';
+import { Audio } from "expo-av";
+import { useCallback, useEffect, useState } from "react";
+import { Alert, Platform } from "react-native";
 
 export const useMicrophonePermission = () => {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -9,18 +9,18 @@ export const useMicrophonePermission = () => {
   const requestMicrophonePermission = useCallback(async () => {
     try {
       setIsLoading(true);
-      
+
       // Request permission for audio recording
       const { status } = await Audio.requestPermissionsAsync();
-      
-      if (status === 'granted') {
+
+      if (status === "granted") {
         setHasPermission(true);
       } else {
         setHasPermission(false);
         showPermissionDeniedAlert();
       }
     } catch (error) {
-      console.error('Error requesting microphone permission:', error);
+      console.error("Error requesting microphone permission:", error);
       setHasPermission(false);
     } finally {
       setIsLoading(false);
@@ -33,34 +33,34 @@ export const useMicrophonePermission = () => {
 
   const showPermissionDeniedAlert = () => {
     Alert.alert(
-      'Quyền truy cập microphone bị từ chối',
-      'Để sử dụng tính năng luyện tập phát âm, vui lòng cấp quyền truy cập microphone trong cài đặt ứng dụng.',
+      "Quyền truy cập microphone bị từ chối",
+      "Để sử dụng tính năng luyện tập phát âm, vui lòng cấp quyền truy cập microphone trong cài đặt ứng dụng.",
       [
         {
-          text: 'Hủy',
-          style: 'cancel',
+          text: "Hủy",
+          style: "cancel",
         },
         {
-          text: 'Mở cài đặt',
+          text: "Mở cài đặt",
           onPress: () => {
             // On iOS, this will open the app settings
-            if (Platform.OS === 'ios') {
+            if (Platform.OS === "ios") {
               // You can use Linking.openSettings() if needed
-              console.log('Open iOS settings');
+              console.log("Open iOS settings");
             }
           },
         },
-      ]
+      ],
     );
   };
 
   const checkPermission = async () => {
     try {
       const { status } = await Audio.getPermissionsAsync();
-      setHasPermission(status === 'granted');
-      return status === 'granted';
+      setHasPermission(status === "granted");
+      return status === "granted";
     } catch (error) {
-      console.error('Error checking microphone permission:', error);
+      console.error("Error checking microphone permission:", error);
       return false;
     }
   };

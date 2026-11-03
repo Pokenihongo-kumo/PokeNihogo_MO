@@ -22,29 +22,10 @@ import { ROUTES } from "@routes/routes";
 import userExerciseAttemptService from "@services/user-exercise-attempt";
 import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import {
-  router,
-  useFocusEffect,
-  useLocalSearchParams,
-  useNavigation,
-} from "expo-router";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { router, useFocusEffect, useLocalSearchParams, useNavigation } from "expo-router";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Alert,
-  Animated,
-  BackHandler,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Alert, Animated, BackHandler, ScrollView, StyleSheet, Text, View } from "react-native";
 
 // Simple types matching BE response structure
 type ExerciseQuestion = {
@@ -63,11 +44,10 @@ type ExerciseSession = {
 };
 
 export default function QuizScreen() {
-  const { exerciseAttemptId: exerciseAttemptIdParam, lessonId: lessonIdParam } =
-    useLocalSearchParams<{
-      exerciseAttemptId?: string;
-      lessonId?: string;
-    }>();
+  const { exerciseAttemptId: exerciseAttemptIdParam, lessonId: lessonIdParam } = useLocalSearchParams<{
+    exerciseAttemptId?: string;
+    lessonId?: string;
+  }>();
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { showAlert } = useMinimalAlert();
@@ -82,47 +62,34 @@ export default function QuizScreen() {
     (key: string, fallback: string) => {
       Alert.alert(t("common.error", "Error"), t(key, fallback));
     },
-    [t]
+    [t],
   );
 
   // Fetch exercise data using exerciseAttemptId
-  const { data: exerciseData, isLoading: isLoadingQuestions } =
-    useUserExerciseQuestions(exerciseAttemptId);
+  const { data: exerciseData, isLoading: isLoadingQuestions } = useUserExerciseQuestions(exerciseAttemptId);
   const [session, setSession] = useState<ExerciseSession | null>(null);
   // Map lưu lựa chọn theo questionId
   const [selections, setSelections] = useState<Record<string, string[]>>({});
   const [isLoading, setIsLoading] = useState(true);
   // const [isSubmitting, setIsSubmitting] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
-  const [userExerciseAttemptId, setUserExerciseAttemptId] = useState<
-    number | null
-  >(null);
+  const [userExerciseAttemptId, setUserExerciseAttemptId] = useState<number | null>(null);
   const { mutate: upsertAnswerLog } = useUpsertUserAnswerLog();
-  const { mutate: checkCompletion, data: checkCompletionData } =
-    useCheckCompletion();
-  const { mutate: submitCompletion, isPending: isSubmitting } =
-    useSubmitCompletion();
-  const { mutate: abandonExercise, isPending: isAbandoning } =
-    useAbandonExercise();
+  const { mutate: checkCompletion, data: checkCompletionData } = useCheckCompletion();
+  const { mutate: submitCompletion, isPending: isSubmitting } = useSubmitCompletion();
+  const { mutate: abandonExercise, isPending: isAbandoning } = useAbandonExercise();
   const {
     mutate: continueAndAbandonExercise,
     mutateAsync: continueAndAbandonExerciseAsync,
     isPending: isContinuing,
   } = useContinueAndAbandonExercise();
-  const {
-    mutateAsync: createNewExerciseAttemptAsync,
-    isPending: isCreatingNew,
-  } = useCreateNewExerciseAttempt();
+  const { mutateAsync: createNewExerciseAttemptAsync, isPending: isCreatingNew } = useCreateNewExerciseAttempt();
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showExitConfirmModal, setShowExitConfirmModal] = useState(false);
   const [showResumeModal, setShowResumeModal] = useState(false);
-  const [unansweredQuestionIds, setUnansweredQuestionIds] = useState<number[]>(
-    []
-  );
+  const [unansweredQuestionIds, setUnansweredQuestionIds] = useState<number[]>([]);
   const [exerciseId, setExerciseId] = useState<number | null>(null);
-  const [lessonId, setLessonId] = useState<number | null>(
-    lessonIdParam ? parseInt(lessonIdParam, 10) : null
-  );
+  const [lessonId, setLessonId] = useState<number | null>(lessonIdParam ? parseInt(lessonIdParam, 10) : null);
   const [isTimerPaused, setIsTimerPaused] = useState(false);
   const [allowNavigate, setAllowNavigate] = useState(false);
   const pendingActionRef = useRef<any>(null);
@@ -140,10 +107,7 @@ export default function QuizScreen() {
   // Use BE response directly without unnecessary transformation
   useEffect(() => {
     if (!exerciseAttemptId) {
-      showError(
-        "quiz_screen.alerts.missing_attempt_retry",
-        "Không tìm thấy bài tập. Vui lòng thử lại."
-      );
+      showError("quiz_screen.alerts.missing_attempt_retry", "Không tìm thấy bài tập. Vui lòng thử lại.");
       router.back();
       return;
     }
@@ -196,21 +160,15 @@ export default function QuizScreen() {
         const restoredSelections: Record<string, string[]> = {};
 
         // Sort and map questions directly from BE response
-        const questions: ExerciseQuestion[] = (
-          testSet?.testSetQuestionBanks || []
-        )
-          .sort(
-            (a: any, b: any) => (a.questionOrder || 0) - (b.questionOrder || 0)
-          )
+        const questions: ExerciseQuestion[] = (testSet?.testSetQuestionBanks || [])
+          .sort((a: any, b: any) => (a.questionOrder || 0) - (b.questionOrder || 0))
           .map((item: any) => {
             const questionBank = item.questionBank;
             const answers = questionBank.answers || [];
             const questionId = questionBank.id.toString();
 
             // Find the selected answer (has "choose" field)
-            const selectedAnswer = answers.find(
-              (answer: any) => answer.choose === "choose"
-            );
+            const selectedAnswer = answers.find((answer: any) => answer.choose === "choose");
             if (selectedAnswer) {
               restoredSelections[questionId] = [selectedAnswer.id.toString()];
             }
@@ -227,11 +185,7 @@ export default function QuizScreen() {
 
         // Create simple session object matching what component needs
         const exerciseSession: ExerciseSession = {
-          id:
-            exercise.userExerciseAttemptId?.toString() ||
-            exercise.id?.toString() ||
-            exerciseAttemptId ||
-            "",
+          id: exercise.userExerciseAttemptId?.toString() || exercise.id?.toString() || exerciseAttemptId || "",
           questions: questions,
         };
 
@@ -258,27 +212,15 @@ export default function QuizScreen() {
         }
       } catch (error) {
         console.error("Error loading exercise data:", error);
-        showError(
-          "quiz_screen.alerts.load_quiz_failed",
-          "Không thể tải quiz. Vui lòng thử lại."
-        );
+        showError("quiz_screen.alerts.load_quiz_failed", "Không thể tải quiz. Vui lòng thử lại.");
         router.back();
       }
     } else if (!isLoadingQuestions && !exerciseData) {
       // If data failed to load, show error
-      showError(
-        "quiz_screen.alerts.load_questions_failed",
-        "Không thể tải câu hỏi. Vui lòng thử lại."
-      );
+      showError("quiz_screen.alerts.load_questions_failed", "Không thể tải câu hỏi. Vui lòng thử lại.");
       router.back();
     }
-  }, [
-    exerciseData,
-    isLoadingQuestions,
-    exerciseAttemptId,
-    exerciseAttemptIdNumber,
-    showError,
-  ]);
+  }, [exerciseData, isLoadingQuestions, exerciseAttemptId, exerciseAttemptIdNumber, showError]);
 
   // Reset all states when exerciseAttemptId changes
   // This ensures clean state when navigating to a new exercise
@@ -366,20 +308,15 @@ export default function QuizScreen() {
         }
       }
     },
-    [session, scaleAnims, currentExerciseAttemptId, upsertAnswerLog]
+    [session, scaleAnims, currentExerciseAttemptId, upsertAnswerLog],
   );
 
   const refetchLatestLessonAttempt = useCallback(async () => {
     if (!lessonId) return;
     const lessonIdStr = lessonId.toString();
     try {
-      const response = await userExerciseAttemptService.getLatestExerciseAttempt(
-        lessonIdStr
-      );
-      queryClient.setQueryData(
-        ["user-exercise-attempt-latest", lessonIdStr],
-        response.data
-      );
+      const response = await userExerciseAttemptService.getLatestExerciseAttempt(lessonIdStr);
+      queryClient.setQueryData(["user-exercise-attempt-latest", lessonIdStr], response.data);
     } catch (error) {
       console.error("Error refreshing latest lesson attempt:", error);
     }
@@ -401,10 +338,7 @@ export default function QuizScreen() {
       },
       onError: (error) => {
         console.error("Error checking completion:", error);
-        showError(
-          "quiz_screen.alerts.check_status_failed",
-          "Không thể kiểm tra trạng thái bài làm."
-        );
+        showError("quiz_screen.alerts.check_status_failed", "Không thể kiểm tra trạng thái bài làm.");
       },
     });
   };
@@ -447,22 +381,16 @@ export default function QuizScreen() {
               },
             });
           } else {
-            showError(
-              "quiz_screen.alerts.submit_missing_result",
-              "Không nhận được dữ liệu kết quả."
-            );
+            showError("quiz_screen.alerts.submit_missing_result", "Không nhận được dữ liệu kết quả.");
             setAllowNavigate(false);
           }
         },
         onError: (error) => {
           console.error("Error submitting completion:", error);
-          showError(
-            "quiz_screen.alerts.submit_failed",
-            "Không thể nộp bài."
-          );
+          showError("quiz_screen.alerts.submit_failed", "Không thể nộp bài.");
           setAllowNavigate(false);
         },
-      }
+      },
     );
   };
 
@@ -473,10 +401,7 @@ export default function QuizScreen() {
   }, []);
 
   const handleHardwareBack = useCallback(() => {
-    showAlert(
-      t("quiz_screen.back_blocked_message", "Vui lòng dùng nút quay lại ở góc trên."),
-      "warning"
-    );
+    showAlert(t("quiz_screen.back_blocked_message", "Vui lòng dùng nút quay lại ở góc trên."), "warning");
     return true;
   }, [showAlert, t]);
 
@@ -488,12 +413,9 @@ export default function QuizScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        handleHardwareBack
-      );
+      const subscription = BackHandler.addEventListener("hardwareBackPress", handleHardwareBack);
       return () => subscription.remove();
-    }, [handleHardwareBack])
+    }, [handleHardwareBack]),
   );
 
   useEffect(() => {
@@ -543,13 +465,10 @@ export default function QuizScreen() {
             return;
           }
           console.error("Error abandoning exercise:", error);
-          showError(
-            "quiz_screen.alerts.save_failed",
-            "Không thể lưu bài tập. Vui lòng thử lại."
-          );
+          showError("quiz_screen.alerts.save_failed", "Không thể lưu bài tập. Vui lòng thử lại.");
           setAllowNavigate(false);
         },
-      }
+      },
     );
   };
 
@@ -572,13 +491,10 @@ export default function QuizScreen() {
         },
         onError: (error) => {
           console.error("Error continuing exercise:", error);
-          showError(
-            "quiz_screen.alerts.continue_failed",
-            "Không thể tiếp tục bài tập. Vui lòng thử lại."
-          );
+          showError("quiz_screen.alerts.continue_failed", "Không thể tiếp tục bài tập. Vui lòng thử lại.");
           setAllowNavigate(false);
         },
-      }
+      },
     );
   };
 
@@ -601,12 +517,9 @@ export default function QuizScreen() {
         },
         onError: (error) => {
           console.error("Error continuing exercise:", error);
-          showError(
-            "quiz_screen.alerts.continue_failed",
-            "Không thể tiếp tục bài tập. Vui lòng thử lại."
-          );
+          showError("quiz_screen.alerts.continue_failed", "Không thể tiếp tục bài tập. Vui lòng thử lại.");
         },
-      }
+      },
     );
   };
 
@@ -652,18 +565,12 @@ export default function QuizScreen() {
         });
       } else {
         setIsLoading(false);
-        showError(
-          "quiz_screen.alerts.new_attempt_failed",
-          "Không thể tạo bài tập mới."
-        );
+        showError("quiz_screen.alerts.new_attempt_failed", "Không thể tạo bài tập mới.");
       }
     } catch (error) {
       setIsLoading(false);
       console.error("Error creating new exercise:", error);
-      showError(
-        "quiz_screen.alerts.new_attempt_retry_failed",
-        "Không thể tạo bài tập mới. Vui lòng thử lại."
-      );
+      showError("quiz_screen.alerts.new_attempt_retry_failed", "Không thể tạo bài tập mới. Vui lòng thử lại.");
     }
   };
 
@@ -675,9 +582,7 @@ export default function QuizScreen() {
     return (
       <QuizLayout>
         <View style={styles.center}>
-          <Text style={styles.loadingText}>
-            {t("quiz_screen.loading", t("common.loading", "Đang tải..."))}
-          </Text>
+          <Text style={styles.loadingText}>{t("quiz_screen.loading", t("common.loading", "Đang tải..."))}</Text>
         </View>
       </QuizLayout>
     );
@@ -701,9 +606,7 @@ export default function QuizScreen() {
             totalQuestions={session.questions.length}
             elapsedSeconds={elapsedSeconds}
             questionIds={session.questions.map((q) => q.id)}
-            answeredIds={session.questions
-              .filter((q) => (selections[q.id] || []).length > 0)
-              .map((q) => q.id)}
+            answeredIds={session.questions.filter((q) => (selections[q.id] || []).length > 0).map((q) => q.id)}
             unansweredIds={unansweredQuestionIds.map((id) => id.toString())}
             onPressQuestion={(idx, id) => {
               const y = questionOffsetsRef.current[id] ?? 0;
@@ -718,17 +621,12 @@ export default function QuizScreen() {
       }
     >
       <View style={styles.container}>
-        <ScrollView
-          ref={scrollRef}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: 0 }]}
-        >
+        <ScrollView ref={scrollRef} contentContainerStyle={[styles.scrollContent, { paddingBottom: 0 }]}>
           {session.questions.map((q, qIdx) => {
             const selected = selections[q.id] || [];
             const questionIdNumber = parseInt(q.id, 10);
             // Chỉ hiện màu đỏ khi: trong unansweredQuestionIds từ API VÀ chưa trả lời locally
-            const isUnanswered =
-              unansweredQuestionIds.includes(questionIdNumber) &&
-              selected.length === 0;
+            const isUnanswered = unansweredQuestionIds.includes(questionIdNumber) && selected.length === 0;
 
             if (!scaleAnims[q.id] && q.options) {
               scaleAnims[q.id] = q.options.map(() => new Animated.Value(1));
@@ -741,9 +639,7 @@ export default function QuizScreen() {
                 selectedIds={selected}
                 isUnanswered={isUnanswered}
                 scaleAnims={scaleAnims[q.id] || []}
-                onSelect={(optionId, optionIndex) =>
-                  handleAnswerSelect(q.id, [optionId], optionIndex)
-                }
+                onSelect={(optionId, optionIndex) => handleAnswerSelect(q.id, [optionId], optionIndex)}
                 onLayout={(y) => {
                   questionOffsetsRef.current[q.id] = y;
                 }}
@@ -786,10 +682,7 @@ export default function QuizScreen() {
       <ConfirmModal
         visible={showExitConfirmModal}
         title={t("quiz_screen.modals.exit.title", "Thoát bài làm?")}
-        message={t(
-          "quiz_screen.modals.exit.message",
-          "Bạn có muốn lưu lại phần câu trả lời đã làm không?"
-        )}
+        message={t("quiz_screen.modals.exit.message", "Bạn có muốn lưu lại phần câu trả lời đã làm không?")}
         onRequestClose={() => setShowExitConfirmModal(false)}
         buttons={[
           {
@@ -802,10 +695,7 @@ export default function QuizScreen() {
             onPress: handleSaveAndExit,
             variant: "primary",
             disabled: isAbandoning,
-            loadingText: t(
-              "quiz_screen.modals.exit.saving",
-              "Đang lưu..."
-            ),
+            loadingText: t("quiz_screen.modals.exit.saving", "Đang lưu..."),
           },
         ]}
       />
@@ -816,36 +706,24 @@ export default function QuizScreen() {
         title={t("quiz_screen.modals.resume.title", "Tiếp tục bài làm?")}
         message={t(
           "quiz_screen.modals.resume.message",
-          "Bạn có bài làm đã lưu trước đó. Bạn muốn tiếp tục bài làm cũ hay làm lại bài mới?"
+          "Bạn có bài làm đã lưu trước đó. Bạn muốn tiếp tục bài làm cũ hay làm lại bài mới?",
         )}
-        onRequestClose={() => { }}
+        onRequestClose={() => {}}
         buttonDirection="column"
         buttons={[
           {
-            label: t(
-              "quiz_screen.modals.resume.continue",
-              "Tiếp tục bài cũ"
-            ),
+            label: t("quiz_screen.modals.resume.continue", "Tiếp tục bài cũ"),
             onPress: handleContinuePreviousExercise,
             variant: "primary",
             disabled: isContinuing,
-            loadingText: t(
-              "quiz_screen.modals.resume.loading",
-              "Đang tải..."
-            ),
+            loadingText: t("quiz_screen.modals.resume.loading", "Đang tải..."),
           },
           {
-            label: t(
-              "quiz_screen.modals.resume.new_attempt",
-              "Làm lại bài mới"
-            ),
+            label: t("quiz_screen.modals.resume.new_attempt", "Làm lại bài mới"),
             onPress: handleStartNewExercise,
             variant: "secondary",
             disabled: isCreatingNew,
-            loadingText: t(
-              "quiz_screen.modals.resume.creating",
-              "Đang tạo..."
-            ),
+            loadingText: t("quiz_screen.modals.resume.creating", "Đang tạo..."),
           },
         ]}
       />

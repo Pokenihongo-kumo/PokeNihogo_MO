@@ -7,13 +7,7 @@ import { router } from "expo-router";
 import { HeadphonesIcon } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Animated,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Animated, RefreshControl, StyleSheet, TouchableOpacity, View } from "react-native";
 
 type UserTestItem = {
   id: number;
@@ -52,14 +46,10 @@ const ListeningCard: React.FC<{
               {item.test?.name}
             </ThemedText>
             <View style={styles.levelBadge}>
-              <ThemedText style={styles.levelText}>
-                N{item.test?.levelN}
-              </ThemedText>
+              <ThemedText style={styles.levelText}>N{item.test?.levelN}</ThemedText>
             </View>
           </View>
-          <ThemedText style={styles.exerciseDescription}>
-            {item.test?.description}
-          </ThemedText>
+          <ThemedText style={styles.exerciseDescription}>{item.test?.description}</ThemedText>
         </View>
       </View>
 
@@ -92,8 +82,7 @@ export default function ListeningScreen() {
     pageSize: 10,
   });
 
-  const items: UserTestItem[] =
-    (userTestsData as any)?.data?.data?.results ?? [];
+  const items: UserTestItem[] = (userTestsData as any)?.data?.data?.results ?? [];
   const refreshing = isRefetching;
 
   const handleRefresh = React.useCallback(async () => {
@@ -127,24 +116,13 @@ export default function ListeningScreen() {
   };
 
   return (
-    <HomeLayout
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-      }
-    >
+    <HomeLayout refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
       <ThemedText type="title" style={styles.title}>
         🎧 {t("listening.title")}
       </ThemedText>
-      <ThemedText style={styles.subtitle}>
-        {t("listening.subtitle")}
-      </ThemedText>
+      <ThemedText style={styles.subtitle}>{t("listening.subtitle")}</ThemedText>
 
-      <Animated.View
-        style={[
-          styles.statsCard,
-          { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
-        ]}
-      >
+      <Animated.View style={[styles.statsCard, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
         <ThemedText type="subtitle" style={styles.statsTitle}>
           📊 {t("listening.progress_title")}
         </ThemedText>
@@ -169,9 +147,7 @@ export default function ListeningScreen() {
       </ThemedText>
 
       <View style={styles.exercisesContainer}>
-        {isLoading && (
-          <ThemedText style={{ textAlign: "center" }}>Loading...</ThemedText>
-        )}
+        {isLoading && <ThemedText style={{ textAlign: "center" }}>Loading...</ThemedText>}
         {!!error && (
           <ThemedText style={{ textAlign: "center", color: "#ef4444" }}>
             {error instanceof Error ? error.message : "Error"}
@@ -187,10 +163,7 @@ export default function ListeningScreen() {
                 transform: [{ translateY: slideAnim }],
               }}
             >
-              <ListeningCard
-                item={item}
-                onPress={() => handleListeningPress(item.test?.id)}
-              />
+              <ListeningCard item={item} onPress={() => handleListeningPress(item.test?.id)} />
             </Animated.View>
           ))}
       </View>
@@ -200,18 +173,10 @@ export default function ListeningScreen() {
           🎯 {t("listening.tips_title")}
         </ThemedText>
         <View style={styles.tipsList}>
-          <ThemedText style={styles.tipItem}>
-            • {t("listening.tip_1")}
-          </ThemedText>
-          <ThemedText style={styles.tipItem}>
-            • {t("listening.tip_2")}
-          </ThemedText>
-          <ThemedText style={styles.tipItem}>
-            • {t("listening.tip_3")}
-          </ThemedText>
-          <ThemedText style={styles.tipItem}>
-            • {t("listening.tip_4")}
-          </ThemedText>
+          <ThemedText style={styles.tipItem}>• {t("listening.tip_1")}</ThemedText>
+          <ThemedText style={styles.tipItem}>• {t("listening.tip_2")}</ThemedText>
+          <ThemedText style={styles.tipItem}>• {t("listening.tip_3")}</ThemedText>
+          <ThemedText style={styles.tipItem}>• {t("listening.tip_4")}</ThemedText>
         </View>
       </ThemedView>
     </HomeLayout>
@@ -245,7 +210,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
     padding: 16,
-    borderLeftWidth: 4,},
+    borderLeftWidth: 4,
+  },
   cardHeader: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -331,7 +297,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
     padding: 20,
-    marginBottom: 16,},
+    marginBottom: 16,
+  },
   statsTitle: {
     fontSize: 18,
     fontWeight: "600",
@@ -361,7 +328,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
     padding: 20,
-    marginTop: 16,},
+    marginTop: 16,
+  },
   tipsTitle: {
     fontSize: 18,
     fontWeight: "600",
@@ -379,7 +347,8 @@ const styles = StyleSheet.create({
   controlsCard: {
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 16,
-    padding: 20,},
+    padding: 20,
+  },
   controlsTitle: {
     fontSize: 18,
     fontWeight: "600",

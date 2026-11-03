@@ -35,22 +35,12 @@ export default function TestScreen() {
       LISTENING_TEST: "listening_test",
       LESSON_TEST: "lesson_test",
     };
-    const translationKey =
-      keyMap[(testType || "").toUpperCase()] || "default";
+    const translationKey = keyMap[(testType || "").toUpperCase()] || "default";
     return {
       ...testConfig,
-      title: t(
-        `test_screen.config.${translationKey}.title`,
-        testConfig.title
-      ),
-      exitTitle: t(
-        `test_screen.config.${translationKey}.exit_title`,
-        testConfig.exitTitle
-      ),
-      exitMessage: t(
-        `test_screen.config.${translationKey}.exit_message`,
-        testConfig.exitMessage
-      ),
+      title: t(`test_screen.config.${translationKey}.title`, testConfig.title),
+      exitTitle: t(`test_screen.config.${translationKey}.exit_title`, testConfig.exitTitle),
+      exitMessage: t(`test_screen.config.${translationKey}.exit_message`, testConfig.exitMessage),
     };
   }, [testConfig, testType, t]);
 
@@ -76,9 +66,9 @@ export default function TestScreen() {
     handleSubmitPress,
     handleExitConfirm,
     handleCompletionSubmit,
-  } = useTestLogic({ 
-    userTestAttemptId, 
-    sets, 
+  } = useTestLogic({
+    userTestAttemptId,
+    sets,
     testType,
     onAllowNavigate: setAllowNavigate,
   });
@@ -100,10 +90,7 @@ export default function TestScreen() {
   }, [setShowExitConfirmModal]);
 
   const handleHardwareBack = useCallback(() => {
-    showAlert(
-      t("test_screen.back_blocked_message", "Vui lòng dùng nút quay lại ở góc trên."),
-      "warning"
-    );
+    showAlert(t("test_screen.back_blocked_message", "Vui lòng dùng nút quay lại ở góc trên."), "warning");
     return true;
   }, [showAlert, t]);
 
@@ -114,12 +101,9 @@ export default function TestScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        handleHardwareBack
-      );
+      const subscription = BackHandler.addEventListener("hardwareBackPress", handleHardwareBack);
       return () => subscription.remove();
-    }, [handleHardwareBack])
+    }, [handleHardwareBack]),
   );
 
   useEffect(() => {
@@ -138,25 +122,18 @@ export default function TestScreen() {
     return (
       <QuizLayout>
         <View style={styles.center}>
-          <Text style={styles.loadingText}>
-            {t("test_screen.loading", t("common.loading", "Đang tải..."))}
-          </Text>
+          <Text style={styles.loadingText}>{t("test_screen.loading", t("common.loading", "Đang tải..."))}</Text>
         </View>
       </QuizLayout>
     );
   }
 
   const renderListeningTest = () => (
-    <ScrollView
-      ref={scrollRef}
-      contentContainerStyle={[styles.scrollContent, { paddingBottom: 24 }]}
-    >
+    <ScrollView ref={scrollRef} contentContainerStyle={[styles.scrollContent, { paddingBottom: 24 }]}>
       {allQuestions.map((q) => {
         const selected = selections[q.uid] || [];
         const questionBankIdNumber = parseInt(q.bankId, 10);
-        const isUnanswered =
-          unansweredQuestionIds.includes(questionBankIdNumber) &&
-          selected.length === 0;
+        const isUnanswered = unansweredQuestionIds.includes(questionBankIdNumber) && selected.length === 0;
 
         return (
           <View
@@ -180,10 +157,7 @@ export default function TestScreen() {
   );
 
   const renderReadingTest = () => (
-    <ScrollView
-      ref={scrollRef}
-      contentContainerStyle={[styles.scrollContent, { paddingBottom: 24 }]}
-    >
+    <ScrollView ref={scrollRef} contentContainerStyle={[styles.scrollContent, { paddingBottom: 24 }]}>
       {sets.map((set: any, sIdx: number) => (
         <View
           key={set.id}
@@ -197,9 +171,7 @@ export default function TestScreen() {
           {set.questions.map((q: any) => {
             const selected = selections[q.uid] || [];
             const questionBankIdNumber = parseInt(q.bankId, 10);
-            const isUnanswered =
-              unansweredQuestionIds.includes(questionBankIdNumber) &&
-              selected.length === 0;
+            const isUnanswered = unansweredQuestionIds.includes(questionBankIdNumber) && selected.length === 0;
 
             return (
               <View
@@ -234,7 +206,7 @@ export default function TestScreen() {
             title={data?.data?.name || localizedTestConfig.title}
             icon={localizedTestConfig.icon}
             iconColor={localizedTestConfig.color}
-        onBackPress={handleHeaderBack}
+            onBackPress={handleHeaderBack}
             onSubmitPress={handleSubmitPress}
           />
           <QuizProgress
@@ -242,9 +214,7 @@ export default function TestScreen() {
             totalQuestions={allQuestions.length}
             elapsedSeconds={elapsedSeconds}
             questionIds={allQuestions.map((q) => q.uid)}
-            answeredIds={allQuestions
-              .filter((q) => (selections[q.uid] || []).length > 0)
-              .map((q) => q.uid)}
+            answeredIds={allQuestions.filter((q) => (selections[q.uid] || []).length > 0).map((q) => q.uid)}
             unansweredIds={unansweredUids}
             onPressQuestion={(idx, id) => handleQuestionPress(id)}
             style={styles.progress}
@@ -252,9 +222,7 @@ export default function TestScreen() {
         </View>
       }
     >
-      {testType === "LISTENING_TEST" || testType === "LESSON_TEST" 
-        ? renderListeningTest() 
-        : renderReadingTest()}
+      {testType === "LISTENING_TEST" || testType === "LESSON_TEST" ? renderListeningTest() : renderReadingTest()}
 
       <ConfirmModal
         visible={showExitConfirmModal}
@@ -310,4 +278,3 @@ const styles = StyleSheet.create({
   readingBlock: { marginBottom: 20, paddingHorizontal: 10 },
   block: { marginBottom: 10 },
 });
-

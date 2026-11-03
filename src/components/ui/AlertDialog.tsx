@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Animated,
-  Modal,
-  Text,
-  TextProps,
-  TouchableOpacity,
-  View,
-  ViewProps,
-} from "react-native";
+import { Animated, Modal, Text, TextProps, TouchableOpacity, View, ViewProps } from "react-native";
 
 interface AlertDialogProps {
   children: React.ReactNode;
@@ -81,12 +73,7 @@ const AlertDialogTrigger = React.forwardRef<
   };
 
   return (
-    <TouchableOpacity
-      ref={ref}
-      onPress={handlePress}
-      activeOpacity={0.8}
-      {...props}
-    >
+    <TouchableOpacity ref={ref} onPress={handlePress} activeOpacity={0.8} {...props}>
       {children}
     </TouchableOpacity>
   );
@@ -139,12 +126,7 @@ const AlertDialogContent = React.forwardRef<
   if (!isOpen) return null;
 
   return (
-    <Modal
-      visible={isOpen}
-      transparent
-      animationType="none"
-      onRequestClose={() => onOpenChange?.(false)}
-    >
+    <Modal visible={isOpen} transparent animationType="none" onRequestClose={() => onOpenChange?.(false)}>
       {/* Overlay */}
       <TouchableOpacity
         style={{
@@ -157,10 +139,7 @@ const AlertDialogContent = React.forwardRef<
         activeOpacity={1}
         onPress={() => onOpenChange?.(false)}
       >
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={(e) => e.stopPropagation()}
-        >
+        <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
           <Animated.View
             ref={ref}
             style={[
@@ -170,7 +149,8 @@ const AlertDialogContent = React.forwardRef<
                 padding: 24,
                 margin: 16,
                 width: "90%",
-                maxWidth: 400,gap: 16,
+                maxWidth: 400,
+                gap: 16,
                 transform: [{ scale: scaleAnim }],
               },
               style,
@@ -187,81 +167,52 @@ const AlertDialogContent = React.forwardRef<
 
 AlertDialogContent.displayName = "AlertDialogContent";
 
-const AlertDialogHeader = React.forwardRef<View, AlertDialogHeaderProps>(
-  ({ children, style, ...props }, ref) => (
-    <View
-      ref={ref}
-      style={[
-        {
-          flexDirection: "column",
-          gap: 8,
-          alignItems: "center",
-        },
-        style,
-      ]}
-      {...props}
-    >
-      {children}
-    </View>
-  )
-);
+const AlertDialogHeader = React.forwardRef<View, AlertDialogHeaderProps>(({ children, style, ...props }, ref) => (
+  <View
+    ref={ref}
+    style={[
+      {
+        flexDirection: "column",
+        gap: 8,
+        alignItems: "center",
+      },
+      style,
+    ]}
+    {...props}
+  >
+    {children}
+  </View>
+));
 
 AlertDialogHeader.displayName = "AlertDialogHeader";
 
-const AlertDialogFooter = React.forwardRef<View, AlertDialogFooterProps>(
-  ({ children, style, ...props }, ref) => (
-    <View
-      ref={ref}
-      style={[
-        {
-          flexDirection: "column-reverse",
-          gap: 8,
-        },
-        style,
-      ]}
-      {...props}
-    >
-      {children}
-    </View>
-  )
-);
+const AlertDialogFooter = React.forwardRef<View, AlertDialogFooterProps>(({ children, style, ...props }, ref) => (
+  <View
+    ref={ref}
+    style={[
+      {
+        flexDirection: "column-reverse",
+        gap: 8,
+      },
+      style,
+    ]}
+    {...props}
+  >
+    {children}
+  </View>
+));
 
 AlertDialogFooter.displayName = "AlertDialogFooter";
 
-const AlertDialogTitle = React.forwardRef<Text, AlertDialogTitleProps>(
-  ({ children, style, ...props }, ref) => (
-    <Text
-      ref={ref}
-      style={[
-        {
-          fontSize: 18,
-          fontWeight: "600",
-          color: "#111827",
-          textAlign: "center",
-        },
-        style,
-      ]}
-      {...props}
-    >
-      {children}
-    </Text>
-  )
-);
-
-AlertDialogTitle.displayName = "AlertDialogTitle";
-
-const AlertDialogDescription = React.forwardRef<
-  Text,
-  AlertDialogDescriptionProps
->(({ children, style, ...props }, ref) => (
+const AlertDialogTitle = React.forwardRef<Text, AlertDialogTitleProps>(({ children, style, ...props }, ref) => (
   <Text
     ref={ref}
     style={[
       {
-        fontSize: 14,
-        color: "#6b7280",
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#111827",
         textAlign: "center",
-        lineHeight: 20,
       },
       style,
     ]}
@@ -270,6 +221,28 @@ const AlertDialogDescription = React.forwardRef<
     {children}
   </Text>
 ));
+
+AlertDialogTitle.displayName = "AlertDialogTitle";
+
+const AlertDialogDescription = React.forwardRef<Text, AlertDialogDescriptionProps>(
+  ({ children, style, ...props }, ref) => (
+    <Text
+      ref={ref}
+      style={[
+        {
+          fontSize: 14,
+          color: "#6b7280",
+          textAlign: "center",
+          lineHeight: 20,
+        },
+        style,
+      ]}
+      {...props}
+    >
+      {children}
+    </Text>
+  ),
+);
 
 AlertDialogDescription.displayName = "AlertDialogDescription";
 

@@ -17,12 +17,7 @@ export interface IUploadImageResponse {
 }
 
 const uploadService = {
-  uploadImage: async ({
-    uri,
-    name,
-    type,
-    folderName,
-  }: IUploadImagePayload): Promise<IUploadImageResponse> => {
+  uploadImage: async ({ uri, name, type, folderName }: IUploadImagePayload): Promise<IUploadImageResponse> => {
     const formData = new FormData();
     formData.append("image", {
       uri,
@@ -41,4 +36,3 @@ const uploadService = {
 };
 
 export default uploadService;
-

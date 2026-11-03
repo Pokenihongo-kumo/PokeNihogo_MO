@@ -23,40 +23,25 @@ export const getSortedQuestions = (reviewData: any): IReviewResultQuestionBank[]
   const testSets = reviewData?.data?.testSets;
   if (!testSets || testSets.length === 0) return [];
 
-  const allQuestions = testSets.flatMap((testSet: any) =>
-    testSet.testSetQuestionBanks || []
-  );
+  const allQuestions = testSets.flatMap((testSet: any) => testSet.testSetQuestionBanks || []);
 
   return allQuestions
-    .sort(
-      (a: { questionOrder: number }, b: { questionOrder: number }) =>
-        a.questionOrder - b.questionOrder
-    )
-    .map(
-      (item: { questionBank: IReviewResultQuestionBank }) => item.questionBank
-    );
+    .sort((a: { questionOrder: number }, b: { questionOrder: number }) => a.questionOrder - b.questionOrder)
+    .map((item: { questionBank: IReviewResultQuestionBank }) => item.questionBank);
 };
 
 /**
  * Get user selected answers for a question
  */
-export const getUserSelectedAnswers = (
-  question: IReviewResultQuestionBank
-): number[] => {
-  return question.answers
-    .filter((answer) => answer.type === "user_selected_incorrect")
-    .map((answer) => answer.id);
+export const getUserSelectedAnswers = (question: IReviewResultQuestionBank): number[] => {
+  return question.answers.filter((answer) => answer.type === "user_selected_incorrect").map((answer) => answer.id);
 };
 
 /**
  * Get correct answers for a question
  */
-export const getCorrectAnswers = (
-  question: IReviewResultQuestionBank
-): number[] => {
-  return question.answers
-    .filter((answer) => answer.type === "correct_answer")
-    .map((answer) => answer.id);
+export const getCorrectAnswers = (question: IReviewResultQuestionBank): number[] => {
+  return question.answers.filter((answer) => answer.type === "correct_answer").map((answer) => answer.id);
 };
 
 /**
@@ -69,8 +54,7 @@ export const calculateReviewStats = (reviewData: any) => {
     totalQuestions: data.totalQuestions,
     answeredCorrect: data.answeredCorrect,
     answeredInCorrect: data.answeredInCorrect,
-    unansweredQuestions:
-      data.totalQuestions - data.answeredCorrect - data.answeredInCorrect,
+    unansweredQuestions: data.totalQuestions - data.answeredCorrect - data.answeredInCorrect,
     time: data.time,
     status: data.status,
   };
@@ -80,7 +64,7 @@ export const calculateReviewStats = (reviewData: any) => {
  * Get questions for stats grid navigation
  */
 export const getQuestionsForGrid = (
-  questions: IReviewResultQuestionBank[]
+  questions: IReviewResultQuestionBank[],
 ): Array<{ id: number; isCorrect: boolean; hasUserAnswer: boolean }> => {
   return questions.map((q) => {
     const userSelectedIds = getUserSelectedAnswers(q);

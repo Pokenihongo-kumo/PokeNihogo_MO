@@ -1,10 +1,5 @@
 import { quizService } from "@services/quiz";
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ICompleteQuizResponse,
   ICreateQuizSessionResponse,
@@ -27,9 +22,9 @@ export const useCreateQuizSession = () => {
     mutationFn: (params: {
       lessonId?: string;
       category?: string;
-      level?: 'N5' | 'N4' | 'N3';
+      level?: "N5" | "N4" | "N3";
       questionCount?: number;
-      difficulty?: 'beginner' | 'intermediate' | 'advanced';
+      difficulty?: "beginner" | "intermediate" | "advanced";
       exerciseAttemptId?: number | string;
     }) => quizService.createQuizSession(params),
     onSuccess: (data) => {
@@ -37,10 +32,7 @@ export const useCreateQuizSession = () => {
       queryClient.invalidateQueries({ queryKey: ["quiz-session"] });
       // Optionally set the new session in cache
       if (data?.data?.session?.id) {
-        queryClient.setQueryData(
-          ["quiz-session", data.data.session.id],
-          data
-        );
+        queryClient.setQueryData(["quiz-session", data.data.session.id], data);
       }
     },
   });
@@ -84,12 +76,8 @@ export const useSubmitQuizAnswer = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: {
-      sessionId: string;
-      questionId: string;
-      selectedAnswers: string[];
-      timeSpent: number;
-    }) => quizService.submitAnswer(params),
+    mutationFn: (params: { sessionId: string; questionId: string; selectedAnswers: string[]; timeSpent: number }) =>
+      quizService.submitAnswer(params),
     onSuccess: (data, variables) => {
       // Invalidate quiz session and questions to refetch updated data
       queryClient.invalidateQueries({
@@ -132,10 +120,7 @@ export const useCompleteQuiz = () => {
       queryClient.invalidateQueries({ queryKey: ["quiz-history"] });
       // Set the result in cache for review
       if (data?.data?.result) {
-        queryClient.setQueryData(
-          ["quiz-review", variables.sessionId],
-          data
-        );
+        queryClient.setQueryData(["quiz-review", variables.sessionId], data);
       }
     },
   });
@@ -160,10 +145,7 @@ export const useQuizStats = () => {
  * @param params - Query parameters for quiz history
  * @returns Infinite query hook for getting quiz history
  */
-export const useQuizHistoryInfinite = (params?: {
-  limit?: number;
-  category?: string;
-}) => {
+export const useQuizHistoryInfinite = (params?: { limit?: number; category?: string }) => {
   return useInfiniteQuery<IGetQuizHistoryResponse>({
     queryKey: ["quiz-history", params],
     queryFn: ({ pageParam = 0 }) =>
@@ -174,10 +156,7 @@ export const useQuizHistoryInfinite = (params?: {
       }),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
-      const totalLoaded = allPages.reduce(
-        (sum, page) => sum + (page?.data?.results?.length || 0),
-        0
-      );
+      const totalLoaded = allPages.reduce((sum, page) => sum + (page?.data?.results?.length || 0), 0);
       const hasMore = lastPage?.data?.hasMore ?? false;
       return hasMore ? totalLoaded : undefined;
     },
@@ -190,11 +169,7 @@ export const useQuizHistoryInfinite = (params?: {
  * @param params - Query parameters for quiz history
  * @returns Query hook for getting quiz history
  */
-export const useQuizHistory = (params?: {
-  limit?: number;
-  offset?: number;
-  category?: string;
-}) => {
+export const useQuizHistory = (params?: { limit?: number; offset?: number; category?: string }) => {
   return useQuery<IGetQuizHistoryResponse>({
     queryKey: ["quiz-history", params],
     queryFn: () => quizService.getQuizHistory(params),
@@ -216,4 +191,3 @@ export const useQuizReview = (sessionId: string | null) => {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
-

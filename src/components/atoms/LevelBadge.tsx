@@ -8,25 +8,13 @@ interface LevelBadgeProps {
   style?: any;
 }
 
-export default function LevelBadge({
-  level,
-  size = "small",
-  style,
-}: LevelBadgeProps) {
+export default function LevelBadge({ level, size = "small", style }: LevelBadgeProps) {
   const isLarge = size === "large";
   const { t } = useTranslation();
   const levelText = isLarge ? t("profile.level") : t("profile.level_small");
   return (
-    <View
-      style={[
-        styles.badge,
-        isLarge ? styles.badgeLarge : styles.badgeSmall,
-        style,
-      ]}
-    >
-      <Text
-        style={[styles.text, isLarge ? styles.textLarge : styles.textSmall]}
-      >
+    <View style={[styles.badge, isLarge ? styles.badgeLarge : styles.badgeSmall, style]}>
+      <Text style={[styles.text, isLarge ? styles.textLarge : styles.textSmall]}>
         {levelText} {level}
       </Text>
     </View>

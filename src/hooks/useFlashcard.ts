@@ -16,8 +16,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 export const useFlashcardDecks = (params?: IQueryRequest) => {
   return useQuery({
     queryKey: ["flashcard-decks", params],
-    queryFn: () =>
-      flashcardService.getDecks(params || { currentPage: 1, pageSize: 100 }),
+    queryFn: () => flashcardService.getDecks(params || { currentPage: 1, pageSize: 100 }),
     staleTime: 1 * 60 * 1000, // 1 minute
   });
 };
@@ -37,8 +36,7 @@ export const useCreateFlashcardDeck = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: ICreateFlashcardDeckRequest) =>
-      flashcardService.createDeck(data),
+    mutationFn: (data: ICreateFlashcardDeckRequest) => flashcardService.createDeck(data),
     onSuccess: () => {
       // Invalidate and refetch flashcard decks list
       queryClient.invalidateQueries({ queryKey: ["flashcard-decks"] });
@@ -51,13 +49,8 @@ export const useUpdateFlashcardDeck = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      deckId,
-      data,
-    }: {
-      deckId: number | string;
-      data: IUpdateFlashcardDeckRequest;
-    }) => flashcardService.updateDeck(deckId, data),
+    mutationFn: ({ deckId, data }: { deckId: number | string; data: IUpdateFlashcardDeckRequest }) =>
+      flashcardService.updateDeck(deckId, data),
     onSuccess: (_, variables) => {
       // Invalidate flashcard decks list and specific deck
       queryClient.invalidateQueries({ queryKey: ["flashcard-decks"] });
@@ -73,8 +66,7 @@ export const useDeleteFlashcardDeck = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (deckId: number | string) =>
-      flashcardService.deleteDeck(deckId),
+    mutationFn: (deckId: number | string) => flashcardService.deleteDeck(deckId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["flashcard-decks"] });
     },
@@ -86,8 +78,7 @@ export const useAddWordToFlashcardDeck = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: IAddWordToFlashcardDeckRequest) =>
-      flashcardService.addWord(data),
+    mutationFn: (data: IAddWordToFlashcardDeckRequest) => flashcardService.addWord(data),
     onSuccess: (_, variables) => {
       // Invalidate flashcard decks to update totalCards count
       queryClient.invalidateQueries({ queryKey: ["flashcard-decks"] });
@@ -108,8 +99,7 @@ export const useCreateFlashcardDeckCard = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: ICreateFlashcardDeckCardRequest) =>
-      flashcardService.createDeckCard(data),
+    mutationFn: (data: ICreateFlashcardDeckCardRequest) => flashcardService.createDeckCard(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["flashcard-deck-cards", variables.deckId],
@@ -125,10 +115,7 @@ export const useCreateFlashcardDeckCard = () => {
 };
 
 // Hook to get words in a flashcard deck
-export const useFlashcardDeckWords = (
-  deckId: number | string | null,
-  params?: IQueryRequest
-) => {
+export const useFlashcardDeckWords = (deckId: number | string | null, params?: IQueryRequest) => {
   return useQuery({
     queryKey: ["flashcard-deck-words", deckId, params],
     queryFn: () => flashcardService.getWords(deckId!, params),
@@ -140,7 +127,7 @@ export const useFlashcardDeckWords = (
 // Hook to get cards of a flashcard deck (supports VOCABULARY/GRAMMAR/KANJI)
 export const useFlashcardDeckCards = (
   deckId: number | string | null,
-  params?: IQueryRequest & { contentType?: FlashcardContentType }
+  params?: IQueryRequest & { contentType?: FlashcardContentType },
 ) => {
   return useQuery({
     queryKey: ["flashcard-deck-cards", deckId, params],
@@ -155,13 +142,8 @@ export const useRemoveWordFromFlashcardDeck = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      deckId,
-      vocabularyId,
-    }: {
-      deckId: number | string;
-      vocabularyId: number | string;
-    }) => flashcardService.removeWord(deckId, vocabularyId),
+    mutationFn: ({ deckId, vocabularyId }: { deckId: number | string; vocabularyId: number | string }) =>
+      flashcardService.removeWord(deckId, vocabularyId),
     onSuccess: (_, variables) => {
       // Invalidate flashcard decks to update totalCards count
       queryClient.invalidateQueries({ queryKey: ["flashcard-decks"] });
@@ -207,8 +189,7 @@ export const useUpdateFlashcardDeckCardWithMetadata = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: IUpdateFlashcardDeckCardRequest) =>
-      flashcardService.updateDeckCardWithMetadata(data),
+    mutationFn: (data: IUpdateFlashcardDeckCardRequest) => flashcardService.updateDeckCardWithMetadata(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["flashcard-deck-cards", variables.deckId],
@@ -225,8 +206,7 @@ export const useDeleteFlashcardDeckCards = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: IDeleteFlashcardDeckCardsRequest) =>
-      flashcardService.deleteDeckCards(data),
+    mutationFn: (data: IDeleteFlashcardDeckCardsRequest) => flashcardService.deleteDeckCards(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["flashcard-deck-cards", variables.deckId],
@@ -246,8 +226,7 @@ export const useMarkFlashcardCardRead = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: IMarkFlashcardReadRequest) =>
-      flashcardService.markCardRead(data),
+    mutationFn: (data: IMarkFlashcardReadRequest) => flashcardService.markCardRead(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["flashcard-deck-cards", variables.deckId],
@@ -255,4 +234,3 @@ export const useMarkFlashcardCardRead = () => {
     },
   });
 };
-

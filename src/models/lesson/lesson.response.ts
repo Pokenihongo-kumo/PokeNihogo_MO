@@ -1,4 +1,4 @@
-import { Lesson, LessonCategory, LessonProgress } from './lesson.common';
+import { Lesson, LessonCategory, LessonProgress } from "./lesson.common";
 
 export interface GetLessonsResponse {
   success: boolean;
@@ -6,7 +6,7 @@ export interface GetLessonsResponse {
     categories: LessonCategory[];
     totalLessons: number;
     completedLessons: number;
-    userLevel: 'N5' | 'N4' | 'N3';
+    userLevel: "N5" | "N4" | "N3";
   };
   message: string;
 }

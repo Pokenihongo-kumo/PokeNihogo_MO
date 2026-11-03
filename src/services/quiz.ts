@@ -13,38 +13,37 @@ import {
 import mockQuizData from "../../mock-data/quiz-questions.json";
 
 // Feature flags
-const USE_MOCK_DATA =
-  process.env.NODE_ENV === "development" || !process.env.EXPO_PUBLIC_API_URL;
+const USE_MOCK_DATA = process.env.NODE_ENV === "development" || !process.env.EXPO_PUBLIC_API_URL;
 
 export const quizService = {
   // Create a new quiz session
   createQuizSession: async (params: {
     lessonId?: string;
     category?: string;
-    level?: 'N5' | 'N4' | 'N3';
+    level?: "N5" | "N4" | "N3";
     questionCount?: number;
-    difficulty?: 'beginner' | 'intermediate' | 'advanced';
+    difficulty?: "beginner" | "intermediate" | "advanced";
     exerciseAttemptId?: number | string;
   }): Promise<ICreateQuizSessionResponse> => {
     try {
       if (USE_MOCK_DATA) {
         // Filter questions based on parameters
         let questions = [...mockQuizData.questions];
-        
+
         if (params.lessonId) {
-          questions = questions.filter(q => q.lessonId === params.lessonId);
+          questions = questions.filter((q) => q.lessonId === params.lessonId);
         }
-        
+
         if (params.category) {
-          questions = questions.filter(q => q.category === params.category);
+          questions = questions.filter((q) => q.category === params.category);
         }
-        
+
         if (params.level) {
-          questions = questions.filter(q => q.level === params.level);
+          questions = questions.filter((q) => q.level === params.level);
         }
-        
+
         if (params.difficulty) {
-          questions = questions.filter(q => q.difficulty === params.difficulty);
+          questions = questions.filter((q) => q.difficulty === params.difficulty);
         }
 
         // Shuffle and limit questions
@@ -85,7 +84,9 @@ export const quizService = {
   },
 
   // Get quiz session by ID
-  getQuizSession: async (sessionId: string): Promise<{ statusCode: number; data?: { session: QuizSession }; message?: string }> => {
+  getQuizSession: async (
+    sessionId: string,
+  ): Promise<{ statusCode: number; data?: { session: QuizSession }; message?: string }> => {
     try {
       if (USE_MOCK_DATA) {
         // In mock mode, we'll create a session with the same ID
@@ -151,15 +152,15 @@ export const quizService = {
     try {
       if (USE_MOCK_DATA) {
         // Find the question
-        const question = mockQuizData.questions.find(q => q.id === params.questionId);
+        const question = mockQuizData.questions.find((q) => q.id === params.questionId);
         if (!question) {
           throw new Error("Question not found");
         }
 
         // Check if answer is correct
-        const isCorrect = JSON.stringify(params.selectedAnswers.sort()) === 
-                         JSON.stringify(question.correctAnswers.sort());
-        
+        const isCorrect =
+          JSON.stringify(params.selectedAnswers.sort()) === JSON.stringify(question.correctAnswers.sort());
+
         const points = isCorrect ? question.points : 0;
 
         return {
@@ -204,10 +205,10 @@ export const quizService = {
         const totalQuestions = params.answers.length;
 
         for (const answer of params.answers) {
-          const question = mockQuizData.questions.find(q => q.id === answer.questionId);
+          const question = mockQuizData.questions.find((q) => q.id === answer.questionId);
           if (question) {
-            const isCorrect = JSON.stringify(answer.selectedAnswers.sort()) === 
-                             JSON.stringify(question.correctAnswers.sort());
+            const isCorrect =
+              JSON.stringify(answer.selectedAnswers.sort()) === JSON.stringify(question.correctAnswers.sort());
             if (isCorrect) {
               correctAnswers++;
               earnedPoints += question.points;
@@ -216,7 +217,7 @@ export const quizService = {
         }
 
         const score = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-        
+
         // Determine Pokemon reward based on score
         let pokemonReward;
         if (score >= 90) {
@@ -265,7 +266,7 @@ export const quizService = {
           correctAnswers,
           score,
           totalPoints: params.answers.reduce((sum, answer) => {
-            const question = mockQuizData.questions.find(q => q.id === answer.questionId);
+            const question = mockQuizData.questions.find((q) => q.id === answer.questionId);
             return sum + (question?.points || 0);
           }, 0),
           earnedPoints,
@@ -402,7 +403,7 @@ export const quizService = {
       throw error;
     }
   },
-  
+
   // Get a completed session with user's answers for review
   getQuizReview: async (sessionId: string): Promise<IGetQuizReviewResponse> => {
     try {
@@ -411,7 +412,8 @@ export const quizService = {
 
         const answers = questions.map((q) => {
           const selectedAnswers = q.correctAnswers;
-          const isCorrect = JSON.stringify([...selectedAnswers].sort()) === JSON.stringify([...q.correctAnswers].sort());
+          const isCorrect =
+            JSON.stringify([...selectedAnswers].sort()) === JSON.stringify([...q.correctAnswers].sort());
           return {
             questionId: q.id,
             selectedAnswers,

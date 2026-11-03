@@ -19,12 +19,7 @@ interface TestQuestionCardProps {
   selected: string[];
   isUnanswered: boolean;
   scaleAnims: Animated.Value[];
-  onAnswerSelect: (
-    bankId: string,
-    selected: string[],
-    optionIndex: number,
-    uid: string
-  ) => void;
+  onAnswerSelect: (bankId: string, selected: string[], optionIndex: number, uid: string) => void;
 }
 
 export const TestQuestionCard: React.FC<TestQuestionCardProps> = ({
@@ -45,9 +40,7 @@ export const TestQuestionCard: React.FC<TestQuestionCardProps> = ({
         </View>
       </View>
       {/* For listening questions, hide question text and only show audio */}
-      {!isListeningQuestion && question.question && (
-        <Text style={styles.questionText}>{question.question}</Text>
-      )}
+      {!isListeningQuestion && question.question && <Text style={styles.questionText}>{question.question}</Text>}
       {question.audioUrl && (
         <InlineAudioPlayer
           audioUrl={question.audioUrl}
@@ -65,9 +58,7 @@ export const TestQuestionCard: React.FC<TestQuestionCardProps> = ({
               index={index}
               isSelected={isSelected}
               scaleAnim={scaleAnims[index] || new Animated.Value(1)}
-              onPress={() =>
-                onAnswerSelect(question.bankId, [opt.id], index, question.uid)
-              }
+              onPress={() => onAnswerSelect(question.bankId, [opt.id], index, question.uid)}
             />
           );
         })}
@@ -80,7 +71,8 @@ const styles = StyleSheet.create({
   qaCard: {
     backgroundColor: "white",
     borderRadius: 16,
-    padding: 20,position: "relative",
+    padding: 20,
+    position: "relative",
   },
   qaCardUnanswered: {
     borderWidth: 2,

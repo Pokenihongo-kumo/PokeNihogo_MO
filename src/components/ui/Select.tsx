@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useRef, useState } from "react"
-import { Animated, Dimensions, FlatList, Modal, Pressable, StyleSheet, Text, View } from "react-native"
+import type React from "react";
+import { useRef, useState } from "react";
+import { Animated, Dimensions, FlatList, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 interface SelectOption {
-  label: string
-  value: string
+  label: string;
+  value: string;
 }
 
 interface CustomSelectProps {
-  options: SelectOption[]
-  placeholder?: string
-  onSelect?: (option: SelectOption) => void
-  onValueChange?: (value: string) => void
-  selectedValue?: string
-  value?: string
-  style?: any
+  options: SelectOption[];
+  placeholder?: string;
+  onSelect?: (option: SelectOption) => void;
+  onValueChange?: (value: string) => void;
+  selectedValue?: string;
+  value?: string;
+  style?: any;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -28,15 +28,15 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   value,
   style,
 }) => {
-  const [isVisible, setIsVisible] = useState(false)
-  const fadeAnim = useRef(new Animated.Value(0)).current
-  const scaleAnim = useRef(new Animated.Value(0.8)).current
+  const [isVisible, setIsVisible] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
   const currentValue = value || selectedValue;
-  const selectedOption = options.find((option) => option.value === currentValue)
+  const selectedOption = options.find((option) => option.value === currentValue);
 
   const openModal = () => {
-    setIsVisible(true)
+    setIsVisible(true);
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -49,8 +49,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         friction: 8,
         useNativeDriver: true,
       }),
-    ]).start()
-  }
+    ]).start();
+  };
 
   const closeModal = () => {
     Animated.parallel([
@@ -65,15 +65,15 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         useNativeDriver: true,
       }),
     ]).start(() => {
-      setIsVisible(false)
-    })
-  }
+      setIsVisible(false);
+    });
+  };
 
   const handleSelect = (option: SelectOption) => {
-    onSelect?.(option)
-    onValueChange?.(option.value)
-    closeModal()
-  }
+    onSelect?.(option);
+    onValueChange?.(option.value);
+    closeModal();
+  };
 
   const renderOption = ({ item }: { item: SelectOption }) => (
     <Pressable
@@ -82,7 +82,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     >
       <Text style={[styles.optionText, currentValue === item.value && styles.selectedOptionText]}>{item.label}</Text>
     </Pressable>
-  )
+  );
 
   return (
     <>
@@ -124,10 +124,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         </Pressable>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-const { width } = Dimensions.get("window")
+const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   trigger: {
@@ -165,7 +165,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 12,
     width: width * 0.85,
-    maxHeight: "70%",},
+    maxHeight: "70%",
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -208,9 +209,9 @@ const styles = StyleSheet.create({
     color: "#1d4ed8",
     fontWeight: "500",
   },
-})
+});
 
-CustomSelect.displayName = 'Select';
+CustomSelect.displayName = "Select";
 
-export { CustomSelect as Select }
+export { CustomSelect as Select };
 export default CustomSelect;

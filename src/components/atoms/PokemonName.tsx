@@ -7,11 +7,7 @@ interface PokemonNameProps {
   numberOfLines?: number;
 }
 
-export default function PokemonName({
-  name,
-  style,
-  numberOfLines = 1,
-}: PokemonNameProps) {
+export default function PokemonName({ name, style, numberOfLines = 1 }: PokemonNameProps) {
   return (
     <Text style={[styles.name, style]} numberOfLines={numberOfLines}>
       {name}

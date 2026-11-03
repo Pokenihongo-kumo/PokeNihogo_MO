@@ -5,16 +5,7 @@ import { useAttendanceConfig } from "@hooks/useAttendance";
 import { Sparkles } from "lucide-react-native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ActivityIndicator,
-  Animated,
-  Dimensions,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Animated, Dimensions, Modal, ScrollView, StyleSheet, Text, View } from "react-native";
 import BounceButton from "./ui/BounceButton";
 import LottieAnimation from "./ui/LottieAnimation";
 
@@ -51,10 +42,7 @@ const DAY_OF_WEEK_MAP: Record<string, number> = {
   SATURDAY: 6,
 };
 
-const useCreateLast7Days = (
-  history: string[],
-  todayChecked: boolean
-) => {
+const useCreateLast7Days = (history: string[], todayChecked: boolean) => {
   return useMemo(() => {
     const days: CheckInDay[] = [];
     const today = new Date();
@@ -127,29 +115,22 @@ export function DailyLoginModal({
       checkInHistory
         .map((date) => normalizeDate(date))
         .filter((value, index, array) => value && array.indexOf(value) === index),
-    [checkInHistory]
+    [checkInHistory],
   );
 
-  const checkInDays = useCreateLast7Days(
-    normalizedHistory,
-    hasCheckedInToday
-  );
+  const checkInDays = useCreateLast7Days(normalizedHistory, hasCheckedInToday);
 
   // Get today's baseCoin and bonusCoin from config
   const todayCoinReward = useMemo(() => {
     if (!attendanceConfig) return null;
     const today = new Date();
     const todayDayIndex = today.getDay();
-    const todayDayOfWeek = Object.keys(DAY_OF_WEEK_MAP).find(
-      (key) => DAY_OF_WEEK_MAP[key] === todayDayIndex
-    );
-    
+    const todayDayOfWeek = Object.keys(DAY_OF_WEEK_MAP).find((key) => DAY_OF_WEEK_MAP[key] === todayDayIndex);
+
     if (!todayDayOfWeek) return null;
-    
-    const config = attendanceConfig.find(
-      (c) => c.dayOfWeek === todayDayOfWeek
-    );
-    
+
+    const config = attendanceConfig.find((c) => c.dayOfWeek === todayDayOfWeek);
+
     return config ? { baseCoin: config.baseCoin, bonusCoin: config.bonusCoin } : null;
   }, [attendanceConfig]);
 
@@ -182,19 +163,22 @@ export function DailyLoginModal({
     }
   }, [hasCheckedInToday, isSubmitting, onCheckIn, triggerCelebration]);
 
-  const getDayName = useCallback((dateString: string) => {
-    const date = new Date(dateString);
-    const days = [
-      t("daily_login.day_names.sun"),
-      t("daily_login.day_names.mon"),
-      t("daily_login.day_names.tue"),
-      t("daily_login.day_names.wed"),
-      t("daily_login.day_names.thu"),
-      t("daily_login.day_names.fri"),
-      t("daily_login.day_names.sat")
-    ];
-    return days[date.getDay()];
-  }, [t]);
+  const getDayName = useCallback(
+    (dateString: string) => {
+      const date = new Date(dateString);
+      const days = [
+        t("daily_login.day_names.sun"),
+        t("daily_login.day_names.mon"),
+        t("daily_login.day_names.tue"),
+        t("daily_login.day_names.wed"),
+        t("daily_login.day_names.thu"),
+        t("daily_login.day_names.fri"),
+        t("daily_login.day_names.sat"),
+      ];
+      return days[date.getDay()];
+    },
+    [t],
+  );
 
   const getDateNumber = useCallback((dateString: string) => {
     const date = new Date(dateString);
@@ -202,12 +186,7 @@ export function DailyLoginModal({
   }, []);
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="none"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       <Animated.View style={[styles.overlay, { opacity: fadeAnim }]}>
         <Animated.View
           style={[
@@ -221,17 +200,13 @@ export function DailyLoginModal({
             {isLoading || isConfigLoading ? (
               <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#7c3aed" />
-                <Text style={styles.loadingText}>
-                  {t("daily_login.loading_state")}
-                </Text>
+                <Text style={styles.loadingText}>{t("daily_login.loading_state")}</Text>
               </View>
             ) : (
               <>
                 <View style={styles.header}>
                   <Text style={styles.title}>{t("daily_login.title")}</Text>
-                  <Text style={styles.subtitle}>
-                    {t("daily_login.subtitle")}
-                  </Text>
+                  <Text style={styles.subtitle}>{t("daily_login.subtitle")}</Text>
                 </View>
 
                 <View style={styles.streakContainer}>
@@ -256,10 +231,10 @@ export function DailyLoginModal({
                     <View style={styles.weeklyBadge}>
                       <Text style={styles.weeklyBadgeIcon}>📅</Text>
                       <Text style={styles.weeklyBadgeText}>
-                      {t("daily_login.weekly_badge", {
-                        count: weeklyCount,
-                        total: 7,
-                      })}
+                        {t("daily_login.weekly_badge", {
+                          count: weeklyCount,
+                          total: 7,
+                        })}
                       </Text>
                     </View>
                   </View>
@@ -280,9 +255,7 @@ export function DailyLoginModal({
                   <View style={styles.coinRewardSection}>
                     <View style={styles.coinRewardCard}>
                       <View style={styles.coinRewardRow}>
-                        <Text style={styles.coinRewardLabel}>
-                          {t("daily_login.today_reward")}
-                        </Text>
+                        <Text style={styles.coinRewardLabel}>{t("daily_login.today_reward")}</Text>
                         <View style={styles.coinRewardValue}>
                           <Sparkles size={16} color="#f59e0b" />
                           <Text style={styles.coinAmount}>{todayCoinReward.baseCoin}</Text>
@@ -339,9 +312,7 @@ export function DailyLoginModal({
                               <Text style={styles.missIcon}>✗</Text>
                             </View>
                           ) : (
-                            <Text style={styles.dateNumber}>
-                              {getDateNumber(day.date)}
-                            </Text>
+                            <Text style={styles.dateNumber}>{getDateNumber(day.date)}</Text>
                           )}
                         </View>
                         <View style={styles.dayDot} />
@@ -362,8 +333,8 @@ export function DailyLoginModal({
                     {hasCheckedInToday
                       ? t("daily_login.already_checked")
                       : isSubmitting
-                      ? t("daily_login.check_in_progress")
-                      : t("daily_login.check_in_button")}
+                        ? t("daily_login.check_in_progress")
+                        : t("daily_login.check_in_button")}
                   </BounceButton>
                 </View>
               </>
@@ -390,13 +361,7 @@ export function DailyLoginModal({
               </Animated.View>
             )}
 
-            <BounceButton
-              variant="ghost"
-              size="full"
-              onPress={onClose}
-              withHaptics={true}
-              className="h-12"
-            >
+            <BounceButton variant="ghost" size="full" onPress={onClose} withHaptics={true} className="h-12">
               {t("daily_login.close")}
             </BounceButton>
           </ScrollView>
@@ -594,14 +559,16 @@ const styles = StyleSheet.create({
   },
   dayBoxChecked: {
     backgroundColor: "#dcfce7",
-    borderColor: "#22c55e",},
+    borderColor: "#22c55e",
+  },
   dayBoxMissed: {
     backgroundColor: "#fafafa",
     borderColor: "#e5e5e5",
   },
   dayBoxFuture: {
     backgroundColor: "#dbeafe",
-    borderColor: "#3b82f6",},
+    borderColor: "#3b82f6",
+  },
   iconContainer: {
     width: "100%",
     height: "100%",

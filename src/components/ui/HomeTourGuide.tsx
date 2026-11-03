@@ -7,7 +7,7 @@ interface HomeTourGuideProps {
 
 /**
  * HomeTourGuide Component
- * 
+ *
  * Wraps the home screen elements with CopilotStep for tour guide functionality.
  * This component provides step-by-step guidance for:
  * - User profile header

@@ -2,11 +2,7 @@ import { cva, VariantProps } from "class-variance-authority";
 import * as Haptics from "expo-haptics";
 import React from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 const bounceButtonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-lg ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
@@ -34,7 +30,7 @@ const bounceButtonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 const textVariants = cva("text-center font-bold", {
@@ -119,7 +115,7 @@ export default function BounceButton({
   const handlePress = () => {
     if (isDisabled) return;
     if (withHaptics) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     }
     onPress?.();
   };
@@ -137,16 +133,8 @@ export default function BounceButton({
   });
 
   return (
-    <View
-      className="relative self-center w-full"
-      style={{ opacity: isDisabled ? 0.5 : 1 }}
-    >
-      {!disabled ? (
-        <Animated.View
-          className={`${shadowVariants({ variant })}`}
-          style={animatedShadowStyle}
-        />
-      ) : <></>}
+    <View className="relative self-center w-full" style={{ opacity: isDisabled ? 0.5 : 1 }}>
+      {!disabled ? <Animated.View className={`${shadowVariants({ variant })}`} style={animatedShadowStyle} /> : <></>}
 
       <Animated.View
         className={`${bounceButtonVariants({ variant, size, className })} h-16`}
@@ -171,9 +159,7 @@ export default function BounceButton({
   );
 }
 
-function getSpinnerColor(
-  variant?: VariantProps<typeof bounceButtonVariants>["variant"]
-) {
+function getSpinnerColor(variant?: VariantProps<typeof bounceButtonVariants>["variant"]) {
   switch (variant) {
     case "destructive":
     case "secondary":
@@ -202,11 +188,7 @@ function LoadingContent({
   return (
     <View className="flex-row items-center">
       <ActivityIndicator color={spinnerColor} />
-      {children ? (
-        <Text className={`${textVariants({ variant, size })} opacity-80 ml-2`}>
-          {children}
-        </Text>
-      ) : null}
+      {children ? <Text className={`${textVariants({ variant, size })} opacity-80 ml-2`}>{children}</Text> : null}
     </View>
   );
 }

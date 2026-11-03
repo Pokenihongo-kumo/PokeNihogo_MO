@@ -43,4 +43,3 @@ export const RewardHistoryResponseSchema = z.object({
 
 export type IRewardHistoryItem = z.infer<typeof RewardHistoryItemSchema>;
 export type IRewardHistoryResponse = z.infer<typeof RewardHistoryResponseSchema>;
-

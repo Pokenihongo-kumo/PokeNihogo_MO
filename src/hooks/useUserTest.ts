@@ -1,10 +1,7 @@
 import { TestStatus } from "@constants/test.enum";
 import { TestDetail } from "@models/user-test/test-full-user.response";
 import userTestService from "@services/user-test";
-import {
-  useInfiniteQuery,
-  useQuery,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 type GetMyUserTestsParams = {
   currentPage?: number;
@@ -33,7 +30,7 @@ export const useUserTestsInfinite = (params: Omit<GetMyUserTestsParams, "current
     getNextPageParam: (lastPage: any, allPages: any[]) => {
       const pagination = lastPage?.data?.data?.pagination;
       if (!pagination) return undefined;
-      
+
       const { current, totalPage } = pagination;
       return current < totalPage ? current + 1 : undefined;
     },
@@ -68,4 +65,3 @@ export const useTestFullUser = (testId: string | number | null) => {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
-

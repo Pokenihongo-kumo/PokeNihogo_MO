@@ -97,7 +97,7 @@ export const optimizeList = <T>(items: T[], maxItems: number = 50): T[] => {
 
 export const debounce = <T extends (...args: any[]) => any>(
   func: T,
-  delay: number
+  delay: number,
 ): ((...args: Parameters<T>) => void) => {
   let timeoutId: ReturnType<typeof setTimeout>;
 
@@ -109,7 +109,7 @@ export const debounce = <T extends (...args: any[]) => any>(
 
 export const throttle = <T extends (...args: any[]) => any>(
   func: T,
-  limit: number
+  limit: number,
 ): ((...args: Parameters<T>) => void) => {
   let inThrottle: boolean;
 

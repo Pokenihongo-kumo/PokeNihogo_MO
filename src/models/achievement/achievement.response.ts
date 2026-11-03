@@ -15,8 +15,8 @@ export type IAchievementListResponse = z.infer<typeof AchievementListResponseSch
  * User Achievements Data Schema (results + pagination only, without response wrapper)
  */
 export const UserAchievementsDataSchema = z.object({
-    results: z.array(AchievementGroupEntitySchema),
-    pagination: PaginationSchema,
+  results: z.array(AchievementGroupEntitySchema),
+  pagination: PaginationSchema,
 });
 export type UserAchievementsData = z.infer<typeof UserAchievementsDataSchema>;
 //---------------------End---------------------//
@@ -25,9 +25,9 @@ export type UserAchievementsData = z.infer<typeof UserAchievementsDataSchema>;
  * User Achievements Response Schema (full backend response)
  */
 export const UserAchievementsResponseSchema = z.object({
-    statusCode: z.number(),
-    message: z.string(),
-    data: UserAchievementsDataSchema,
+  statusCode: z.number(),
+  message: z.string(),
+  data: UserAchievementsDataSchema,
 });
 export type UserAchievementsResponse = z.infer<typeof UserAchievementsResponseSchema>;
 //---------------------End---------------------//

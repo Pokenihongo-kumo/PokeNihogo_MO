@@ -17,14 +17,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { getApiErrorMessage, toApiError } from "@utils/api-error.utils";
 
 export default function QuizResultScreen() {
-  const {
-    resultId,
-    resultData,
-    message,
-    timeSpent,
-    origin,
-    testType,
-  } = useLocalSearchParams<{
+  const { resultId, resultData, message, timeSpent, origin, testType } = useLocalSearchParams<{
     resultId?: string;
     resultData?: string;
     message?: string;
@@ -59,11 +52,7 @@ export default function QuizResultScreen() {
     const minutes = Math.floor(timeSpentNumber / 60);
     const seconds = timeSpentNumber % 60;
     if (minutes > 0) {
-      return t(
-        "quiz_result.time_minutes_seconds",
-        "{{minutes}}m {{seconds}}s",
-        { minutes, seconds }
-      );
+      return t("quiz_result.time_minutes_seconds", "{{minutes}}m {{seconds}}s", { minutes, seconds });
     }
     return t("quiz_result.time_seconds", "{{seconds}}s", { seconds });
   }, [timeSpentNumber, t]);
@@ -81,7 +70,7 @@ export default function QuizResultScreen() {
           : t(fallbackKey, fallbackDefault);
       return getApiErrorMessage(error, fallback);
     },
-    [t]
+    [t],
   );
 
   const handleGoHome = useCallback(() => {
@@ -98,11 +87,7 @@ export default function QuizResultScreen() {
         onSuccess: (data) => {
           if ((data as any)?.statusCode === 403) {
             const errorMsg =
-              (data as any)?.message ||
-              t(
-                "quiz_result.review_forbidden",
-                "Bạn không đủ điều kiện để xem đáp án"
-              );
+              (data as any)?.message || t("quiz_result.review_forbidden", "Bạn không đủ điều kiện để xem đáp án");
             openErrorModal(errorMsg);
             return;
           }
@@ -116,11 +101,7 @@ export default function QuizResultScreen() {
           });
         },
         onError: (error: Error) => {
-          const errorMsg = parseAxiosErrorMessage(
-            error,
-            "quiz_result.review_error_default",
-            "Không thể xem đáp án"
-          );
+          const errorMsg = parseAxiosErrorMessage(error, "quiz_result.review_error_default", "Không thể xem đáp án");
           openErrorModal(errorMsg);
         },
       });
@@ -134,12 +115,7 @@ export default function QuizResultScreen() {
       {
         onSuccess: (data: any) => {
           if (data?.statusCode === 403) {
-            const errorMsg =
-              data?.message ||
-              t(
-                "quiz_result.review_forbidden",
-                "Bạn không đủ điều kiện để xem đáp án"
-              );
+            const errorMsg = data?.message || t("quiz_result.review_forbidden", "Bạn không đủ điều kiện để xem đáp án");
             openErrorModal(errorMsg);
             setIsFetchingReview(false);
             return;
@@ -156,26 +132,13 @@ export default function QuizResultScreen() {
           setIsFetchingReview(false);
         },
         onError: (error: Error) => {
-          const errorMsg = parseAxiosErrorMessage(
-            error,
-            "quiz_result.review_error_default",
-            "Không thể xem đáp án"
-          );
+          const errorMsg = parseAxiosErrorMessage(error, "quiz_result.review_error_default", "Không thể xem đáp án");
           openErrorModal(errorMsg);
           setIsFetchingReview(false);
         },
-      }
+      },
     );
-  }, [
-    checkReviewAccess,
-    checkReviewAccessTest,
-    openErrorModal,
-    origin,
-    parseAxiosErrorMessage,
-    resultId,
-    t,
-    testType,
-  ]);
+  }, [checkReviewAccess, checkReviewAccessTest, openErrorModal, origin, parseAxiosErrorMessage, resultId, t, testType]);
 
   const answeredSummary = useMemo(() => {
     if (!result) return "-";
@@ -227,28 +190,18 @@ export default function QuizResultScreen() {
 
   // Determine status message
   const statusMessage = useMemo(() => {
-    if (!result)
-      return t("quiz_result.not_found_message", "Không tìm thấy kết quả quiz");
+    if (!result) return t("quiz_result.not_found_message", "Không tìm thấy kết quả quiz");
 
     // Check incomplete first
     if (result.answeredQuestions < result.totalQuestions) {
-      return t(
-        "quiz_result.message_incomplete",
-        "Bạn đã nộp bài nhưng chưa trả lời đủ câu hỏi"
-      );
+      return t("quiz_result.message_incomplete", "Bạn đã nộp bài nhưng chưa trả lời đủ câu hỏi");
     }
 
     if (result.status === QuizCompletionStatus.FAILED) {
-      return t(
-        "quiz_result.message_failed",
-        "Bạn đã hoàn thành bài tập nhưng có một số câu trả lời sai"
-      );
+      return t("quiz_result.message_failed", "Bạn đã hoàn thành bài tập nhưng có một số câu trả lời sai");
     }
     if (result.allCorrect) {
-      return t(
-        "quiz_result.message_all_correct",
-        "Chúc mừng! Bạn đã trả lời đúng tất cả các câu hỏi!"
-      );
+      return t("quiz_result.message_all_correct", "Chúc mừng! Bạn đã trả lời đúng tất cả các câu hỏi!");
     }
 
     if (message) return message;
@@ -260,12 +213,8 @@ export default function QuizResultScreen() {
     return (
       <QuizLayout>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>
-            {t("quiz_result.not_found_message", "Không tìm thấy kết quả quiz")}
-          </Text>
-          <Button onPress={() => router.back()}>
-            {t("common.back", "Quay lại")}
-          </Button>
+          <Text style={styles.errorText}>{t("quiz_result.not_found_message", "Không tìm thấy kết quả quiz")}</Text>
+          <Button onPress={() => router.back()}>{t("common.back", "Quay lại")}</Button>
         </View>
       </QuizLayout>
     );
@@ -306,13 +255,7 @@ export default function QuizResultScreen() {
           <ResultValueCard
             title={t("quiz_result.answered_title", "Số câu đã trả lời")}
             value={answeredSummary}
-            icon={
-              <MaterialCommunityIcons
-                name="check-circle"
-                size={18}
-                color="#2563eb"
-              />
-            }
+            icon={<MaterialCommunityIcons name="check-circle" size={18} color="#2563eb" />}
             headerGradientColors={["#2563eb", "#4f46e5"]}
             style={styles.tile}
             size="compact"
@@ -322,13 +265,7 @@ export default function QuizResultScreen() {
             <ResultValueCard
               title={t("quiz_result.unanswered_title", "Chưa trả lời")}
               value={result.unansweredQuestions}
-              icon={
-                <MaterialCommunityIcons
-                  name="alert-circle"
-                  size={18}
-                  color="#ef4444"
-                />
-              }
+              icon={<MaterialCommunityIcons name="alert-circle" size={18} color="#ef4444" />}
               headerGradientColors={["#ef4444", "#f87171"]}
               style={styles.tile}
               size="compact"
@@ -340,13 +277,7 @@ export default function QuizResultScreen() {
           <ResultValueCard
             title={t("quiz_result.correct_title", "Số câu đúng")}
             value={correctAnswers}
-            icon={
-              <MaterialCommunityIcons
-                name="check-circle"
-                size={18}
-                color="#059669"
-              />
-            }
+            icon={<MaterialCommunityIcons name="check-circle" size={18} color="#059669" />}
             headerGradientColors={["#059669", "#34d399"]}
             style={styles.tile}
             size="compact"
@@ -356,13 +287,7 @@ export default function QuizResultScreen() {
             <ResultValueCard
               title={t("quiz_result.incorrect_title", "Số câu sai")}
               value={incorrectAnswers}
-              icon={
-                <MaterialCommunityIcons
-                  name="close-circle"
-                  size={18}
-                  color="#ef4444"
-                />
-              }
+              icon={<MaterialCommunityIcons name="close-circle" size={18} color="#ef4444" />}
               headerGradientColors={["#ef4444", "#f87171"]}
               style={styles.tile}
               size="compact"
@@ -374,13 +299,7 @@ export default function QuizResultScreen() {
           <ResultValueCard
             title={t("quiz_result.time_title", "Thời gian")}
             value={timeDisplay}
-            icon={
-              <MaterialCommunityIcons
-                name="timer-outline"
-                size={18}
-                color="#047857"
-              />
-            }
+            icon={<MaterialCommunityIcons name="timer-outline" size={18} color="#047857" />}
             headerGradientColors={["#059669", "#34d399"]}
             style={styles.tile}
             size="compact"
@@ -389,13 +308,7 @@ export default function QuizResultScreen() {
           <ResultValueCard
             title={t("quiz_result.accuracy_title", "Tỉ lệ đúng")}
             value={formattedAccuracy}
-            icon={
-              <MaterialCommunityIcons
-                name="percent-outline"
-                size={18}
-                color="#7c3aed"
-              />
-            }
+            icon={<MaterialCommunityIcons name="percent-outline" size={18} color="#7c3aed" />}
             headerGradientColors={["#7c3aed", "#a855f7"]}
             style={styles.tile}
             size="compact"

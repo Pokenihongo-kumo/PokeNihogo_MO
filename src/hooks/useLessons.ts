@@ -6,12 +6,7 @@ import { lessonService } from "@services/lesson";
 import lessonCategoriesService from "@services/lesson-categories";
 import userProgressService from "@services/user-progres";
 import { useGlobalStore } from "@stores/global/global.config";
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useLesson = (lessonId: string) => {
   const language = useGlobalStore((state) => state.language);
@@ -39,15 +34,8 @@ export const useUpdateLessonProgress = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      lessonId,
-      progress,
-      isCompleted,
-    }: {
-      lessonId: string;
-      progress: number;
-      isCompleted?: boolean;
-    }) => lessonService.updateLessonProgress(lessonId, progress, isCompleted),
+    mutationFn: ({ lessonId, progress, isCompleted }: { lessonId: string; progress: number; isCompleted?: boolean }) =>
+      lessonService.updateLessonProgress(lessonId, progress, isCompleted),
     onSuccess: (data, variables) => {
       // Invalidate and refetch lessons
       queryClient.invalidateQueries({ queryKey: ["lessons"] });
@@ -62,9 +50,7 @@ export const useUpdateLessonProgress = () => {
 /**
  * Infinite list of user lessons with pagination support
  */
-export const useInfiniteUserLessons = (
-  params: Omit<IQueryRequest, "currentPage">
-) => {
+export const useInfiniteUserLessons = (params: Omit<IQueryRequest, "currentPage">) => {
   const language = useGlobalStore((state) => state.language);
 
   return useInfiniteQuery({

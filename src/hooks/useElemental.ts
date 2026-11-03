@@ -7,11 +7,11 @@ import { useQuery } from "@tanstack/react-query";
  * @returns List elemental data
  */
 export const useListElemental = () => {
-    const language = useGlobalStore((state) => state.language);
-    const { data, isLoading, isError } = useQuery({
-        queryKey: ['list-elemental', language],
-        queryFn: () => elementalService.getListElemental(),
-    });
-    return { data: data?.data.data, isLoading, isError };
+  const language = useGlobalStore((state) => state.language);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["list-elemental", language],
+    queryFn: () => elementalService.getListElemental(),
+  });
+  return { data: data?.data.data, isLoading, isError };
 };
 //------------------------End------------------------//
