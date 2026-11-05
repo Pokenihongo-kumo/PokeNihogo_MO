@@ -13,6 +13,7 @@ import VoiceRecorder from "@components/ui/EnhancedAudioRecorder";
 import { useAuth } from "@hooks/useAuth";
 import { useTestFullUser } from "@hooks/useUserTest";
 import { useTranslation } from "react-i18next";
+import geminiService from "@services/gemini";
 
 type Message = {
   id: string;
@@ -341,7 +342,7 @@ export default function ConversationScreen() {
     return () => clearTimeout(t);
   }, [countdown, isSequencing, startSequence, scaleAnim, opacityAnim]);
 
-  const sendToGemini = async (
+  const assessRecording = async (
     uri: string,
     referenceText?: string,
   ): Promise<{
@@ -353,16 +354,6 @@ export default function ConversationScreen() {
     aiAudioMimeType?: string;
     matchScore?: number;
   }> => {
-    const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-
-    if (!apiKey) {
-      throw new Error("Missing Gemini API key (EXPO_PUBLIC_GEMINI_API_KEY/GOOGLE_API_KEY)");
-    }
-
-    const audioBase64 = await FileSystem.readAsStringAsync(uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-
     const getMimeFromUri = (u: string) => {
       const lower = u.toLowerCase();
       if (lower.endsWith(".wav")) return "audio/wav";
@@ -376,123 +367,39 @@ export default function ConversationScreen() {
 
     const mimeType = getMimeFromUri(uri);
 
-    const candidateModels = [
-      "gemini-2.5-flash-native-audio-dialog",
-      "gemini-2.0-flash-exp",
-      "gemini-2.0-flash",
-      "gemini-1.5-flash-8b",
-      "gemini-1.5-pro",
-    ];
+    // The backend calls Gemini; the model's JSON fields are read below as before
+    const result = await geminiService.assessPronunciation({ uri, mimeType, referenceText: referenceText ?? "" });
+    const parsed = result.data as Record<string, any>;
 
-    const systemInstruction =
-      'Role: You are a supportive Japanese Pronunciation Assessment AI. Your first task is to verify if the audio file is actually usable and contains real speech sounds.\n\nCRITICAL FIRST STEP - Audio Validation:\n1) Listen carefully to the audio file. Check if you can hear ANY actual speech sounds.\n2) If the audio is completely silent, contains only background noise/static, is corrupted, or has no intelligible speech, you MUST return all scores as 0 and set MatchScore to 0.\n3) If you can hear some speech (even if unclear), treat the audio as valid and continue to assessment.\n\nIF AUDIO IS VALID (contains some speech):\n1) Transcribe the spoken audio to kana/romaji-like text: TranscribedText.\n2) ALWAYS compare TranscribedText directly with the provided ReferenceText and compute MatchScore in [0,1] based on their similarity.\n3) Score (be forgiving and learner-friendly, but still based on similarity to ReferenceText): Perfect / near-perfect match 85-100, minor deviations 60-85, clear mismatch/unintelligible 0-60. If MatchScore < 0.5 treat as strong mismatch.\n\nIF AUDIO IS INVALID (silent, noise only, corrupted, no speech at all):\n- Set TranscribedText to empty string ""\n- Set MatchScore to 0\n- Set all AccuracyScore values in Syllables to 0\n- Set all Overall scores to 0\n\nOutput (JSON only):\n{\n  "Overall": { "AccuracyScore": number, "FluencyScore": number, "PronScore": number },\n  "TranscribedText": string (empty if no speech detected),\n  "MatchScore": number (0 if audio invalid/no speech),\n  "Syllables": [ { "Syllable": string, "Romaji": string, "AccuracyScore": number (0 if audio invalid), "ErrorType": "Substitution"|"Omission"|"Insertion"|"PitchAccentError"|"None", "ErrorDetail": string } ]\n}\n\nBe encouraging but honest. Do NOT invent words that are not in the audio, and do NOT ignore the ReferenceText when computing scores.';
-
-    const userPrompt = `Reference Text (Japanese): ${referenceText ?? ""}`;
-
-    const baseBody = {
-      system_instruction: {
-        parts: [
-          {
-            text: systemInstruction,
-          },
-        ],
-      },
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: userPrompt,
-            },
-            {
-              inline_data: { mime_type: mimeType, data: audioBase64 },
-            },
-          ],
-        },
-      ],
-      generationConfig: {
-        response_mime_type: "application/json",
-        temperature: 0.3,
-      },
-    } as const;
-
-    let lastError: Error | undefined;
-    for (const model of candidateModels) {
-      try {
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(baseBody),
-          },
-        );
-
-        if (!res.ok) {
-          const errText = await res.text();
-          if (res.status === 404 || /NOT_FOUND|is not found|unsupported/i.test(errText)) {
-            continue;
-          }
-          throw new Error(`Gemini error: ${res.status} ${errText}`);
-        }
-
-        const json: any = await res.json();
-        const raw = json?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-        let parsed: any = {};
-        try {
-          parsed = raw ? JSON.parse(raw) : {};
-        } catch {
-          parsed = {};
-        }
-
-        let wordsOut: FeedbackWord[] | undefined;
-        if (Array.isArray(parsed)) {
-          wordsOut = parsed
-            .map((it: any) => {
-              const ch = typeof it?.character === "string" ? it.character : String(it?.character ?? "");
-              const acc = String(it?.accuracy ?? "").toLowerCase();
-              const score = acc === "good" ? 100 : acc === "ok" || acc === "medium" ? 60 : acc ? 0 : undefined;
-              const correct = score !== undefined ? score >= 85 : acc === "good";
-              return ch ? { word: ch, correct, score } : undefined;
-            })
-            .filter(Boolean) as FeedbackWord[];
-        } else if (parsed?.words && Array.isArray(parsed.words)) {
-          wordsOut = parsed.words as FeedbackWord[];
-        } else if (parsed?.Syllables && Array.isArray(parsed.Syllables)) {
-          wordsOut = (parsed.Syllables as any[])
-            .map((syl: any) => {
-              const word = String(syl?.Syllable ?? "");
-              const scoreNum =
-                typeof syl?.AccuracyScore === "number"
-                  ? syl.AccuracyScore
-                  : parseFloat(String(syl?.AccuracyScore ?? ""));
-              const score = isFinite(scoreNum) ? Math.max(0, Math.min(100, Math.round(scoreNum))) : undefined;
-              const correct = score !== undefined ? score >= 85 : false;
-              return word ? { word, correct, score } : undefined;
-            })
-            .filter(Boolean) as FeedbackWord[];
-        }
-
-        // Extract MatchScore from response
-        const matchScore =
-          typeof parsed.MatchScore === "number" ? parsed.MatchScore : parseFloat(String(parsed.MatchScore ?? ""));
-
-        return {
-          feedbackText: parsed.ReferenceText || parsed.feedbackText,
-          words: wordsOut,
-          recognizedText: parsed.TranscribedText || parsed.transcribedText || parsed.recognizedText,
-          aiMessageText: parsed.aiMessageText,
-          aiAudioBase64: parsed.aiAudioBase64,
-          aiAudioMimeType: parsed.aiAudioMimeType,
-          matchScore: isFinite(matchScore) ? matchScore : undefined,
-        };
-      } catch (e: any) {
-        lastError = e instanceof Error ? e : new Error(String(e));
-      }
+    let wordsOut: FeedbackWord[] | undefined;
+    if (parsed?.words && Array.isArray(parsed.words)) {
+      wordsOut = parsed.words as FeedbackWord[];
+    } else if (parsed?.Syllables && Array.isArray(parsed.Syllables)) {
+      wordsOut = (parsed.Syllables as any[])
+        .map((syl: any) => {
+          const word = String(syl?.Syllable ?? "");
+          const scoreNum =
+            typeof syl?.AccuracyScore === "number" ? syl.AccuracyScore : parseFloat(String(syl?.AccuracyScore ?? ""));
+          const score = isFinite(scoreNum) ? Math.max(0, Math.min(100, Math.round(scoreNum))) : undefined;
+          const correct = score !== undefined ? score >= 85 : false;
+          return word ? { word, correct, score } : undefined;
+        })
+        .filter(Boolean) as FeedbackWord[];
     }
 
-    if (lastError) throw lastError;
-    throw new Error("Gemini models unavailable or unsupported for this endpoint.");
+    // Extract MatchScore from response
+    const matchScore =
+      typeof parsed.MatchScore === "number" ? parsed.MatchScore : parseFloat(String(parsed.MatchScore ?? ""));
+
+    return {
+      feedbackText: parsed.ReferenceText || parsed.feedbackText,
+      words: wordsOut,
+      recognizedText: parsed.TranscribedText || parsed.transcribedText || parsed.recognizedText,
+      aiMessageText: parsed.aiMessageText,
+      aiAudioBase64: parsed.aiAudioBase64,
+      aiAudioMimeType: parsed.aiAudioMimeType,
+      matchScore: isFinite(matchScore) ? matchScore : undefined,
+    };
   };
 
   const normalizeJa = (s: string) =>
@@ -613,7 +520,7 @@ export default function ConversationScreen() {
 
       setIsSubmitting(true);
 
-      const result = await sendToGemini(uri, nextUserPrompt);
+      const result = await assessRecording(uri, nextUserPrompt);
       const displayText = result.feedbackText || nextUserPrompt || "";
       const recognized = String((result as any).recognizedText || "").trim();
 
