@@ -6,6 +6,7 @@ import { useDebounce } from "@hooks/useDebounce";
 import { useDictionarySearch, useSearchHistory, useWordDetails } from "@hooks/useDictionary";
 import { useAddWordToFlashcardDeck, useCreateFlashcardDeck, useFlashcardDecks } from "@hooks/useFlashcard";
 import { useMinimalAlert } from "@hooks/useMinimalAlert";
+import { ISearchHistoryItem } from "@models/dictionary/dictionary.response";
 import { DictionaryResult } from "@services/dictionary";
 import { formatDateVN } from "@utils/date";
 import { AxiosError } from "axios";
@@ -80,14 +81,11 @@ export default function DictionaryScreen() {
   const debouncedQuery = useDebounce(searchQuery, 300);
 
   // Get word details when a word is selected
-  const { data: wordDetailData, isLoading: wordDetailLoading } = useWordDetails(selectedWordId);
+  const { data: wordDetail, isLoading: wordDetailLoading } = useWordDetails(selectedWordId);
 
-  const hasAudioPronunciation = Boolean(wordDetailData?.data?.audioUrl);
+  const hasAudioPronunciation = Boolean(wordDetail?.audioUrl);
   const isPronouncing = hasAudioPronunciation ? isAudioPlaying : isSpeaking;
-  const formattedWordType = useMemo(
-    () => wordDetailData?.data?.wordType?.replace(/_/g, " "),
-    [wordDetailData?.data?.wordType],
-  );
+  const formattedWordType = useMemo(() => wordDetail?.wordType?.replace(/_/g, " "), [wordDetail?.wordType]);
 
   // Use API hook for real search
   const { data: apiData, isLoading: apiLoading } = useDictionarySearch(
@@ -106,10 +104,10 @@ export default function DictionaryScreen() {
   });
 
   // Get search results from API - memoized to prevent unnecessary re-renders
-  const searchResults = useMemo(() => apiData?.data?.results || [], [apiData?.data?.results]);
+  const searchResults = useMemo(() => apiData?.results || [], [apiData?.results]);
 
   // Get search history results - memoized to prevent unnecessary re-renders
-  const searchHistory = useMemo(() => searchHistoryData?.data?.results || [], [searchHistoryData?.data?.results]);
+  const searchHistory = useMemo(() => searchHistoryData?.results || [], [searchHistoryData?.results]);
 
   // Refetch history after successful search
   useEffect(() => {
@@ -294,7 +292,7 @@ export default function DictionaryScreen() {
 
   // Handle pronunciation playback (prefer BE audio, fallback to TTS)
   const handlePronounce = useCallback(async () => {
-    const audioUrl = wordDetailData?.data?.audioUrl;
+    const audioUrl = wordDetail?.audioUrl;
 
     if (audioUrl) {
       if (isAudioLoading) return;
@@ -344,7 +342,7 @@ export default function DictionaryScreen() {
       return;
     }
 
-    if (!wordDetailData?.data) return;
+    if (!wordDetail) return;
 
     if (isSpeaking) {
       Speech.stop();
@@ -352,7 +350,7 @@ export default function DictionaryScreen() {
       return;
     }
 
-    const textToSpeak = wordDetailData.data.reading || wordDetailData.data.wordJp;
+    const textToSpeak = wordDetail.reading || wordDetail.wordJp;
 
     if (!textToSpeak) return;
 
@@ -371,7 +369,7 @@ export default function DictionaryScreen() {
         setIsSpeaking(false);
       },
     });
-  }, [cleanupAudio, isAudioLoading, isAudioPlaying, isSpeaking, showAlert, t, wordDetailData?.data]);
+  }, [cleanupAudio, isAudioLoading, isAudioPlaying, isSpeaking, showAlert, t, wordDetail]);
 
   // Stop pronunciation when word changes
   useEffect(() => {
@@ -483,7 +481,7 @@ export default function DictionaryScreen() {
       searchHistory,
       onSearch,
     }: {
-      searchHistory: IComponents.SearchHistoryItem[];
+      searchHistory: ISearchHistoryItem[];
       onSearch: (keyword: string, autoSelect?: boolean) => void;
     }) => {
       const { t } = useTranslation();
@@ -638,7 +636,7 @@ export default function DictionaryScreen() {
                       nestedScrollEnabled={true}
                       bounces={false}
                     >
-                      {searchHistory.map((item: IComponents.SearchHistoryItem) => (
+                      {searchHistory.map((item) => (
                         <TouchableOpacity
                           key={item.id}
                           className="flex-row items-center py-3 px-4 border-b border-gray-50 active:bg-gray-50"
@@ -695,7 +693,7 @@ export default function DictionaryScreen() {
         {/* Results - always show content */}
         <View className="flex-1">
           {/* Show word detail if selected */}
-          {selectedWordId && wordDetailData?.data ? (
+          {selectedWordId && wordDetail ? (
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
               <View className="px-4 py-6">
                 {/* Back button to clear selection */}
@@ -708,7 +706,7 @@ export default function DictionaryScreen() {
                 <View className="mb-6">
                   <View className="flex-row items-center justify-between mb-2">
                     <View className="flex-1 flex-row items-center flex-wrap">
-                      <Text className="text-4xl font-bold text-gray-900 mr-3">{wordDetailData.data.wordJp}</Text>
+                      <Text className="text-4xl font-bold text-gray-900 mr-3">{wordDetail.wordJp}</Text>
                       {/* Pronunciation Button */}
                       <TouchableOpacity
                         className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center mr-2"
@@ -733,18 +731,16 @@ export default function DictionaryScreen() {
                     </TouchableOpacity>
                   </View>
                   <View className="flex-row items-center flex-wrap mb-2">
-                    {wordDetailData.data.reading && (
-                      <Text className="text-xl text-gray-600 mr-2">{wordDetailData.data.reading}</Text>
-                    )}
-                    {wordDetailData.data.kanjiMeaning && (
-                      <Text className="text-lg text-gray-500">({wordDetailData.data.kanjiMeaning})</Text>
+                    {wordDetail.reading && <Text className="text-xl text-gray-600 mr-2">{wordDetail.reading}</Text>}
+                    {wordDetail.kanjiMeaning && (
+                      <Text className="text-lg text-gray-500">({wordDetail.kanjiMeaning})</Text>
                     )}
                   </View>
-                  {(wordDetailData.data.levelN || formattedWordType) && (
+                  {(wordDetail.levelN || formattedWordType) && (
                     <View className="flex-row flex-wrap items-center gap-2 mt-2">
-                      {wordDetailData.data.levelN && (
+                      {wordDetail.levelN && (
                         <View className="bg-blue-100 rounded-full px-3 py-1">
-                          <Text className="text-sm font-semibold text-blue-700">N{wordDetailData.data.levelN}</Text>
+                          <Text className="text-sm font-semibold text-blue-700">N{wordDetail.levelN}</Text>
                         </View>
                       )}
                       {formattedWordType && (
@@ -754,9 +750,9 @@ export default function DictionaryScreen() {
                       )}
                     </View>
                   )}
-                  {wordDetailData.data.imageUrl && (
+                  {wordDetail.imageUrl && (
                     <Image
-                      source={{ uri: wordDetailData.data.imageUrl }}
+                      source={{ uri: wordDetail.imageUrl }}
                       className="w-full h-48 rounded-3xl mt-4 mb-2 bg-gray-100"
                       resizeMode="cover"
                     />
@@ -764,10 +760,10 @@ export default function DictionaryScreen() {
                 </View>
 
                 {/* Meanings */}
-                {wordDetailData.data.meanings && wordDetailData.data.meanings.length > 0 && (
+                {wordDetail.meanings && wordDetail.meanings.length > 0 && (
                   <View className="mb-6">
                     <Text className="text-2xl font-semibold text-gray-900 mb-4">{t("dictionary.meanings")}</Text>
-                    {wordDetailData.data.meanings.map((meaning: IComponents.WordMeaning, index: number) => (
+                    {wordDetail.meanings.map((meaning, index) => (
                       <View
                         key={`meaning-${index}-${meaning.meaning || index}`}
                         className="mb-4 pb-4 border-b border-gray-100"
@@ -795,11 +791,11 @@ export default function DictionaryScreen() {
                 )}
 
                 {/* Related Words */}
-                {wordDetailData.data.relatedWords && wordDetailData.data.relatedWords.length > 0 && (
+                {wordDetail.relatedWords && wordDetail.relatedWords.length > 0 && (
                   <View className="mb-6">
                     <Text className="text-2xl font-semibold text-gray-900 mb-4">{t("dictionary.related_words")}</Text>
                     <View className="flex-row flex-wrap">
-                      {wordDetailData.data.relatedWords.map((related: IComponents.RelatedWord) => (
+                      {wordDetail.relatedWords.map((related) => (
                         <TouchableOpacity
                           key={related.id}
                           className="bg-gray-100 rounded-full px-5 py-3 mr-2 mb-2"

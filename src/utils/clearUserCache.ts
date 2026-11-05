@@ -34,8 +34,8 @@ export const clearUserCache = () => {
       "flashcard-deck",
       "flashcard-deck-words",
       "flashcard-deck-cards",
-      // Dictionary favorites
-      "dictionary-favorites",
+      // Dictionary (search history is per user)
+      "dictionary",
       // Quiz
       "quiz-session",
       "quiz-questions",
